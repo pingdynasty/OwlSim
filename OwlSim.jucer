@@ -11,12 +11,13 @@
               companyName="Rebel Technology">
   <MAINGROUP id="WHVxNd" name="OwlSim">
     <GROUP id="{38D29851-9657-B61F-ADA4-1EDE4BF89C63}" name="Source">
+      <FILE id="cYygQH" name="GainPatch.hpp" compile="0" resource="0" file="Source/Patches/GainPatch.hpp"/>
+      <FILE id="PzYpp1" name="TemplatePatch.hpp" compile="0" resource="0"
+            file="Source/Patches/TemplatePatch.hpp"/>
       <FILE id="bJUkY2" name="StompGui.cpp" compile="1" resource="0" file="Source/StompGui.cpp"/>
       <FILE id="tvGCD0" name="StompGui.h" compile="0" resource="0" file="Source/StompGui.h"/>
       <FILE id="ApiN3l" name="SampleBuffer.cpp" compile="1" resource="0"
             file="Source/SampleBuffer.cpp"/>
-      <FILE id="LH6IwG" name="CircularBuffer.hpp" compile="0" resource="0"
-            file="Source/CircularBuffer.hpp"/>
       <FILE id="MMCq5S" name="PatchRegistry.cpp" compile="1" resource="0"
             file="Source/PatchRegistry.cpp"/>
       <FILE id="DMiDRQ" name="PatchRegistry.h" compile="0" resource="0" file="Source/PatchRegistry.h"/>
@@ -24,7 +25,6 @@
       <FILE id="OG0kE5" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="fCZzWp" name="SampleBuffer.h" compile="0" resource="0" file="Source/SampleBuffer.h"/>
-      <FILE id="yBP4pR" name="SimplePatches.h" compile="0" resource="0" file="Source/SimplePatches.h"/>
       <FILE id="uh0X4n" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
       <FILE id="HVtB4q" name="PluginEditor.cpp" compile="1" resource="0"
@@ -33,19 +33,19 @@
     </GROUP>
   </MAINGROUP>
   <MODULES>
-    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_gui_audio" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
   <EXPORTFORMATS>

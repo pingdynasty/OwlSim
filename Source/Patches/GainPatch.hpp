@@ -1,17 +1,7 @@
-#ifndef __SimplePatches_h__
-#define __SimplePatches_h__
+#ifndef __GainPatch_h__
+#define __GainPatch_h__
 
 #include "StompBox.h"
-
-class CopyPatch : public Patch {
-public:
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
-    int size = input.getSize();
-    float* buf = input.getSamples();
-    input.getSamples(0, size, buf);
-    output.setSamples(0, size, buf);
-  }
-};
 
 class GainPatch : public Patch {
 public:
@@ -25,4 +15,4 @@ public:
   }
 };
 
-#endif // __SimplePatches_h__
+#endif // __GainPatch_h__

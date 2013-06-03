@@ -1,11 +1,13 @@
 #include "PatchRegistry.h"
-#include "SimplePatches.h"
+
+#include "Patches/GainPatch.hpp"
+#include "Patches/TemplatePatch.hpp"
 
 #define REGISTER_PATCH(T, STR) registerPatch(STR, Register<T>::construct)
 
 PatchRegistry::PatchRegistry(){
   REGISTER_PATCH(GainPatch, "Gain");
-  REGISTER_PATCH(CopyPatch, "Copy");
+  REGISTER_PATCH(TemplatePatch, "Template");
 }
 
 StringArray PatchRegistry::getNames(){

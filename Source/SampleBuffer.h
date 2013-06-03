@@ -2,6 +2,7 @@
 #define __SampleBuffer_h__
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "StompBox.h"
 
 class SampleBuffer : public AudioInputBuffer, public AudioOutputBuffer {
 private:

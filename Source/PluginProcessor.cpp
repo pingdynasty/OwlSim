@@ -29,6 +29,8 @@ StompBoxAudioProcessor::StompBoxAudioProcessor(){
 }
 
 StompBoxAudioProcessor::~StompBoxAudioProcessor(){
+  if(stomp == this)
+    stomp = NULL;
 }
 
 StringArray StompBoxAudioProcessor::getPatchNames(){
@@ -186,4 +188,25 @@ void StompBoxAudioProcessor::setStateInformation(const void* data, int sizeInByt
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
   return new StompBoxAudioProcessor();
+}
+
+float Patch::getParameterValue(PatchParameterId pid){
+  float val = 0.0;
+  if(stomp)
+    val = stomp->getParameter(pid);
+  return val;
+}
+
+int Patch::getBlockSize(){
+  int val = 0;
+  if(stomp)
+    val = stomp->getBlockSize();
+  return val;
+}
+
+double Patch::getSampleRate(){
+  double val = 0.0;
+  if(stomp)
+    val = stomp->getSampleRate();
+  return val;
 }

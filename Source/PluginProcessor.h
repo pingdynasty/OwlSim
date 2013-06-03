@@ -45,6 +45,8 @@ public:
   void setParameterValue(int pid, int value);
   void setParameterValue(int pid, float value);
 
+  bool bypass;
+
 private:
   PatchRegistry patches;
   ScopedPointer<Patch> patch;
@@ -52,7 +54,6 @@ private:
   float parameterValues[16];
   std::string currentPatchName;
   CriticalSection mutex;
-  bool bypass;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StompBoxAudioProcessor)
 };
