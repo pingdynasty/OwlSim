@@ -22,7 +22,7 @@
 //[Headers] You can add your own extra header files here...
 //[/Headers]
 
-#include "stompGui.h"
+#include "StompGui.h"
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...

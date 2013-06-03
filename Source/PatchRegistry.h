@@ -1,5 +1,7 @@
 #ifndef __PatchRegistry_h__
 #define __PatchRegistry_h__
+#include <map>
+#include <string>
 
 #include "StompBox.h"
 #include "../JuceLibraryCode/JuceHeader.h"
