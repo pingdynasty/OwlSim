@@ -18,7 +18,7 @@ public:
       return new T();
     };
     static PatchCreator* init_creator(std::string& name) {
-      return getCreators()[name] = create;
+      return getCreators()[name] = construct;
     }
     static PatchCreator* creator;
   };
