@@ -128,12 +128,13 @@
   <Files>
     <Filter Name="OwlSim">
       <Filter Name="Source">
+        <File RelativePath="..\..\Source\StompGui.cpp"/>
+        <File RelativePath="..\..\Source\StompGui.h"/>
+        <File RelativePath="..\..\Source\SampleBuffer.cpp"/>
         <File RelativePath="..\..\Source\CircularBuffer.hpp"/>
         <File RelativePath="..\..\Source\PatchRegistry.cpp"/>
         <File RelativePath="..\..\Source\PatchRegistry.h"/>
         <File RelativePath="..\..\Source\StompBox.h"/>
-        <File RelativePath="..\..\Source\stompGui.h"/>
-        <File RelativePath="..\..\Source\stompGui.cpp"/>
         <File RelativePath="..\..\Source\PluginProcessor.cpp"/>
         <File RelativePath="..\..\Source\SampleBuffer.h"/>
         <File RelativePath="..\..\Source\SimplePatches.h"/>
@@ -403,6 +404,7 @@
             </FileConfiguration>
           </File>
           <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_devices\audio_io\juce_AudioIODeviceType.h"/>
+          <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_devices\audio_io\juce_SystemAudioVolume.h"/>
         </Filter>
         <Filter Name="midi_io">
           <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_devices\midi_io\juce_MidiInput.h"/>
@@ -974,6 +976,16 @@
           <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_AudioUnitPluginFormat.h"/>
           <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_AudioUnitPluginFormat.mm"/>
           <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_DirectXPluginFormat.h"/>
+          <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_LADSPAPluginFormat.cpp">
+            <FileConfiguration Name="Debug|Win32"
+                               ExcludedFromBuild="true">
+              <Tool Name="VCCLCompilerTool"/>
+            </FileConfiguration>
+            <FileConfiguration Name="Release|Win32"
+                               ExcludedFromBuild="true">
+              <Tool Name="VCCLCompilerTool"/>
+            </FileConfiguration>
+          </File>
           <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_LADSPAPluginFormat.h"/>
           <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_VSTMidiEventList.h"/>
           <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_VSTPluginFormat.cpp">
@@ -2586,6 +2598,16 @@
             </FileConfiguration>
           </File>
           <File RelativePath="..\..\JuceLibraryCode\modules\juce_graphics\native\juce_android_GraphicsContext.cpp">
+            <FileConfiguration Name="Debug|Win32"
+                               ExcludedFromBuild="true">
+              <Tool Name="VCCLCompilerTool"/>
+            </FileConfiguration>
+            <FileConfiguration Name="Release|Win32"
+                               ExcludedFromBuild="true">
+              <Tool Name="VCCLCompilerTool"/>
+            </FileConfiguration>
+          </File>
+          <File RelativePath="..\..\JuceLibraryCode\modules\juce_graphics\native\juce_freetype_Fonts.cpp">
             <FileConfiguration Name="Debug|Win32"
                                ExcludedFromBuild="true">
               <Tool Name="VCCLCompilerTool"/>
@@ -4230,123 +4252,6 @@
         </File>
         <File RelativePath="..\..\JuceLibraryCode\modules\juce_gui_extra\juce_gui_extra.h"/>
       </Filter>
-      <Filter Name="juce_opengl">
-        <Filter Name="opengl">
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_Draggable3DOrientation.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_Matrix3D.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLContext.cpp">
-            <FileConfiguration Name="Debug|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-            <FileConfiguration Name="Release|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-          </File>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLContext.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLFrameBuffer.cpp">
-            <FileConfiguration Name="Debug|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-            <FileConfiguration Name="Release|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-          </File>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLFrameBuffer.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLGraphicsContext.cpp">
-            <FileConfiguration Name="Debug|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-            <FileConfiguration Name="Release|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-          </File>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLGraphicsContext.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLHelpers.cpp">
-            <FileConfiguration Name="Debug|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-            <FileConfiguration Name="Release|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-          </File>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLHelpers.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLImage.cpp">
-            <FileConfiguration Name="Debug|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-            <FileConfiguration Name="Release|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-          </File>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLImage.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLPixelFormat.cpp">
-            <FileConfiguration Name="Debug|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-            <FileConfiguration Name="Release|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-          </File>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLPixelFormat.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLRenderer.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLShaderProgram.cpp">
-            <FileConfiguration Name="Debug|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-            <FileConfiguration Name="Release|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-          </File>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLShaderProgram.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLTexture.cpp">
-            <FileConfiguration Name="Debug|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-            <FileConfiguration Name="Release|Win32"
-                               ExcludedFromBuild="true">
-              <Tool Name="VCCLCompilerTool"/>
-            </FileConfiguration>
-          </File>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_OpenGLTexture.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_Quaternion.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\opengl\juce_Vector3D.h"/>
-        </Filter>
-        <Filter Name="native">
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\native\juce_MissingGLDefinitions.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\native\juce_OpenGL_android.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\native\juce_OpenGL_ios.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\native\juce_OpenGL_linux.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\native\juce_OpenGL_osx.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\native\juce_OpenGL_win32.h"/>
-          <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\native\juce_OpenGLExtensions.h"/>
-        </Filter>
-        <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\juce_module_info">
-          <FileConfiguration Name="Debug|Win32"
-                             ExcludedFromBuild="true">
-            <Tool Name="VCCLCompilerTool"/>
-          </FileConfiguration>
-          <FileConfiguration Name="Release|Win32"
-                             ExcludedFromBuild="true">
-            <Tool Name="VCCLCompilerTool"/>
-          </FileConfiguration>
-        </File>
-        <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\juce_opengl.h"/>
-      </Filter>
     </Filter>
     <Filter Name="Juce Library Code">
       <File RelativePath="..\..\JuceLibraryCode\AppConfig.h"/>
@@ -4362,7 +4267,6 @@
       <File RelativePath="..\..\JuceLibraryCode\modules\juce_graphics\juce_graphics.cpp"/>
       <File RelativePath="..\..\JuceLibraryCode\modules\juce_gui_basics\juce_gui_basics.cpp"/>
       <File RelativePath="..\..\JuceLibraryCode\modules\juce_gui_extra\juce_gui_extra.cpp"/>
-      <File RelativePath="..\..\JuceLibraryCode\modules\juce_opengl\juce_opengl.cpp"/>
       <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_plugin_client\utility\juce_PluginUtilities.cpp"/>
       <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_plugin_client\RTAS\juce_RTAS_DigiCode1.cpp">
         <FileConfiguration Name="Debug|Win32">
