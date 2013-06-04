@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="jwvpdV" name="OwlSim" projectType="audioplug" version="1.0.0"
-              bundleIdentifier="org.rebeltech.owlsim" buildVST="1" buildAU="1"
+              bundleIdentifier="org.rebeltech.owlsim" buildVST="1" buildAU="0"
               pluginName="OwlSim" pluginDesc="OwlSim" pluginManufacturer="RebelTech"
               pluginManufacturerCode="RBLT" pluginCode="OwlS" pluginChannelConfigs="{1, 1},"
               pluginIsSynth="0" pluginWantsMidiIn="1" pluginProducesMidiOut="1"
               pluginSilenceInIsSilenceOut="0" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="OwlAU" pluginRTASCategory="" aaxIdentifier="com.yourcompany.stompBox"
-              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="3.1.0"
+              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="3.0.0"
               companyName="Rebel Technology">
   <MAINGROUP id="WHVxNd" name="OwlSim">
     <GROUP id="{38D29851-9657-B61F-ADA4-1EDE4BF89C63}" name="Source">
