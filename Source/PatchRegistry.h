@@ -4,7 +4,7 @@
 #include <string>
 
 #include "StompBox.h"
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 
 class PatchRegistry {
   typedef Patch* PatchCreator(); // function pointer to create Patch
@@ -29,7 +29,5 @@ private:
     return creators; 
   }
 };
-
-/* #define REGISTER_PATCH(T, STR) template<> PatchRegistry::PatchCreator* PatchRegistry::Register<T>::creator = PatchRegistry::Register<T>::init_creator(STR) */
 
 #endif // __PatchRegistry_h__

@@ -1,7 +1,7 @@
 #ifndef __PLUGINPROCESSOR_H__
 #define __PLUGINPROCESSOR_H__
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 #include "PatchRegistry.h"
 
 class StompBoxAudioProcessor  : public AudioProcessor {

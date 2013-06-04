@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-StompBoxAudioProcessor* stomp = 0;
+StompBoxAudioProcessor* stomp = NULL;
 
 StompBoxAudioProcessor::StompBoxAudioProcessor(){
   stomp = this;

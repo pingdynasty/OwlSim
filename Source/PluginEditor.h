@@ -1,7 +1,7 @@
 #ifndef __PLUGINEDITOR_H__
 #define __PLUGINEDITOR_H__
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 #include "PluginProcessor.h"
 
 class StompBoxAudioProcessorEditor  : public AudioProcessorEditor
@@ -10,7 +10,6 @@ public:
     StompBoxAudioProcessorEditor (StompBoxAudioProcessor* ownerFilter);
     ~StompBoxAudioProcessorEditor();
 
-    //==============================================================================
     // This is just a standard Juce paint method...
     void paint (Graphics& g);
 private:
