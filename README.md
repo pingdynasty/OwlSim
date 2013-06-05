@@ -5,7 +5,7 @@ pedal. All code and documentation published under the Gnu GPL unless otherwise
 stated: http://www.gnu.org/licenses/gpl-3.0.txt
 
 
-#### 1. Compilation and SDKs #### 
+#### 1. Compilation and SDKs
 You need to compile the source code to use the OwlSim. for MAC OSX users: XCode 
 project in /Builds/MacOSX for Windows users: Visual Studio solutions(2008, 2010 
 or 2012) available in /Builds for Linux users: Makefile in /Builds/Linux
@@ -25,7 +25,7 @@ to set a Rez Search Path in XCode - click on the project title, select the Build
 Settings tab and set a Rez Search Path to point at the directory you have
 created and make it recursive (e.g. /Library/Developer/CoreAudio/**).
 
-#### 2. Write your patch ####
+#### 2. Write your patch
 To write your patch, please use the template TemplatePatch.hpp (in Source/Patches).
 You can write your code directly into it, or create a new file.
 
@@ -44,7 +44,7 @@ float valueD = getParameterValue(PARAMETER_D);
 The Switch button is acting as a standard Bypass button.
 
 
-#### 3. Test #### 
+#### 3. Test 
 The OwlSim will run as a mono plugin. For the moment it is limited to one instance 
 at a time (so don’t try to put the OwlSim into more than 1 track at a time :) We 
 will change that later of course!
