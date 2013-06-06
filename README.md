@@ -23,7 +23,7 @@ There is an Xcode project in /Builds/MacOSX.
 If you are using Xcode version 4.3 or later, you will need to follow the readme.rtf located in /CoreAudioUtilityClasses.
 You may also need to set a Rez Search Path in XCode - click on the project title, select the Build Settings tab and set a Rez Search Path to point at the directory you have created and make it recursive (e.g. /Library/Developer/CoreAudio/**)
 
-The project can build in the AU format as well. You can enable it by setting the variable JucePlugin_Build_AU to 0 in /JuceLibraryCode/AppConfig.h.
+The project can build in the AU format as well. You can enable it by setting the variable JucePlugin_Build_AU to 1 in /JuceLibraryCode/AppConfig.h.
 You will find addtional support on the [Juce Forum](http://rawmaterialsoftware.com/juce.php)
 
 
