@@ -32,7 +32,7 @@ You can write your code directly into it, or create a new file.
 If you create a new file (say, “MyPatch.hpp”) you will need to register it in
 the PatchRegistry.cpp: - adding the relevant include: 
 	#include "Patches/MyPatch.hpp"
-	#
+
 - add the following line in Patchregistry::PatchRegistry()
 REGISTER_PATCH(MyPatch, "MyPatch");
 
