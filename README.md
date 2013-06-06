@@ -23,7 +23,7 @@ There is an Xcode project in /Builds/MacOSX.
 If you are using Xcode version 4.3 or later, you will need to follow the readme.rtf located in /CoreAudioUtilityClasses.
 You may also need to set a Rez Search Path in XCode - click on the project title, select the Build Settings tab and set a Rez Search Path to point at the directory you have created and make it recursive (e.g. /Library/Developer/CoreAudio/**)
 
-The project can build in the AU format as well. You can enable it by setting the variable JucePlugin_Build_AU to 1 in /JuceLibraryCode/AppConfig.h.
+The project can build in the AU format as well. You can enable it by setting the variable `JucePlugin_Build_AU` to 1 in /JuceLibraryCode/AppConfig.h.
 You will find addtional support on the [Juce Forum](http://rawmaterialsoftware.com/juce.php)
 
 
@@ -36,21 +36,22 @@ You can write your code directly into it, or create a new file.
 If you create a new file (say, “MyPatch.hpp”) you will need to register it in
 the PatchRegistry.cpp: 
 - adding the relevant include: 
-`#include "Patches/MyPatch.hpp"`
+`  #include "Patches/MyPatch.hpp"  `
 - add the following line in Patchregistry::PatchRegistry()
-`REGISTER_PATCH(MyPatch, "MyPatch");`
+`  REGISTER_PATCH(MyPatch, "MyPatch");  `
 
 In the patch, to get a value (float between 0 and 1) from the knobs, do as
 follow: 
-`float valueA = getParameterValue(PARAMETER_A);
-float valueB =getParameterValue(PARAMETER_B); 
-float valueC = getParameterValue(PARAMETER_C);
-float valueD = getParameterValue(PARAMETER_D);`
+`  float valueA = getParameterValue(PARAMETER_A);  `
+` float valueB =getParameterValue(PARAMETER_B);  `
+` float valueC = getParameterValue(PARAMETER_C);  `
+` float valueD = getParameterValue(PARAMETER_D);  `
 
 The Switch button is acting as a standard Bypass button.
 
 
 3. Test 
 -------
+
 The OwlSim will run as a mono plugin. For the moment it is limited to one instance at a time (so don’t try to put the OwlSim into more than 1 track at a time :)
 We will change that later of course!
