@@ -25,6 +25,10 @@ to set a Rez Search Path in XCode - click on the project title, select the Build
 Settings tab and set a Rez Search Path to point at the directory you have
 created and make it recursive (e.g. /Library/Developer/CoreAudio/**).
 
+Below is a link to the juce forum:
+
+[juce](http://rawmaterialsoftware.com/juce.php)
+
 #### 2. Write your patch
 To write your patch, please use the template TemplatePatch.hpp (in Source/Patches).
 You can write your code directly into it, or create a new file.
