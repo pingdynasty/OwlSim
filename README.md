@@ -1,4 +1,4 @@
-[06/06/2013 22:13:36] Guillaume Le Nost: # OWL Simulator #
+# OWL Simulator #
 
 Simulator for the [OWL](http://hoxtonowl.com/), a programmable audio effects
 pedal. All code and documentation published under the Gnu GPL unless otherwise
