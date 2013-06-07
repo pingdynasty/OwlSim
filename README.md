@@ -33,15 +33,15 @@ You can write your code directly into it, or create a new file.
 
 If you create a new file (say, “MyPatch.hpp”) you will need to register it in Source/PatchRegistry.cpp: 
 - add the relevant #include:
-    #include "Patches/MyPatch.hpp"
+        #include "Patches/MyPatch.hpp"
 - add the following line to the constructor, Patchregistry::PatchRegistry():
-    REGISTER_PATCH(MyPatch, "My Patch");
+        REGISTER_PATCH(MyPatch, "My Patch");
 
 In the patch, to get a value (float between 0 and 1) from the knobs, do as follows: 
-    float valueA = getParameterValue(PARAMETER_A);
-    float valueB = getParameterValue(PARAMETER_B);
-    float valueC = getParameterValue(PARAMETER_C);
-    float valueD = getParameterValue(PARAMETER_D);
+        float valueA = getParameterValue(PARAMETER_A);
+        float valueB = getParameterValue(PARAMETER_B);
+        float valueC = getParameterValue(PARAMETER_C);
+        float valueD = getParameterValue(PARAMETER_D);
 
 The footswitch is currently not tied to the API, but acts as a standard True Bypass switch.
 
@@ -49,6 +49,7 @@ The footswitch is currently not tied to the API, but acts as a standard True Byp
 3. Test 
 -------
 
-Start up your favourite DAW, create a track, and load the OwlSim VST plugin. The build script should have copied the compiled files to the right location. Using the drop-down box you can select the Template (if you have put your code into TemplatePatch.hpp) or your own patch if you have registered it in the PatchRegistry.
+Start up your favourite DAW, create a track, and load the OwlSim VST plugin. If it does not appear, you may have to tell the DAW to re-scan or reload the VST directory. The build script should have copied the compiled files to the right location, but if it does not work please verify that the DAW is using the target directory.
+In the OwlSim plugin you can use the drop-down box to select the patch: Template (if you have put your code into TemplatePatch.hpp) or your own patch if you have registered it in the PatchRegistry.
 
 Please note that currently, OwlSim is a mono plugin. For the moment it is limited to one instance at a time (so don’t try to put the OwlSim into more than 1 track at a time). We will change that later of course!
