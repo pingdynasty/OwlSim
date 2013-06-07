@@ -9,8 +9,8 @@ stated: http://www.gnu.org/licenses/gpl-3.0.txt
 -----------------------
 
 ### 1.1. VST SDK (All platforms)
-To build VSTs, you need the VST SDK 2.4, available [here](https://code.google.com/p/juced/source/browse/trunk/vst/?r=8) 
-Take time to sign the Steinberg [license agreement](www.steinberg.net/en/company/developer.html) if you haven’t done it already.
+To build the OwlSim as a VST, you need the VST SDK 2.4, available on [Steinberg website](http://www.steinberg.net/en/company/developer.html).
+Please check in your project settings that the Path to the VST SDK is correct.
 
 ### 1.2. Windows 
 For Windows users, Visual Studio solutions(2008, 2010 or 2012) are available in /Builds 
