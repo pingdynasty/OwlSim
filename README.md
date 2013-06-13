@@ -62,3 +62,11 @@ Start up your favourite DAW, create a track, and load the OwlSim VST plugin. The
 In the OwlSim plugin you can use the drop-down box to select the patch: Template (if you have put your code into TemplatePatch.hpp) or your own patch if you have registered it in the PatchRegistry.
 
 Please note that currently, OwlSim is a mono plugin. For the moment it is limited to one instance at a time (so don’t try to put the OwlSim into more than 1 track at a time). We will change that later of course!
+
+
+#### Compiling for Audio Units - tips
+
+Please follow the link below for some tips on building Audio Units plugins with OWLSim:
+
+[AU_tips](http://hoxtonowl.com/forums/topic/audiounits-compilation-tips/)
+
