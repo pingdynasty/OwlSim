@@ -26,5 +26,5 @@ float* SampleBuffer::getSamples(){
 
 void SampleBuffer::setSamples(float* data){
   float* buf = buffer.getSampleData(0, 0);
-  memcpy(data, buf, buffer.getNumSamples()*sizeof(float));
+  memcpy(buf, data, buffer.getNumSamples()*sizeof(float));
 }

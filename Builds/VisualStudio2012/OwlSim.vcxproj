@@ -1180,6 +1180,7 @@
     <ClCompile Include="..\..\modules\juce_audio_plugin_client\VST\juce_VST_Wrapper.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Patches\ParametricEqPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\GainPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\TemplatePatch.hpp"/>
     <ClInclude Include="..\..\Source\StompGui.h"/>
