@@ -1,30 +1,41 @@
 #include "SampleBuffer.h"
 #include <string.h>
 
-SampleBuffer::SampleBuffer(AudioSampleBuffer& buf)
+InputSampleBuffer::InputSampleBuffer(AudioSampleBuffer& buf)
   : buffer(buf) {}
 
-void SampleBuffer::getSamples(int from, int length, float* data){
+void InputSampleBuffer::getSamples(int from, int length, float* data){
   jassert(from+length <= buffer.getNumSamples());
   float* buf = buffer.getSampleData(0, from);
   memcpy(data, buf, length*sizeof(float));
 }
 
-void SampleBuffer::setSamples(int from, int length, float* data){
+int InputSampleBuffer::getSize(){
+  return buffer.getNumSamples();
+}
+
+float* InputSampleBuffer::getSamples(){
+  return buffer.getSampleData(0, 0);
+}
+
+OutputSampleBuffer::OutputSampleBuffer(AudioSampleBuffer& buf)
+  : buffer(buf) {}
+
+void OutputSampleBuffer::setSamples(int from, int length, float* data){
   jassert(from+length <= buffer.getNumSamples());
   float* buf = buffer.getSampleData(0, from);
   memcpy(buf, data, length*sizeof(float));
 }
 
-int SampleBuffer::getSize(){
+int OutputSampleBuffer::getSize(){
   return buffer.getNumSamples();
 }
 
-float* SampleBuffer::getSamples(){
+float* OutputSampleBuffer::getSamples(){
   return buffer.getSampleData(0, 0);
 }
 
-void SampleBuffer::setSamples(float* data){
+void OutputSampleBuffer::setSamples(float* data){
   float* buf = buffer.getSampleData(0, 0);
-  memcpy(buf, data, buffer.getNumSamples()*sizeof(float));
+  memcpy(data, buf, buffer.getNumSamples()*sizeof(float));
 }
