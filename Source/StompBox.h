@@ -21,6 +21,7 @@ public:
   virtual ~AudioOutputBuffer(){}
   virtual void setSamples(int from, int length, float* data) = 0;
   virtual void setSamples(float* data) = 0;
+  virtual float* getSamples() = 0;
   virtual int getSize() = 0;
 };
 
