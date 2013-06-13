@@ -155,8 +155,9 @@ void StompBoxAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer&
 
   SampleBuffer buf(buffer);
 
-  // let the patch to the audio processing
-  patch->processAudio(buf, buf);
+  // let the patch to the audio processing if not bypassed
+  if (bypass==0)
+    patch->processAudio(buf, buf);
 
   // clear any extra output channels
   for(int i = 1; i < getNumOutputChannels(); ++i)

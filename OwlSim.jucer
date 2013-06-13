@@ -11,6 +11,8 @@
               companyName="Rebel Technology">
   <MAINGROUP id="WHVxNd" name="OwlSim">
     <GROUP id="{38D29851-9657-B61F-ADA4-1EDE4BF89C63}" name="Source">
+      <FILE id="PGdjFy" name="ParametricEqPatch.hpp" compile="0" resource="0"
+            file="Source/Patches/ParametricEqPatch.hpp"/>
       <FILE id="cYygQH" name="GainPatch.hpp" compile="0" resource="0" file="Source/Patches/GainPatch.hpp"/>
       <FILE id="PzYpp1" name="TemplatePatch.hpp" compile="0" resource="0"
             file="Source/Patches/TemplatePatch.hpp"/>
@@ -85,7 +87,8 @@
                        isDebug="0" optimisation="2" targetName="OwlSim"/>
       </CONFIGURATIONS>
     </VS2012>
-    <LINUX_MAKE targetFolder="Builds/Linux" juceFolder="modules" vstFolder="~/SDKs/vstsdk2.4">
+    <LINUX_MAKE targetFolder="Builds/Linux" juceFolder="modules" vstFolder="~/SDKs/vstsdk2.4"
+                extraCompilerFlags="-I ../../Source">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
                        targetName="OwlSim"/>
