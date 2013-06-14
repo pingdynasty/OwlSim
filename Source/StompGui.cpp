@@ -281,11 +281,11 @@ void StompGui::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_switchButton] -- add your button handler code here..
         if (switchButton->getToggleState() == 0){
             switchButton->setToggleState(1,0);
-            processor->bypass = 0 ;
+            processor->bypass = false ;
         }
         else{
             switchButton->setToggleState(0,0);
-            processor->bypass = 1 ;
+            processor->bypass = true ;
         }
         //[/UserButtonCode_switchButton]
     }
