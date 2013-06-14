@@ -16,9 +16,6 @@ public:
   inline void write(T value){
     buffer[(writeIndex++) & (size-1)] = value;
   }
-//   inline T read(){
-//     return buffer[(writeIndex + (~readIndex++)) & (size-1)];
-//   }
   inline T head(){
     return buffer[(writeIndex - 1) & (size-1)];
   }
