@@ -2,6 +2,7 @@
 #define __ParametricEqPatch_hpp__
 
 #include "StompBox.h"
+#include <math.h>
 
 /**
  * Biquad Parametric EQ filter class

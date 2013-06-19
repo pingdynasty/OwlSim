@@ -1,5 +1,5 @@
-#ifndef __GainPatch_h__
-#define __GainPatch_h__
+#ifndef __GainPatch_hpp__
+#define __GainPatch_hpp__
 
 #include "StompBox.h"
 
@@ -15,4 +15,4 @@ public:
   }
 };
 
-#endif // __GainPatch_h__
+#endif // __GainPatch_hpp__

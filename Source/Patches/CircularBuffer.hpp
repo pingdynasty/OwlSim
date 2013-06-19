@@ -1,6 +1,8 @@
 #ifndef __CircularBuffer_h__
 #define __CircularBuffer_h__
 
+#include <string.h> /* for memset */
+
 /**
  * size must be a power of two
  */

@@ -4,6 +4,9 @@
 #include "Patches/TemplatePatch.hpp"
 #include "Patches/SimpleDelayPatch.hpp"
 #include "Patches/ParametricEqPatch.hpp"
+#include "Patches/DistortionPatch.hpp"
+#include "Patches/OverdrivePatch.hpp"
+#include "Patches/PhaserPatch.hpp"
 
 #define REGISTER_PATCH(T, STR) registerPatch(STR, Register<T>::construct)
 
@@ -12,6 +15,9 @@ PatchRegistry::PatchRegistry(){
   REGISTER_PATCH(TemplatePatch, "Template");
   REGISTER_PATCH(SimpleDelayPatch, "Simple Delay");
   REGISTER_PATCH(ParametricEqPatch, "Parametric EQ");
+  REGISTER_PATCH(DistortionPatch, "Distortion");
+  REGISTER_PATCH(OverdrivePatch, "Overdrive");
+  REGISTER_PATCH(PhaserPatch, "Phaser");
 }
 
 StringArray PatchRegistry::getNames(){
