@@ -26,29 +26,23 @@
 
 #include "StompBox.h"
 
-#define SR (48000.f)  //sample rate
-#define F_PI (3.14159f)
-
-class PhaserPatch : public Patch {
-    
+class PhaserPatch : public Patch {    
 public:
   //initialise to some usefull defaults...
-  PhaserPatch()  : _lfoPhase( 0.f ), depth( 1.f ), feedback( .7f ), _zm1( 0.f )
-  {
+  PhaserPatch()  : _lfoPhase( 0.f ), depth( 1.f ), feedback( .7f ), _zm1( 0.f ){
     Range( 440.f, 1600.f );
     Rate( .5f );
   }
     
   void Range( float fMin, float fMax ){ // Hz
-    _dmin = fMin / (SR/2.f);
-    _dmax = fMax / (SR/2.f);
+    _dmin = fMin / (getSampleRate()/2.f);
+    _dmax = fMax / (getSampleRate()/2.f);
   }
     
   float Rate( float rate ){ // cps
-    _lfoInc = 2.f * F_PI * (rate / SR);
+    _lfoInc = 2.f * M_PI * (rate / getSampleRate());
     return _lfoInc * 1000.f;
-  }
-    
+  }    
     
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output) {
         
@@ -64,15 +58,14 @@ public:
     float d  = _dmin + (_dmax-_dmin) * ((sin( _lfoPhase ) + 1.f)/2.f);
         
     _lfoPhase += rate;
-    if( _lfoPhase >= F_PI * 2.f )
-      _lfoPhase -= F_PI * 2.f;
+    if( _lfoPhase >= M_PI * 2.f )
+      _lfoPhase -= M_PI * 2.f;
         
     //update filter coeffs
     for( int i=0; i<6; i++ )
       _alps[i].Delay( d );
         
     for (int n = 0; n < size; n++) {
-
         
       //calculate output
       y = _alps[0].Update(_alps[1].Update(_alps[2].Update(_alps[3].Update(_alps[4].Update(
