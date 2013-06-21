@@ -7,6 +7,8 @@
 #include "Patches/DistortionPatch.hpp"
 #include "Patches/OverdrivePatch.hpp"
 #include "Patches/PhaserPatch.hpp"
+#include "Patches/StateVariableFilterPatch.hpp"
+#include "Patches/ResonantFilterPatch.hpp"
 
 #define REGISTER_PATCH(T, STR) registerPatch(STR, Register<T>::construct)
 
@@ -18,6 +20,8 @@ PatchRegistry::PatchRegistry(){
   REGISTER_PATCH(DistortionPatch, "Distortion");
   REGISTER_PATCH(OverdrivePatch, "Overdrive");
   REGISTER_PATCH(PhaserPatch, "Phaser");
+  REGISTER_PATCH(StateVariableFilterPatch, "State Variable Filter");
+  REGISTER_PATCH(ResonantFilterPatch, "Resonant Low Pass Filter");
 }
 
 StringArray PatchRegistry::getNames(){
