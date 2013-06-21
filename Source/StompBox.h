@@ -5,7 +5,8 @@ enum PatchParameterId {
   PARAMETER_A,
   PARAMETER_B,
   PARAMETER_C,
-  PARAMETER_D
+  PARAMETER_D,
+  PARAMETER_E
 };
 
 class AudioInputBuffer {
@@ -28,6 +29,7 @@ public:
 class Patch {
 public:
   virtual ~Patch(){}
+  void registerParameter(PatchParameterId pid, const std::string& name, const std::string& description = "");
   float getParameterValue(PatchParameterId pid);
   int getBlockSize();
   double getSampleRate();

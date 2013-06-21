@@ -5,10 +5,15 @@
 
 class OverdrivePatch : public Patch {
 public:
+  OverdrivePatch(){
+    registerParameter(PARAMETER_A, "Drive");
+    registerParameter(PARAMETER_B, "Offset");
+    registerParameter(PARAMETER_D, "Gain");
+  }
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
-    float gain = getParameterValue(PARAMETER_D);  // get output gain value
-    float offset = getParameterValue(PARAMETER_C); 	  // get offset value
     float drive = getParameterValue(PARAMETER_A); // get input drive value
+    float offset = getParameterValue(PARAMETER_B); 	  // get offset value
+    float gain = getParameterValue(PARAMETER_D);  // get output gain value
     offset /= 10;
     drive += 0.03;
     drive *= 40;

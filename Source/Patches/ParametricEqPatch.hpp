@@ -9,7 +9,8 @@
  */
 class Biquad1 {
 public:
-  Biquad1() : x1(0.0f), x2(0.0f), y1(0.0f), y2(0.0f) {}
+  Biquad1() : x1(0.0f), x2(0.0f), y1(0.0f), y2(0.0f) {
+  }
   ~Biquad1() {}
     
   void setCoeffsPEQ(float normalizedFrequency, float Q, float dbGain) {
@@ -34,7 +35,7 @@ public:
     // process a block of more than 2 samples. Basic implementation without coeffs interpolation.
     out[0] = b[0]*input[0]+b[1]*x1+b[2]*x2-a[1]*y1-a[2]*y2 ;
     out[1] = b[0]*input[1]+b[1]*input[0]+b[2]*x1-a[1]*out[0]-a[2]*y1 ;
-    for (int i=2; i<numSamples; i++){
+    for(int i=2; i<numSamples; i++){
       out[i] = b[0]*input[i]+b[1]*input[i-1]+b[2]*input[i-2]-a[1]*out[i-1]-a[2]*out[i-2] ;
     }
     // store values for next block
@@ -56,16 +57,19 @@ private:
 class ParametricEqPatch : public Patch {
 public:    
   ParametricEqPatch() {
+    registerParameter(PARAMETER_A, "Freq");
+    registerParameter(PARAMETER_B, "Q");
+    registerParameter(PARAMETER_D, "Gain");
     peq.setCoeffsPEQ(getFrequency()/getSampleRate(), getQ(), getDbGain()) ;
   }    
   ~ParametricEqPatch() {}
 
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
     // update filter coefficients
-    float fn=getFrequency()/getSampleRate();
+    float fn = getFrequency()/getSampleRate();
     float Q = getQ();
-    float g= getDbGain();
-    peq.setCoeffsPEQ(fn,Q,g) ;
+    float g = getDbGain();
+    peq.setCoeffsPEQ(fn, Q, g) ;
         
     // get samples
     int size = input.getSize();
@@ -95,7 +99,7 @@ private:
   }
     
   float getDbGain(){
-    float linGain = getParameterValue(PARAMETER_C);
+    float linGain = getParameterValue(PARAMETER_D);
     // linGain = 0    <-> -15 dB
     // linGain = 0.5  <-> 0dB
     // linGain = 1    <-> 15dB

@@ -51,6 +51,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void timerCallback();
+    void updateLabels();
     //[/UserMethods]
 
     void paint (Graphics& g);

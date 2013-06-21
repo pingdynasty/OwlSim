@@ -8,12 +8,7 @@ StompBoxAudioProcessor* stomp = NULL;
 
 StompBoxAudioProcessor::StompBoxAudioProcessor() : bypass(false) {
   stomp = this;
-  parameterNames.add("A");
-  parameterNames.add("B");
-  parameterNames.add("C");
-  parameterNames.add("D");
-  parameterNames.add("E");
-    
+
   // Init first 4 parameters 
   for(int i=0;i<4;i++)
     setParameter(i, 0.0f);
@@ -43,7 +38,14 @@ const String StompBoxAudioProcessor::getCurrentPatchName(){
 
 void StompBoxAudioProcessor::setPatch(std::string name){
   const ScopedLock myScopedLock(mutex);
-  currentPatchName = name;    
+  parameterNames.clear();  
+  parameterDescriptions.clear();
+  setParameterName(PARAMETER_A, "");
+  setParameterName(PARAMETER_B, "");
+  setParameterName(PARAMETER_C, "");
+  setParameterName(PARAMETER_D, "");
+
+  currentPatchName = name;
   patch = patches.create(name);
 }
 
@@ -73,9 +75,7 @@ const String StompBoxAudioProcessor::getParameterName(int index){
 }
 
 const String StompBoxAudioProcessor::getParameterText(int index){
-  if(index < sizeof(parameterValues))
-    return parameterNames[index];
-  return String::empty;
+  return String(getParameter(index));
 }
 
 const String StompBoxAudioProcessor::getInputChannelName(int channelIndex) const {
@@ -187,6 +187,22 @@ void StompBoxAudioProcessor::setStateInformation(const void* data, int sizeInByt
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
   return new StompBoxAudioProcessor();
+}
+
+const String StompBoxAudioProcessor::getParameterDescription(int index){
+  if(index < sizeof(parameterDescriptions))
+    return parameterDescriptions[index];
+  return String::empty;
+}
+
+void StompBoxAudioProcessor::setParameterName(int pid, const String& name, const String& description){
+  parameterNames.set(pid, name);
+  parameterDescriptions.set(pid, description);
+}
+
+void Patch::registerParameter(PatchParameterId pid, const std::string& name, const std::string& description){
+  if(stomp)
+    stomp->setParameterName(pid, name, description);
 }
 
 float Patch::getParameterValue(PatchParameterId pid){

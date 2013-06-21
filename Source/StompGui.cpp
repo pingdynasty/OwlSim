@@ -131,11 +131,8 @@ StompGui::StompGui (StompBoxAudioProcessor* ptr)
 
     //[Constructor] You can add your own custom stuff here..
     processor = ptr;
-    
-    label1->setText(processor->getParameterName(0), dontSendNotification);
-    label2->setText(processor->getParameterName(1), dontSendNotification);
-    label3->setText(processor->getParameterName(2), dontSendNotification);
-    label4->setText(processor->getParameterName(3), dontSendNotification);
+
+    updateLabels();
     menu->addItemList(processor->getPatchNames(), 1);
     menu->setTextWhenNothingSelected(processor->getCurrentPatchName());
     menu->setText(processor->getCurrentPatchName());
@@ -263,7 +260,7 @@ void StompGui::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
         String js=menu->getText(); // JUCE string
         std::string ss (js.toUTF8()); // convert to std::string
         processor->setPatch(ss);
-        
+	updateLabels();        
         //[/UserComboBoxCode_menu]
     }
 
@@ -297,6 +294,18 @@ void StompGui::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+void StompGui::updateLabels(){
+  label1->setText(processor->getParameterName(0), dontSendNotification);
+  label1->setTooltip(processor->getParameterDescription(0));
+  label2->setText(processor->getParameterName(1), dontSendNotification);
+  label2->setTooltip(processor->getParameterDescription(1));
+  label3->setText(processor->getParameterName(2), dontSendNotification);
+  label3->setTooltip(processor->getParameterDescription(2));
+  label4->setText(processor->getParameterName(3), dontSendNotification);
+  label4->setTooltip(processor->getParameterDescription(3));
+}
+
 void StompGui::timerCallback()
 {
     slider1->setValue(processor->getParameter(0), dontSendNotification);

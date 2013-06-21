@@ -5,6 +5,9 @@
 
 class TemplatePatch : public Patch {
 public:
+  TemplatePatch(){
+    registerParameter(PARAMETER_A, "A");
+  }
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
     // put your code here!
   }

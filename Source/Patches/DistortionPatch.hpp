@@ -5,6 +5,11 @@
 
 class DistortionPatch : public Patch {
 public:
+  DistortionPatch(){
+    registerParameter(PARAMETER_A, "Drive");
+    registerParameter(PARAMETER_B, "Offset");
+    registerParameter(PARAMETER_D, "Gain");
+  }
   float nonLinear(float x) {   // Distortion curve
     // tanh approx
     if(x < -3)
