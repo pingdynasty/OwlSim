@@ -6,7 +6,7 @@
 class TemplatePatch : public Patch {
 public:
   TemplatePatch(){
-    registerParameter(PARAMETER_A, "A");
+    registerParameter(PARAMETER_A, "My Knob");
   }
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
     // put your code here!

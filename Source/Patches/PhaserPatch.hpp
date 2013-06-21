@@ -68,8 +68,7 @@ public:
     for( int i=0; i<6; i++ )
       _alps[i].Delay( d );
         
-    for (int n = 0; n < size; n++) {
-        
+    for (int n = 0; n < size; n++) {        
       //calculate output
       y = _alps[0].Update(_alps[1].Update(_alps[2].Update(_alps[3].Update(_alps[4].Update(
 											  _alps[5].Update( x[n] + _zm1 * feedback ))))));

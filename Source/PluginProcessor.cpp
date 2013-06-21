@@ -9,8 +9,8 @@ StompBoxAudioProcessor* stomp = NULL;
 StompBoxAudioProcessor::StompBoxAudioProcessor() : bypass(false) {
   stomp = this;
 
-  // Init first 4 parameters 
-  for(int i=0;i<4;i++)
+  // Init first parameters 
+  for(int i=0;i<5;i++)
     setParameter(i, 0.0f);
 
   // set default patch
@@ -44,7 +44,7 @@ void StompBoxAudioProcessor::setPatch(std::string name){
   setParameterName(PARAMETER_B, "");
   setParameterName(PARAMETER_C, "");
   setParameterName(PARAMETER_D, "");
-
+  setParameterName(PARAMETER_E, "");
   currentPatchName = name;
   patch = patches.create(name);
 }

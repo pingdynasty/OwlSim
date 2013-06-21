@@ -18,8 +18,6 @@
 		31A6507D85B861970B2C5077 /* juce_RTAS_MacUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF3FDC957594A27C0DFE32BF /* juce_RTAS_MacUtilities.mm */; };
 		33DE2128E7F3F0FE3939245F /* juce_data_structures.mm in Sources */ = {isa = PBXBuildFile; fileRef = 773485A3BAF8CEBFAF7DA3A2 /* juce_data_structures.mm */; };
 		39F381B0A872BF75B09C92C9 /* PluginProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 282C7778FF7FBC524E7DF064 /* PluginProcessor.cpp */; };
-		41BAA8B91774880B00E81750 /* __functions.c in Sources */ = {isa = PBXBuildFile; fileRef = 41BAA8B71774880B00E81750 /* __functions.c */; };
-		41BAA8BA1774880B00E81750 /* reverb.c in Sources */ = {isa = PBXBuildFile; fileRef = 41BAA8B81774880B00E81750 /* reverb.c */; };
 		42AC5A89F838C72BD8E06F2B /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F95BD4B799CEC88A017FD9 /* CoreAudio.framework */; };
 		4308AFD382F441FA8634D2C7 /* juce_graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = C3283538B0CED53ECAF4DC20 /* juce_graphics.mm */; };
 		46E76C3C9249051F170DD77B /* StompGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D002D794BF298922071C325C /* StompGui.cpp */; };
@@ -278,8 +276,6 @@
 		4095AAE9F8E25AF89A33F0F5 /* juce_mac_AudioCDBurner.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_mac_AudioCDBurner.mm; path = ../../modules/juce_audio_devices/native/juce_mac_AudioCDBurner.mm; sourceTree = SOURCE_ROOT; };
 		40E6B00704A0ADF57A69630B /* juce_Synthesiser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_Synthesiser.cpp; path = ../../modules/juce_audio_basics/synthesisers/juce_Synthesiser.cpp; sourceTree = SOURCE_ROOT; };
 		4176971FC55F3DC844076657 /* juce_BooleanPropertyComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_BooleanPropertyComponent.cpp; path = ../../modules/juce_gui_basics/properties/juce_BooleanPropertyComponent.cpp; sourceTree = SOURCE_ROOT; };
-		41BAA8B71774880B00E81750 /* __functions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = __functions.c; path = ../../Source/Patches/rbj/__functions.c; sourceTree = SOURCE_ROOT; };
-		41BAA8B81774880B00E81750 /* reverb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = reverb.c; path = ../../Source/Patches/rbj/reverb.c; sourceTree = SOURCE_ROOT; };
 		41F95BD4B799CEC88A017FD9 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		42327B40F4ABFEBEFBABD824 /* juce_ScopedWriteLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_ScopedWriteLock.h; path = ../../modules/juce_core/threads/juce_ScopedWriteLock.h; sourceTree = SOURCE_ROOT; };
 		4233C6511C0957382265ECEF /* juce_DeletedAtShutdown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_DeletedAtShutdown.h; path = ../../modules/juce_events/messages/juce_DeletedAtShutdown.h; sourceTree = SOURCE_ROOT; };
@@ -1312,8 +1308,6 @@
 		49162BE66036D49F8A28C785 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				41BAA8B71774880B00E81750 /* __functions.c */,
-				41BAA8B81774880B00E81750 /* reverb.c */,
 				A1F90ECAFDF86794EEC83E0E /* ParametricEqPatch.hpp */,
 				738A28641A75A547CE5DAEBA /* GainPatch.hpp */,
 				E4887E496274EE39EFA4F332 /* TemplatePatch.hpp */,
@@ -2677,8 +2671,6 @@
 				C3E4FD5303855D5D5D7B704B /* juce_RTAS_Wrapper.cpp in Sources */,
 				D52A2A6488EB78B7E057A050 /* juce_VST_Wrapper.cpp in Sources */,
 				56793C47698BC16DC4960430 /* juce_VST_Wrapper.mm in Sources */,
-				41BAA8B91774880B00E81750 /* __functions.c in Sources */,
-				41BAA8BA1774880B00E81750 /* reverb.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

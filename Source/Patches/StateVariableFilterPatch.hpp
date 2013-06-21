@@ -30,7 +30,7 @@ public:
     fc = getParameterValue(PARAMETER_A);
     q = getParameterValue(PARAMETER_B);
     ratio = getParameterValue(PARAMETER_C);
-    gain = getParameterValue(PARAMETER_D);
+    gain = getParameterValue(PARAMETER_D)*2;
     fc /= 2;
     f = sin(M_PI * fc);
     q = 1 - q;

@@ -15,7 +15,7 @@ public:
   SimpleDelayPatch(){
     registerParameter(PARAMETER_A, "Delay");
     registerParameter(PARAMETER_B, "Feedback");
-    registerParameter(PARAMETER_C, "Wet/Dry");
+    registerParameter(PARAMETER_C, "Dry/Wet");
   }
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output) {        
     const int size = input.getSize();           // samples in block

@@ -9,6 +9,9 @@
 #include "Patches/StateVariableFilterPatch.hpp"
 #include "Patches/ResonantFilterPatch.hpp"
 #include "Patches/FlangerPatch.hpp"
+#include "Patches/LeakyIntegratorPatch.hpp"
+#include "Patches/LpfDelayPatch.hpp"
+#include "Patches/LpfDelayPhaserPatch.hpp"
 
 #define REGISTER_PATCH(T, STR) registerPatch(STR, Register<T>::construct)
 
@@ -22,6 +25,9 @@ PatchRegistry::PatchRegistry(){
   REGISTER_PATCH(StateVariableFilterPatch, "State Variable Filter");
   REGISTER_PATCH(ResonantFilterPatch, "Resonant Low Pass Filter");
   REGISTER_PATCH(FlangerPatch, "Flanger");
+  REGISTER_PATCH(LeakyIntegratorPatch, "Leaky Integrator");
+  REGISTER_PATCH(LpfDelayPatch<32768>, "Low Pass Filtered Delay");
+  REGISTER_PATCH(LpfDelayPhaserPatch<32768>, "Low Pass Filtered Delay with Phaser");
 }
 
 StringArray PatchRegistry::getNames(){
