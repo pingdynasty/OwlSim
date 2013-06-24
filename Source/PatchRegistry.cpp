@@ -12,6 +12,7 @@
 #include "Patches/LeakyIntegratorPatch.hpp"
 #include "Patches/LpfDelayPatch.hpp"
 #include "Patches/LpfDelayPhaserPatch.hpp"
+#include "Patches/WaveshaperPatch.hpp"
 
 #define REGISTER_PATCH(T, STR) registerPatch(STR, Register<T>::construct)
 
@@ -28,6 +29,7 @@ PatchRegistry::PatchRegistry(){
   REGISTER_PATCH(LeakyIntegratorPatch, "Leaky Integrator");
   REGISTER_PATCH(LpfDelayPatch<32768>, "Low Pass Filtered Delay");
   REGISTER_PATCH(LpfDelayPhaserPatch<32768>, "Low Pass Filtered Delay with Phaser");
+  REGISTER_PATCH(WaveshaperPatch, "waveshaper");
 }
 
 StringArray PatchRegistry::getNames(){
