@@ -4,10 +4,14 @@
 
 #include <iostream>
 
-StompBoxAudioProcessor* stomp = NULL;
+ThreadLocalValue<StompBoxAudioProcessor*> StompBoxAudioProcessor::instances;
+
+StompBoxAudioProcessor* StompBoxAudioProcessor::getThreadLocalInstance(){
+  return instances.get();
+}
 
 StompBoxAudioProcessor::StompBoxAudioProcessor() : bypass(false) {
-  stomp = this;
+  instances = this;
 
   // Init first parameters 
   for(int i=0;i<5;i++)
@@ -24,8 +28,6 @@ StompBoxAudioProcessor::StompBoxAudioProcessor() : bypass(false) {
 }
 
 StompBoxAudioProcessor::~StompBoxAudioProcessor(){
-  if(stomp == this)
-    stomp = NULL;
 }
 
 StringArray StompBoxAudioProcessor::getPatchNames(){
@@ -40,11 +42,11 @@ void StompBoxAudioProcessor::setPatch(std::string name){
   const ScopedLock myScopedLock(mutex);
   parameterNames.clear();  
   parameterDescriptions.clear();
-  setParameterName(PARAMETER_A, "");
-  setParameterName(PARAMETER_B, "");
-  setParameterName(PARAMETER_C, "");
-  setParameterName(PARAMETER_D, "");
-  setParameterName(PARAMETER_E, "");
+  registerParameter(PARAMETER_A, "");
+  registerParameter(PARAMETER_B, "");
+  registerParameter(PARAMETER_C, "");
+  registerParameter(PARAMETER_D, "");
+  registerParameter(PARAMETER_E, "");
   currentPatchName = name;
   patch = patches.create(name);
 }
@@ -195,33 +197,19 @@ const String StompBoxAudioProcessor::getParameterDescription(int index){
   return String::empty;
 }
 
-void StompBoxAudioProcessor::setParameterName(int pid, const String& name, const String& description){
+void StompBoxAudioProcessor::registerParameter(PatchParameterId pid, const std::string& name, const std::string& description){
   parameterNames.set(pid, name);
   parameterDescriptions.set(pid, description);
 }
 
-void Patch::registerParameter(PatchParameterId pid, const std::string& name, const std::string& description){
-  if(stomp)
-    stomp->setParameterName(pid, name, description);
+float StompBoxAudioProcessor::getParameterValue(PatchParameterId pid){
+  return getParameter(pid);
 }
 
-float Patch::getParameterValue(PatchParameterId pid){
-  float val = 0.0;
-  if(stomp)
-    val = stomp->getParameter(pid);
-  return val;
+int StompBoxAudioProcessor::getBlockSize(){
+  return AudioProcessor::getBlockSize();
 }
 
-int Patch::getBlockSize(){
-  int val = 0;
-  if(stomp)
-    val = stomp->getBlockSize();
-  return val;
-}
-
-double Patch::getSampleRate(){
-  double val = 0.0;
-  if(stomp)
-    val = stomp->getSampleRate();
-  return val;
+double StompBoxAudioProcessor::getSampleRate(){
+  return AudioProcessor::getSampleRate();
 }

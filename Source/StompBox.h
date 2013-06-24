@@ -1,6 +1,10 @@
 #ifndef __StompBox_h__
 #define __StompBox_h__
 
+#include <string>
+
+class PatchProcessor;
+
 enum PatchParameterId {
   PARAMETER_A,
   PARAMETER_B,
@@ -28,13 +32,16 @@ public:
 
 class Patch {
 public:
-  virtual ~Patch(){}
+  Patch();
+  virtual ~Patch();
   void registerParameter(PatchParameterId pid, const std::string& name, const std::string& description = "");
   float getParameterValue(PatchParameterId pid);
   int getBlockSize();
   double getSampleRate();
-public:
   virtual void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output) = 0;
+private:
+  PatchProcessor* processor;
+//   PatchProcessor* getPatchProcessor();
 };
 
 #endif // __StompBox_h__

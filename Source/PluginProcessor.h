@@ -2,9 +2,10 @@
 #define __PLUGINPROCESSOR_H__
 
 #include "JuceHeader.h"
+#include "PatchProcessor.h"
 #include "PatchRegistry.h"
 
-class StompBoxAudioProcessor  : public AudioProcessor {
+class StompBoxAudioProcessor  : public AudioProcessor, public PatchProcessor {
 public:
   StompBoxAudioProcessor();
   ~StompBoxAudioProcessor();
@@ -35,21 +36,24 @@ public:
   void changeProgramName (int index, const String& newName);
   void getStateInformation (MemoryBlock& destData);
   void setStateInformation (const void* data, int sizeInBytes);
-    
-  // PatchProcessor methods
-  StringArray getPatchNames();
-  const String getCurrentPatchName();
-  void setPatch(std::string name);
-  void getParameterValue(int pid, int &value);
-  void getParameterValue(int pid, float &value);
-  void setParameterValue(int pid, int value);
-  void setParameterValue(int pid, float value);
 
-  void setParameterName(int pid, const String& name, const String& description = String::empty);
   const String getParameterDescription(int index);
+  void setPatch(std::string name);
+  static StompBoxAudioProcessor* getThreadLocalInstance();
   bool bypass;
 
+  /*** PatchProcessor methods */
+  StringArray getPatchNames();
+  const String getCurrentPatchName();
+  void registerParameter(PatchParameterId pid, const std::string& name, 
+			 const std::string& description = "");
+  float getParameterValue(PatchParameterId pid);
+  int getBlockSize();
+  double getSampleRate();
+
 private:
+  static ThreadLocalValue<StompBoxAudioProcessor*> instances;
+
   PatchRegistry patches;
   ScopedPointer<Patch> patch;
   float parameterValues[16];
