@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  29 Apr 2013 3:10:43pm
+  Creation date:  24 Jun 2013 12:03:45pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,8 +19,8 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_STOMPGUI_STOMPGUI_1EB40A60__
-#define __JUCER_HEADER_STOMPGUI_STOMPGUI_1EB40A60__
+#ifndef __JUCER_HEADER_STOMPGUI_STOMPGUI_5A5A7FF4__
+#define __JUCER_HEADER_STOMPGUI_STOMPGUI_5A5A7FF4__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
@@ -63,6 +63,8 @@ public:
     // Binary resources:
     static const char* owl_illustration_illustrator_svg;
     static const int owl_illustration_illustrator_svgSize;
+    static const char* owlFaceplate_png;
+    static const int owlFaceplate_pngSize;
 
 
 private:
@@ -81,7 +83,7 @@ private:
     Label* label2;
     Slider* slider2;
     TextButton* switchButton;
-    Drawable* drawable1;
+    Image cachedImage_owlFaceplate_png;
 
 
     //==============================================================================
@@ -91,4 +93,4 @@ private:
 //[EndFile] You can add extra defines here...
 //[/EndFile]
 
-#endif   // __JUCER_HEADER_STOMPGUI_STOMPGUI_1EB40A60__
+#endif   // __JUCER_HEADER_STOMPGUI_STOMPGUI_5A5A7FF4__
