@@ -8,6 +8,9 @@
     <Filter Include="OwlSim\Source">
       <UniqueIdentifier>{3D480287-0B92-5D13-4CA3-F851109E0F77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="OwlSim\Source\Patches">
+      <UniqueIdentifier>{C0FB07C1-6FB7-EFC5-FACC-C932309341D4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Juce Modules">
       <UniqueIdentifier>{422C46B7-0467-2DB0-BF3C-16DFCAFD69AC}</UniqueIdentifier>
     </Filter>
@@ -1461,14 +1464,47 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\Patches\ParametricEqPatch.hpp">
-      <Filter>OwlSim\Source</Filter>
+    <ClInclude Include="..\..\Source\Patches\CircularBuffer.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\FlangerPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Patches\GainPatch.hpp">
-      <Filter>OwlSim\Source</Filter>
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\LeakyIntegratorPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\LpfDelayPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\LpfDelayPhaserPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\OverdrivePatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Patches\TemplatePatch.hpp">
-      <Filter>OwlSim\Source</Filter>
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\PhaserPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\ResonantFilterPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\SampleBasedPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\SimpleDelayPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\StateVariableFilterPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\ParametricEqPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\StompGui.h">
       <Filter>OwlSim\Source</Filter>

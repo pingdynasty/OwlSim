@@ -1174,9 +1174,20 @@
     <ClCompile Include="..\..\modules\juce_audio_plugin_client\VST\juce_VST_Wrapper.cpp"/>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\Patches\ParametricEqPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\CircularBuffer.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\FlangerPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\GainPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\LeakyIntegratorPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\LpfDelayPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\LpfDelayPhaserPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\OverdrivePatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\TemplatePatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\PhaserPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\ResonantFilterPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\SampleBasedPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\SimpleDelayPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\StateVariableFilterPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\ParametricEqPatch.hpp"/>
     <ClInclude Include="..\..\Source\StompGui.h"/>
     <ClInclude Include="..\..\Source\PatchRegistry.h"/>
     <ClInclude Include="..\..\Source\StompBox.h"/>

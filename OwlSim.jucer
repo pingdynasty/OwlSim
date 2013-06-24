@@ -11,11 +11,34 @@
               companyName="Rebel Technology">
   <MAINGROUP id="WHVxNd" name="OwlSim">
     <GROUP id="{38D29851-9657-B61F-ADA4-1EDE4BF89C63}" name="Source">
-      <FILE id="PGdjFy" name="ParametricEqPatch.hpp" compile="0" resource="0"
-            file="Source/Patches/ParametricEqPatch.hpp"/>
-      <FILE id="cYygQH" name="GainPatch.hpp" compile="0" resource="0" file="Source/Patches/GainPatch.hpp"/>
-      <FILE id="PzYpp1" name="TemplatePatch.hpp" compile="0" resource="0"
-            file="Source/Patches/TemplatePatch.hpp"/>
+      <GROUP id="{5899F8C7-8969-B7C3-DE7F-C03A2EBBDDD0}" name="Patches">
+        <FILE id="vgTlvv" name="CircularBuffer.hpp" compile="0" resource="0"
+              file="Source/Patches/CircularBuffer.hpp"/>
+        <FILE id="CdDjKP" name="FlangerPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/FlangerPatch.hpp"/>
+        <FILE id="cYygQH" name="GainPatch.hpp" compile="0" resource="0" file="Source/Patches/GainPatch.hpp"/>
+        <FILE id="cB50yV" name="LeakyIntegratorPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/LeakyIntegratorPatch.hpp"/>
+        <FILE id="BdEkrx" name="LpfDelayPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/LpfDelayPatch.hpp"/>
+        <FILE id="ctBzD0" name="LpfDelayPhaserPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/LpfDelayPhaserPatch.hpp"/>
+        <FILE id="P1uUS7" name="OverdrivePatch.hpp" compile="0" resource="0"
+              file="Source/Patches/OverdrivePatch.hpp"/>
+        <FILE id="PzYpp1" name="TemplatePatch.hpp" compile="0" resource="0"
+              file="Source/Patches/TemplatePatch.hpp"/>
+        <FILE id="FbQdH2" name="PhaserPatch.hpp" compile="0" resource="0" file="Source/Patches/PhaserPatch.hpp"/>
+        <FILE id="fQLRcB" name="ResonantFilterPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/ResonantFilterPatch.hpp"/>
+        <FILE id="FDmeLM" name="SampleBasedPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/SampleBasedPatch.hpp"/>
+        <FILE id="iQl02D" name="SimpleDelayPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/SimpleDelayPatch.hpp"/>
+        <FILE id="orF0aW" name="StateVariableFilterPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/StateVariableFilterPatch.hpp"/>
+        <FILE id="PGdjFy" name="ParametricEqPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/ParametricEqPatch.hpp"/>
+      </GROUP>
       <FILE id="bJUkY2" name="StompGui.cpp" compile="1" resource="0" file="Source/StompGui.cpp"/>
       <FILE id="tvGCD0" name="StompGui.h" compile="0" resource="0" file="Source/StompGui.h"/>
       <FILE id="ApiN3l" name="SampleBuffer.cpp" compile="1" resource="0"

@@ -128,9 +128,22 @@
   <Files>
     <Filter Name="OwlSim">
       <Filter Name="Source">
-        <File RelativePath="..\..\Source\Patches\ParametricEqPatch.hpp"/>
-        <File RelativePath="..\..\Source\Patches\GainPatch.hpp"/>
-        <File RelativePath="..\..\Source\Patches\TemplatePatch.hpp"/>
+        <Filter Name="Patches">
+          <File RelativePath="..\..\Source\Patches\CircularBuffer.hpp"/>
+          <File RelativePath="..\..\Source\Patches\FlangerPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\GainPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\LeakyIntegratorPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\LpfDelayPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\LpfDelayPhaserPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\OverdrivePatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\TemplatePatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\PhaserPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\ResonantFilterPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\SampleBasedPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\SimpleDelayPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\StateVariableFilterPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\ParametricEqPatch.hpp"/>
+        </Filter>
         <File RelativePath="..\..\Source\StompGui.cpp"/>
         <File RelativePath="..\..\Source\StompGui.h"/>
         <File RelativePath="..\..\Source\SampleBuffer.cpp"/>
