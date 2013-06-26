@@ -4,15 +4,13 @@
 
 #include <iostream>
 
-ThreadLocalValue<StompBoxAudioProcessor*> StompBoxAudioProcessor::instances;
+ThreadLocalValue<StompBoxAudioProcessor*> StompBoxAudioProcessor::instance;
 
 StompBoxAudioProcessor* StompBoxAudioProcessor::getThreadLocalInstance(){
-  return instances.get();
+  return instance.get();
 }
 
 StompBoxAudioProcessor::StompBoxAudioProcessor() : bypass(false) {
-  instances = this;
-
   // Init first parameters 
   for(int i=0;i<5;i++)
     setParameter(i, 0.0f);
@@ -48,6 +46,7 @@ void StompBoxAudioProcessor::setPatch(std::string name){
   registerParameter(PARAMETER_D, "");
   registerParameter(PARAMETER_E, "");
   currentPatchName = name;
+  instance = this; // thread local instance must be set before Patch constructor is called
   patch = patches.create(name);
 }
 

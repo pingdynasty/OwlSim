@@ -52,7 +52,7 @@ public:
   double getSampleRate();
 
 private:
-  static ThreadLocalValue<StompBoxAudioProcessor*> instances;
+  static ThreadLocalValue<StompBoxAudioProcessor*> instance;
 
   PatchRegistry patches;
   ScopedPointer<Patch> patch;
