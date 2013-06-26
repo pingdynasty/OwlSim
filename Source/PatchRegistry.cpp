@@ -13,6 +13,8 @@
 #include "Patches/LpfDelayPatch.hpp"
 #include "Patches/LpfDelayPhaserPatch.hpp"
 #include "Patches/WaveshaperPatch.hpp"
+#include "Patches/FreeVerbPatch.hpp"
+#include "Patches/EnvelopeFilterPatch.hpp"
 
 #define REGISTER_PATCH(T, STR) registerPatch(STR, Register<T>::construct)
 
@@ -29,7 +31,9 @@ PatchRegistry::PatchRegistry(){
   REGISTER_PATCH(LeakyIntegratorPatch, "Leaky Integrator");
   REGISTER_PATCH(LpfDelayPatch<32768>, "Low Pass Filtered Delay");
   REGISTER_PATCH(LpfDelayPhaserPatch<32768>, "Low Pass Filtered Delay with Phaser");
-  REGISTER_PATCH(WaveshaperPatch, "waveshaper");
+  REGISTER_PATCH(WaveshaperPatch, "Waveshaper");
+  REGISTER_PATCH(FreeVerbPatch, "FreeVerb");
+  REGISTER_PATCH(EnvelopeFilterPatch, "Envelope Filter");
 }
 
 StringArray PatchRegistry::getNames(){
