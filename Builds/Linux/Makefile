@@ -49,6 +49,7 @@ endif
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 OBJECTS := \
+  $(OBJDIR)/PatchProcessor_b85b83b3.o \
   $(OBJDIR)/StompGui_6de188b3.o \
   $(OBJDIR)/SampleBuffer_5a386a13.o \
   $(OBJDIR)/PatchRegistry_cb5b7186.o \
@@ -86,6 +87,11 @@ clean:
 strip:
 	@echo Stripping OwlSim
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
+
+$(OBJDIR)/PatchProcessor_b85b83b3.o: ../../Source/PatchProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling PatchProcessor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/StompGui_6de188b3.o: ../../Source/StompGui.cpp
 	-@mkdir -p $(OBJDIR)

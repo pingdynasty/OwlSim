@@ -128,6 +128,8 @@
   <Files>
     <Filter Name="OwlSim">
       <Filter Name="Source">
+        <File RelativePath="..\..\Source\PatchProcessor.cpp"/>
+        <File RelativePath="..\..\Source\PatchProcessor.h"/>
         <Filter Name="Patches">
           <File RelativePath="..\..\Source\Patches\CircularBuffer.hpp"/>
           <File RelativePath="..\..\Source\Patches\FlangerPatch.hpp"/>

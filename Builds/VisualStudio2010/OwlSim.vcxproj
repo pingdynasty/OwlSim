@@ -127,6 +127,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\PatchProcessor.cpp"/>
     <ClCompile Include="..\..\Source\StompGui.cpp"/>
     <ClCompile Include="..\..\Source\SampleBuffer.cpp"/>
     <ClCompile Include="..\..\Source\PatchRegistry.cpp"/>
@@ -1174,6 +1175,7 @@
     <ClCompile Include="..\..\modules\juce_audio_plugin_client\VST\juce_VST_Wrapper.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\PatchProcessor.h"/>
     <ClInclude Include="..\..\Source\Patches\CircularBuffer.hpp"/>
     <ClInclude Include="..\..\Source\Patches\FlangerPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\GainPatch.hpp"/>

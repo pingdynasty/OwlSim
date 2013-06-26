@@ -298,6 +298,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\PatchProcessor.cpp">
+      <Filter>OwlSim\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\StompGui.cpp">
       <Filter>OwlSim\Source</Filter>
     </ClCompile>
@@ -1464,6 +1467,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\PatchProcessor.h">
+      <Filter>OwlSim\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Patches\CircularBuffer.hpp">
       <Filter>OwlSim\Source\Patches</Filter>
     </ClInclude>

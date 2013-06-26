@@ -11,6 +11,10 @@
               companyName="Rebel Technology">
   <MAINGROUP id="WHVxNd" name="OwlSim">
     <GROUP id="{38D29851-9657-B61F-ADA4-1EDE4BF89C63}" name="Source">
+      <FILE id="GLbClc" name="PatchProcessor.cpp" compile="1" resource="0"
+            file="Source/PatchProcessor.cpp"/>
+      <FILE id="U8JvTw" name="PatchProcessor.h" compile="0" resource="0"
+            file="Source/PatchProcessor.h"/>
       <GROUP id="{5899F8C7-8969-B7C3-DE7F-C03A2EBBDDD0}" name="Patches">
         <FILE id="vgTlvv" name="CircularBuffer.hpp" compile="0" resource="0"
               file="Source/Patches/CircularBuffer.hpp"/>
