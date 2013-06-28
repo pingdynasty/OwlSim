@@ -25,6 +25,8 @@
 #include "StompBox.h"
 
 const float MY_FLOAT_THRESHOLD = 0.00001; // under this value all numbers are set to 0 (gives a -100dB SNR)
+static const int Nchannels = 32;                    // number of internal channels
+const int primes[Nchannels] = {503,577,641,701,769,839,911,983,1049,1109,1193,1277,1321,1429,1487,1559,1619,1699,1783,1871,1949,2017,2089,2161,2267,2339,2393,2473,2579,2663,2713,2791}; // prime numbers for ReverbFDN delay lines
 
 
 
@@ -367,9 +369,9 @@ public:
         else
         {
             // set feedback gains appropriately
-            for (int i_chan=0; i_chan<this->Nchannels; i_chan++)
+            for (int i_chan=0; i_chan<Nchannels; i_chan++)
             {
-                this->_feedbackGains[i_chan] = 1./this->Nchannels_SQRT * pow(10., -3. * this->primes[i_chan] / (tr60*this->_fs));
+                this->_feedbackGains[i_chan] = 1./Nchannels_SQRT * pow(10., -3. * primes[i_chan] / (tr60*this->_fs));
             }
         }
     }
@@ -394,10 +396,8 @@ private:
     float _drywet;  // dry/wet balance (0<->100% wet ; 1<->100% dry)
     
     // INTERNAL THINGS
-    static const int Nchannels = 32;                    // number of internal channels
-    const int Nchannels_log2 = 5;                       // log2 of number of channels (for hadamard)
-    const float Nchannels_SQRT = 5.65685425;            // sqrt of number of channels
-    const int primes[Nchannels] = {503,577,641,701,769,839,911,983,1049,1109,1193,1277,1321,1429,1487,1559,1619,1699,1783,1871,1949,2017,2089,2161,2267,2339,2393,2473,2579,2663,2713,2791}; // prime numbers for ReverbFDN delay lines
+    static const int Nchannels_log2 = 5;                       // log2 of number of channels (for hadamard)
+    static const float Nchannels_SQRT = 5.65685425;            // sqrt of number of channels
     DelayLine _delayLines[Nchannels];    // Nchannels delay lines
     float _dl[Nchannels];                // outputs of delay lines
     float _feedbackGains[Nchannels];     // feedback gains of delay lines
@@ -411,9 +411,9 @@ ReverbFDN::ReverbFDN(float fs, float tr60, float drywet)
     this->setTR60(tr60);
     
     // init of the Nchannels delay lines
-    for (int i_chan=0; i_chan<this->Nchannels; i_chan++)
+    for (int i_chan=0; i_chan<Nchannels; i_chan++)
     {
-        this->_delayLines[i_chan] = DelayLine(this->primes[i_chan]);
+        this->_delayLines[i_chan] = DelayLine(primes[i_chan]);
         this->_dl[i_chan] = 0.;
     }
 }
@@ -432,20 +432,20 @@ void ReverbFDN::processReplacing(float *inputBuffer, float *outputBuffer, int bu
         outputBuffer[i_samp] = 0.;
         
         // get outputs from all delay lines and sum to the mono output
-        for (int i_delayLine = 0 ; i_delayLine<this->Nchannels ; i_delayLine++)
+        for (int i_delayLine = 0 ; i_delayLine<Nchannels ; i_delayLine++)
         {
             this->_dl[i_delayLine] = this->_delayLines[i_delayLine].process_tick(this->_feedbackGains[i_delayLine]*(this->_dl[i_delayLine]+input));
             outputBuffer[i_samp] += this->_dl[i_delayLine];
         }
         
         // divide by Nchannels_SQRT to rescale the sum and apply dry/wet balance
-        outputBuffer[i_samp] *= (1-this->_drywet)/this->Nchannels_SQRT;
+        outputBuffer[i_samp] *= (1-this->_drywet)/Nchannels_SQRT;
         outputBuffer[i_samp] += input * this->_drywet;
         
         // hadamard matrixing and feedback loop (replacing delayLines inputs)
-        for (int i=0 ; i < this->Nchannels_log2 ; ++i)
+        for (int i=0 ; i < Nchannels_log2 ; ++i)
         {
-            for (int j=0 ; j < (1 << this->Nchannels_log2) ; j += 1 << (i+1))
+            for (int j=0 ; j < (1 << Nchannels_log2) ; j += 1 << (i+1))
             {
                 temp1_long = (1<<i);
                 for (int k=0 ; k < temp1_long ; ++k)

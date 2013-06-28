@@ -45,17 +45,17 @@
 
 class SampleJitterPatch : public Patch {
   
-  const float MIN_DELAY = 0.00001; // in seconds
-  const float MAX_DELAY = 0.02;
-  const float MIN_BIAS = 0.1; // bias acts as exponent on a random delay time, t = rnd^bias
-  const float MAX_BIAS = 6;
+  const float MIN_DELAY; // in seconds
+  const float MAX_DELAY;
+  const float MIN_BIAS; // bias acts as exponent on a random delay time, t = rnd^bias
+  const float MAX_BIAS;
   
   float* circularBuffer;
   unsigned int bufferSize;
   unsigned int writeIdx;
   
 public:
-  SampleJitterPatch(){
+  SampleJitterPatch() : MIN_DELAY(0.00001), MAX_DELAY(0.02), MIN_BIAS(0.1), MAX_BIAS(6), ramp(0.1) {
     registerParameter(PARAMETER_A, "Rate");
     registerParameter(PARAMETER_B, "Bias");
     registerParameter(PARAMETER_D, "Dry/Wet");
@@ -110,8 +110,8 @@ public:
 private:
   // Parameter ramping to reduce clicks.
   
-  float oldVal[4] = {0, 0, 0, 0};
-  float ramp = 0.1; // 0..1
+  float oldVal[4];
+  float ramp; // 0..1
   
   float getRampedParameterValue(PatchParameterId id){
     float val = getParameterValue(id);

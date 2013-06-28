@@ -44,23 +44,24 @@
 
 class BiasedDelayPatch : public Patch {
   
-  const float MIN_DELAY = 0.01; // in seconds
-  const float MAX_DELAY = 4;
+  const float MIN_DELAY; // in seconds
+  const float MAX_DELAY;
   
-  const float MIN_BIAS = 0.5;
-  const float MED_BIAS = 1;
-  const float MAX_BIAS = 3;
+  const float MIN_BIAS;
+  const float MED_BIAS;
+  const float MAX_BIAS;
 
   float* circularBuffer;
   unsigned int bufferSize;
   unsigned int writeIdx;
   
 public:
-  BiasedDelayPatch(){
+  BiasedDelayPatch() : MIN_DELAY(0.01), MAX_DELAY(4), MIN_BIAS(0.5), MED_BIAS(1), MAX_BIAS(3), ramp(0.1) {
     registerParameter(PARAMETER_A, "Delay");
     registerParameter(PARAMETER_B, "Feedback");
     registerParameter(PARAMETER_C, "Bias");
     registerParameter(PARAMETER_D, "Dry/Wet");
+    memset(oldVal, 0, sizeof(oldVal));
   }
 
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
@@ -134,8 +135,8 @@ private:
 
   // Parameter ramping to reduce clicks.
   
-  float oldVal[4] = {0, 0, 0, 0};
-  float ramp = 0.1; // 0..1
+  float oldVal[4];
+  float ramp; // 0..1
   
   float getRampedParameterValue(PatchParameterId id){
     float val = getParameterValue(id);

@@ -42,16 +42,17 @@
 
 class DualTremoloPatch : public Patch {
 
-  const float MIN_FREQ = 0.5;
-  const float MAX_FREQ = 35;
-  float phase1, phase2 = 0;
+  const float MIN_FREQ;
+  const float MAX_FREQ;
+  float phase1, phase2;
 
 public:
-  DualTremoloPatch(){
+  DualTremoloPatch() : MIN_FREQ(0.5), MAX_FREQ(35), phase1(0), phase2(0), ramp(0.1) {
     registerParameter(PARAMETER_A, "Freq 1");
     registerParameter(PARAMETER_B, "Amount 1");
     registerParameter(PARAMETER_C, "Freq 2");
     registerParameter(PARAMETER_D, "Amount 2");
+    memset(oldVal, 0, sizeof(oldVal));
   }
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
     double rate = getSampleRate();
@@ -84,8 +85,8 @@ public:
 private:
   // Parameter ramping to reduce clicks.
 
-  float oldVal[4] = {0, 0, 0, 0};
-  float ramp = 0.1; // 0..1
+  float oldVal[4];
+  float ramp; // 0..1
 
   float getRampedParameterValue(PatchParameterId id) {
     float val = getParameterValue(id);

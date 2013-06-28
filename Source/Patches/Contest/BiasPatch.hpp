@@ -44,15 +44,16 @@
 
 class BiasPatch : public Patch {
 
-  const float MIN_BIAS = 0.1;
-  const float MED_BIAS = 1;
-  const float MAX_BIAS = 6;
+  const float MIN_BIAS;
+  const float MED_BIAS;
+  const float MAX_BIAS;
 
 public:
-    public BiasPatch(){
-      registerParameter(PARAMETER_A, "Bias");
-      registerParameter(PARAMETER_D, "Dry/Wet");
-    }
+  BiasPatch() : MIN_BIAS(0.1), MED_BIAS(1), MAX_BIAS(6), ramp(0.1) {
+    registerParameter(PARAMETER_A, "Bias");
+    registerParameter(PARAMETER_D, "Dry/Wet");
+    memset(oldVal, 0, sizeof(oldVal));
+  }
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
     float bias = getBias(1 - getRampedParameterValue(PARAMETER_A));
     float dryWetMix = getRampedParameterValue(PARAMETER_D);
@@ -91,8 +92,8 @@ private:
   
   // Parameter ramping to reduce clicks.
 
-  float oldVal[4] = {0, 0, 0, 0};
-  float ramp = 0.1; // 0..1
+  float oldVal[4];
+  float ramp; // 0..1
 
   float getRampedParameterValue(PatchParameterId id) {
     float val = getParameterValue(id);
