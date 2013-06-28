@@ -129,6 +129,18 @@
     <Filter Name="OwlSim">
       <Filter Name="Source">
         <Filter Name="Patches">
+          <Filter Name="Contest">
+            <File RelativePath="..\..\Source\Patches\Contest\BiasedDelayPatch.hpp"/>
+            <File RelativePath="..\..\Source\Patches\Contest\BiasPatch.hpp"/>
+            <File RelativePath="..\..\Source\Patches\Contest\BitH8rPatch.hpp"/>
+            <File RelativePath="..\..\Source\Patches\Contest\blo_bleep.hpp"/>
+            <File RelativePath="..\..\Source\Patches\Contest\ConnyPatch.hpp"/>
+            <File RelativePath="..\..\Source\Patches\Contest\DroneBox.hpp"/>
+            <File RelativePath="..\..\Source\Patches\Contest\DualTremoloPatch.hpp"/>
+            <File RelativePath="..\..\Source\Patches\Contest\JumpDelay.hpp"/>
+            <File RelativePath="..\..\Source\Patches\Contest\SampleJitterPatch.hpp"/>
+            <File RelativePath="..\..\Source\Patches\Contest\SirenPatch.hpp"/>
+          </Filter>
           <File RelativePath="..\..\Source\Patches\EnvelopeFilterPatch.hpp"/>
           <File RelativePath="..\..\Source\Patches\FreeVerbPatch.hpp"/>
           <File RelativePath="..\..\Source\Patches\CircularBuffer.hpp"/>

@@ -1175,6 +1175,16 @@
     <ClCompile Include="..\..\modules\juce_audio_plugin_client\VST\juce_VST_Wrapper.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Patches\Contest\BiasedDelayPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\Contest\BiasPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\Contest\BitH8rPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\Contest\blo_bleep.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\Contest\ConnyPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\Contest\DroneBox.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\Contest\DualTremoloPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\Contest\JumpDelay.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\Contest\SampleJitterPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\Contest\SirenPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\EnvelopeFilterPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\FreeVerbPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\CircularBuffer.hpp"/>

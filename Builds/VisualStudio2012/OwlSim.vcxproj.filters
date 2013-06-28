@@ -11,6 +11,9 @@
     <Filter Include="OwlSim\Source\Patches">
       <UniqueIdentifier>{C0FB07C1-6FB7-EFC5-FACC-C932309341D4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="OwlSim\Source\Patches\Contest">
+      <UniqueIdentifier>{8642F420-45CB-A758-D9E9-1767CB27A822}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Juce Modules">
       <UniqueIdentifier>{422C46B7-0467-2DB0-BF3C-16DFCAFD69AC}</UniqueIdentifier>
     </Filter>
@@ -1467,6 +1470,36 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Patches\Contest\BiasedDelayPatch.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\Contest\BiasPatch.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\Contest\BitH8rPatch.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\Contest\blo_bleep.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\Contest\ConnyPatch.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\Contest\DroneBox.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\Contest\DualTremoloPatch.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\Contest\JumpDelay.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\Contest\SampleJitterPatch.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\Contest\SirenPatch.hpp">
+      <Filter>OwlSim\Source\Patches\Contest</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Patches\EnvelopeFilterPatch.hpp">
       <Filter>OwlSim\Source\Patches</Filter>
     </ClInclude>
