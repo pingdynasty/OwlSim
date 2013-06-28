@@ -49,7 +49,7 @@ class BiasPatch : public Patch {
   const float MAX_BIAS = 6;
 
 public:
-    public BiasPatch(){
+    BiasPatch(){
       registerParameter(PARAMETER_A, "Bias");
       registerParameter(PARAMETER_D, "Dry/Wet");
     }
