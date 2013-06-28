@@ -23,7 +23,13 @@
 
 class ConnyPatch : public Patch {
 public:
-    
+  ConnyPatch(){
+      registerParameter(PARAMETER_A, "Dist 1");
+      registerParameter(PARAMETER_B, "Dist 2");
+      registerParameter(PARAMETER_C, "Gain");
+      registerParameter(PARAMETER_D, "Dry/Wet");
+  }
+
     /* The clip function works to sanitize the data if it's to big (could happen) it's cut down to size*/
     float clip(float in)
     {

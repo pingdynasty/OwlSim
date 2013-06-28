@@ -541,7 +541,12 @@ void Siren::processReplacing(float *outputBuffer, int bufferSize)
 class SirenPatch : public Patch
 {    
 public:
-    SirenPatch() : _Siren(getSampleRate()) {}
+    SirenPatch() : _Siren(getSampleRate()) {
+      registerParameter(PARAMETER_A, "f0");
+      registerParameter(PARAMETER_B, "fm");
+      registerParameter(PARAMETER_C, "mode");
+      registerParameter(PARAMETER_D, "tr60");
+    }
     
     void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output)
     {

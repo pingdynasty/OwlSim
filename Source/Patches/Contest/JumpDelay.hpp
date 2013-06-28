@@ -150,6 +150,11 @@ public:
   JumpDelay() {
     pParams = new JDelay::Parameters(this);
     pBuffer = new JDelay::Buffer();
+    registerParameter(PARAMETER_A, "Size");
+    registerParameter(PARAMETER_B, "Feedback");
+    registerParameter(PARAMETER_C, "Probability");
+    registerParameter(PARAMETER_D, "Direction");
+
   }
   JDelay::Parameters* pParams;
   JDelay::Buffer* pBuffer;

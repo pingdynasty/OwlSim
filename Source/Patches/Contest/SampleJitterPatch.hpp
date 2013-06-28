@@ -55,6 +55,11 @@ class SampleJitterPatch : public Patch {
   unsigned int writeIdx;
   
 public:
+  SampleJitterPatch(){
+    registerParameter(PARAMETER_A, "Rate");
+    registerParameter(PARAMETER_B, "Bias");
+    registerParameter(PARAMETER_D, "Dry/Wet");
+  }
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
 
     double rate = getSampleRate();

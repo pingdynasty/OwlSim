@@ -201,6 +201,11 @@ public:
   , mPrevFinePitch(-1.)
   , mPrevDecay(-1.)
   {
+    registerParameter(PARAMETER_A, "Coarse Pitch");
+    registerParameter(PARAMETER_B, "Fine Pitch");
+    registerParameter(PARAMETER_C, "Decay");
+    registerParameter(PARAMETER_D, "Mix");
+
     mOldValues[0] = 0.; 
     mOldValues[1] = 0.;
     mOldValues[2] = 0.;

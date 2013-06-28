@@ -56,6 +56,13 @@ class BiasedDelayPatch : public Patch {
   unsigned int writeIdx;
   
 public:
+  BiasedDelayPatch(){
+    registerParameter(PARAMETER_A, "Delay");
+    registerParameter(PARAMETER_B, "Feedback");
+    registerParameter(PARAMETER_C, "Bias");
+    registerParameter(PARAMETER_D, "Dry/Wet");
+  }
+
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
 
     double rate = getSampleRate();

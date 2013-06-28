@@ -47,6 +47,12 @@ class DualTremoloPatch : public Patch {
   float phase1, phase2 = 0;
 
 public:
+  DualTremoloPatch(){
+    registerParameter(PARAMETER_A, "Freq 1");
+    registerParameter(PARAMETER_B, "Amount 1");
+    registerParameter(PARAMETER_C, "Freq 2");
+    registerParameter(PARAMETER_D, "Amount 2");
+  }
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
     double rate = getSampleRate();
 
