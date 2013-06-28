@@ -27,8 +27,7 @@
 const float MY_FLOAT_THRESHOLD = 0.00001; // under this value all numbers are set to 0 (gives a -100dB SNR)
 static const int Nchannels = 32;                    // number of internal channels
 const int primes[Nchannels] = {503,577,641,701,769,839,911,983,1049,1109,1193,1277,1321,1429,1487,1559,1619,1699,1783,1871,1949,2017,2089,2161,2267,2339,2393,2473,2579,2663,2713,2791}; // prime numbers for ReverbFDN delay lines
-
-
+static const float Nchannels_SQRT = 5.65685425;            // sqrt of number of channels
 
 
 
@@ -215,7 +214,7 @@ FMSynth::FMSynth(float f0, float fm, float fs) : _sawtooth_f0(f0,fs,0.5) , _sawt
 
 void FMSynth::processReplacing(float *outputBuffer, int bufferSize)
 {
-    float freqHzBuffer[bufferSize]; // buffer to store modulation frequency
+    float* freqHzBuffer = new float[bufferSize]; // buffer to store modulation frequency
     
     // compute modulation frequency (LFO)
     this->_sawtooth_fm.processReplacing(freqHzBuffer,bufferSize);
@@ -256,6 +255,7 @@ void FMSynth::processReplacing(float *outputBuffer, int bufferSize)
     
     // and finally cut DC from the audio signal (now for the case f0=0)
     this->_DCcutFilter2.processReplacing(outputBuffer, outputBuffer, bufferSize);
+	delete freqHzBuffer;
 }
 
 
@@ -397,7 +397,6 @@ private:
     
     // INTERNAL THINGS
     static const int Nchannels_log2 = 5;                       // log2 of number of channels (for hadamard)
-    static const float Nchannels_SQRT = 5.65685425;            // sqrt of number of channels
     DelayLine _delayLines[Nchannels];    // Nchannels delay lines
     float _dl[Nchannels];                // outputs of delay lines
     float _feedbackGains[Nchannels];     // feedback gains of delay lines

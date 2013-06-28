@@ -1,5 +1,21 @@
 #include "PatchRegistry.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+#ifndef min
+#define min(a,b) ((a)<(b)?(a):(b))
+#endif /* min */
+#ifndef max
+#define max(a,b) ((a)>(b)?(a):(b))
+#endif /* max */
+#ifndef abs
+#define abs(x) ((x)>0?(x):-(x))
+#endif /* abs */
+
 #include "Patches/GainPatch.hpp"
 #include "Patches/TemplatePatch.hpp"
 #include "Patches/SimpleDelayPatch.hpp"

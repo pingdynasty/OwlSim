@@ -88,7 +88,7 @@ public:
       float delaySample = circularBuffer[writeIdx];
       float v = buf[i] + circularBuffer[writeIdx] * feedback;
       v = applyBias(v, bias);
-      circularBuffer[writeIdx] = fminf(1, fmaxf(-1, v)); // Guard: hard range limits.
+      circularBuffer[writeIdx] = min(1, max(-1, v)); // Guard: hard range limits.
       buf[i] = linearBlend(buf[i], delaySample, dryWetMix);
 
       writeIdx = (++writeIdx) % sampleDelay;
