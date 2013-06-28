@@ -52,6 +52,7 @@
 
 /* Begin PBXFileReference section */
 		001E2EA48E119882130EEDBE /* juce_UnitTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_UnitTest.h; path = ../../modules/juce_core/unit_tests/juce_UnitTest.h; sourceTree = SOURCE_ROOT; };
+		001E8CFFEE426120D2FA68D1 /* FreeVerbPatch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FreeVerbPatch.hpp; path = ../../Source/Patches/FreeVerbPatch.hpp; sourceTree = SOURCE_ROOT; };
 		00AB854356F557565A4A3937 /* StompBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StompBox.h; path = ../../Source/StompBox.h; sourceTree = SOURCE_ROOT; };
 		00AE445B74F40EB142CD4DF9 /* juce_ComponentListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_ComponentListener.h; path = ../../modules/juce_gui_basics/components/juce_ComponentListener.h; sourceTree = SOURCE_ROOT; };
 		0169DB3A546EE8A4EDC72CD4 /* juce_Font.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_Font.cpp; path = ../../modules/juce_graphics/fonts/juce_Font.cpp; sourceTree = SOURCE_ROOT; };
@@ -89,6 +90,7 @@
 		0BFEF0657DED42479FF69CCE /* juce_XmlDocument.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_XmlDocument.cpp; path = ../../modules/juce_core/xml/juce_XmlDocument.cpp; sourceTree = SOURCE_ROOT; };
 		0C0E24D912D77C528BA4344C /* juce_ApplicationProperties.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_ApplicationProperties.cpp; path = ../../modules/juce_data_structures/app_properties/juce_ApplicationProperties.cpp; sourceTree = SOURCE_ROOT; };
 		0C1F52EE22EB16392FD92312 /* juce_PluginHostType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_PluginHostType.h; path = ../../modules/juce_audio_plugin_client/utility/juce_PluginHostType.h; sourceTree = SOURCE_ROOT; };
+		0C366E7A421D93BAFA9C1FCC /* EnvelopeFilterPatch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EnvelopeFilterPatch.hpp; path = ../../Source/Patches/EnvelopeFilterPatch.hpp; sourceTree = SOURCE_ROOT; };
 		0C418E98DB2B3EDB83902434 /* juce_TimeSliceThread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_TimeSliceThread.h; path = ../../modules/juce_core/threads/juce_TimeSliceThread.h; sourceTree = SOURCE_ROOT; };
 		0C5B1B356D88D07D53E656F3 /* juce_AudioCDReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_AudioCDReader.cpp; path = ../../modules/juce_audio_devices/audio_cd/juce_AudioCDReader.cpp; sourceTree = SOURCE_ROOT; };
 		0C79E3D1876E1766B23CC8C0 /* juce_audio_devices.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_audio_devices.mm; path = ../../modules/juce_audio_devices/juce_audio_devices.mm; sourceTree = SOURCE_ROOT; };
@@ -1322,9 +1324,9 @@
 		49162BE66036D49F8A28C785 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				FF9B9C4586626963E4F05DA8 /* Patches */,
 				15A939C0397C6C08B0D9A5A2 /* PatchProcessor.cpp */,
 				170C4EEBCB6659EA91C23080 /* PatchProcessor.h */,
-				FF9B9C4586626963E4F05DA8 /* Patches */,
 				D002D794BF298922071C325C /* StompGui.cpp */,
 				4F5253085D003938E538323E /* StompGui.h */,
 				FD00B7F04F836603A2AE9008 /* SampleBuffer.cpp */,
@@ -2570,6 +2572,8 @@
 		FF9B9C4586626963E4F05DA8 /* Patches */ = {
 			isa = PBXGroup;
 			children = (
+				0C366E7A421D93BAFA9C1FCC /* EnvelopeFilterPatch.hpp */,
+				001E8CFFEE426120D2FA68D1 /* FreeVerbPatch.hpp */,
 				BF271B7B6FCAB619D49AA3F2 /* CircularBuffer.hpp */,
 				4F5D4DE748235239187FF20E /* FlangerPatch.hpp */,
 				738A28641A75A547CE5DAEBA /* GainPatch.hpp */,
@@ -2748,7 +2752,7 @@
 					"DEBUG=1",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
 				);
-				GCC_VERSION = 4.2;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"~/SDKs/vstsdk2.4",
@@ -2760,7 +2764,6 @@
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-bundle";
 				OTHER_REZFLAGS = "-d ppc_$ppc -d i386_$i386 -d ppc64_$ppc64 -d x86_64_$x86_64 -I /System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Versions/A/Headers -I \"$(DEVELOPER_DIR)/Extras/CoreAudio/AudioUnits/AUPublic/AUBase\"";
 				SDKROOT_ppc = macosx10.5;

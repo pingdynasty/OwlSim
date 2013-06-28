@@ -11,11 +11,11 @@
               companyName="Rebel Technology">
   <MAINGROUP id="WHVxNd" name="OwlSim">
     <GROUP id="{38D29851-9657-B61F-ADA4-1EDE4BF89C63}" name="Source">
-      <FILE id="GLbClc" name="PatchProcessor.cpp" compile="1" resource="0"
-            file="Source/PatchProcessor.cpp"/>
-      <FILE id="U8JvTw" name="PatchProcessor.h" compile="0" resource="0"
-            file="Source/PatchProcessor.h"/>
       <GROUP id="{5899F8C7-8969-B7C3-DE7F-C03A2EBBDDD0}" name="Patches">
+        <FILE id="br6Qxq" name="EnvelopeFilterPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/EnvelopeFilterPatch.hpp"/>
+        <FILE id="a5OIoG" name="FreeVerbPatch.hpp" compile="0" resource="0"
+              file="Source/Patches/FreeVerbPatch.hpp"/>
         <FILE id="vgTlvv" name="CircularBuffer.hpp" compile="0" resource="0"
               file="Source/Patches/CircularBuffer.hpp"/>
         <FILE id="CdDjKP" name="FlangerPatch.hpp" compile="0" resource="0"
@@ -43,6 +43,10 @@
         <FILE id="PGdjFy" name="ParametricEqPatch.hpp" compile="0" resource="0"
               file="Source/Patches/ParametricEqPatch.hpp"/>
       </GROUP>
+      <FILE id="meheFz" name="PatchProcessor.cpp" compile="1" resource="0"
+            file="Source/PatchProcessor.cpp"/>
+      <FILE id="vjDnoH" name="PatchProcessor.h" compile="0" resource="0"
+            file="Source/PatchProcessor.h"/>
       <FILE id="bJUkY2" name="StompGui.cpp" compile="1" resource="0" file="Source/StompGui.cpp"/>
       <FILE id="tvGCD0" name="StompGui.h" compile="0" resource="0" file="Source/StompGui.h"/>
       <FILE id="ApiN3l" name="SampleBuffer.cpp" compile="1" resource="0"

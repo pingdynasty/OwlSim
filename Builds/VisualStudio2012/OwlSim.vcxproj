@@ -1181,7 +1181,8 @@
     <ClCompile Include="..\..\modules\juce_audio_plugin_client\VST\juce_VST_Wrapper.cpp"/>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\PatchProcessor.h"/>
+    <ClInclude Include="..\..\Source\Patches\EnvelopeFilterPatch.hpp"/>
+    <ClInclude Include="..\..\Source\Patches\FreeVerbPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\CircularBuffer.hpp"/>
     <ClInclude Include="..\..\Source\Patches\FlangerPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\GainPatch.hpp"/>
@@ -1196,6 +1197,7 @@
     <ClInclude Include="..\..\Source\Patches\SimpleDelayPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\StateVariableFilterPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\ParametricEqPatch.hpp"/>
+    <ClInclude Include="..\..\Source\PatchProcessor.h"/>
     <ClInclude Include="..\..\Source\StompGui.h"/>
     <ClInclude Include="..\..\Source\PatchRegistry.h"/>
     <ClInclude Include="..\..\Source\StompBox.h"/>

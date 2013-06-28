@@ -128,9 +128,9 @@
   <Files>
     <Filter Name="OwlSim">
       <Filter Name="Source">
-        <File RelativePath="..\..\Source\PatchProcessor.cpp"/>
-        <File RelativePath="..\..\Source\PatchProcessor.h"/>
         <Filter Name="Patches">
+          <File RelativePath="..\..\Source\Patches\EnvelopeFilterPatch.hpp"/>
+          <File RelativePath="..\..\Source\Patches\FreeVerbPatch.hpp"/>
           <File RelativePath="..\..\Source\Patches\CircularBuffer.hpp"/>
           <File RelativePath="..\..\Source\Patches\FlangerPatch.hpp"/>
           <File RelativePath="..\..\Source\Patches\GainPatch.hpp"/>
@@ -146,6 +146,8 @@
           <File RelativePath="..\..\Source\Patches\StateVariableFilterPatch.hpp"/>
           <File RelativePath="..\..\Source\Patches\ParametricEqPatch.hpp"/>
         </Filter>
+        <File RelativePath="..\..\Source\PatchProcessor.cpp"/>
+        <File RelativePath="..\..\Source\PatchProcessor.h"/>
         <File RelativePath="..\..\Source\StompGui.cpp"/>
         <File RelativePath="..\..\Source\StompGui.h"/>
         <File RelativePath="..\..\Source\SampleBuffer.cpp"/>

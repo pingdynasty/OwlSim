@@ -1467,8 +1467,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\PatchProcessor.h">
-      <Filter>OwlSim\Source</Filter>
+    <ClInclude Include="..\..\Source\Patches\EnvelopeFilterPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Patches\FreeVerbPatch.hpp">
+      <Filter>OwlSim\Source\Patches</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Patches\CircularBuffer.hpp">
       <Filter>OwlSim\Source\Patches</Filter>
@@ -1511,6 +1514,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Patches\ParametricEqPatch.hpp">
       <Filter>OwlSim\Source\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PatchProcessor.h">
+      <Filter>OwlSim\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\StompGui.h">
       <Filter>OwlSim\Source</Filter>
