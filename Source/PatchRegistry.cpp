@@ -13,6 +13,8 @@
 #include "Patches/LpfDelayPatch.hpp"
 #include "Patches/LpfDelayPhaserPatch.hpp"
 #include "Patches/WaveshaperPatch.hpp"
+#include "Patches/FreeVerbPatch.hpp"
+#include "Patches/EnvelopeFilterPatch.hpp"
 
 #include "Patches/contest/BiasPatch.hpp"
 #include "Patches/contest/BiasedDelayPatch.hpp"
@@ -41,6 +43,8 @@ PatchRegistry::PatchRegistry(){
   REGISTER_PATCH(LpfDelayPatch<32768>, "Low Pass Filtered Delay");
   REGISTER_PATCH(LpfDelayPhaserPatch<32768>, "Low Pass Filtered Delay with Phaser");
   REGISTER_PATCH(WaveshaperPatch, "Waveshaper");
+  REGISTER_PATCH(FreeVerbPatch, "FreeVerb");
+  REGISTER_PATCH(EnvelopeFilterPatch, "Envelope Filter");
 
   REGISTER_PATCH(BiasPatch, "contest/BiasPatch");
   REGISTER_PATCH(BiasedDelayPatch, "contest/BiasedDelayPatch");
