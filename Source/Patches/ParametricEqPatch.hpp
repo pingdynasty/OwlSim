@@ -59,14 +59,16 @@ public:
   ParametricEqPatch() {
     registerParameter(PARAMETER_A, "Freq");
     registerParameter(PARAMETER_B, "Q");
-    registerParameter(PARAMETER_D, "Gain");
+    registerParameter(PARAMETER_C, "Gain");
     peq.setCoeffsPEQ(getFrequency()/getSampleRate(), getQ(), getDbGain()) ;
   }    
-  ~ParametricEqPatch() {}
+    ~ParametricEqPatch() {
+    }
 
   void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
     // update filter coefficients
     float fn = getFrequency()/getSampleRate();
+       
     float Q = getQ();
     float g = getDbGain();
     peq.setCoeffsPEQ(fn, Q, g) ;
@@ -74,10 +76,11 @@ public:
     // get samples
     int size = input.getSize();
     float* inBuf = input.getSamples();
-    float* outBuf = output.getSamples();
-        
+    float* outBuf = new float[size];
     // filter samples
     peq.process(size, inBuf, outBuf);
+    output.setSamples(outBuf);
+    delete outBuf;
   }
     
 private:
@@ -85,10 +88,9 @@ private:
 
   float getFrequency() {
     float f = getParameterValue(PARAMETER_A);
-    // param_A = 0    <-> f=20;
-    // param_A = 1    <-> f=20000;
-    float g=2*powf(10,(3*f+1.0));
-    return g;
+    // param_A = 0    <-> f=50;
+    // param_A = 1    <-> f=10050;
+      return powf(10,3*f+1)+40;
   }
         
   float getQ(){
@@ -99,7 +101,7 @@ private:
   }
     
   float getDbGain(){
-    float linGain = getParameterValue(PARAMETER_D);
+    float linGain = getParameterValue(PARAMETER_C);
     // linGain = 0    <-> -15 dB
     // linGain = 0.5  <-> 0dB
     // linGain = 1    <-> 15dB
