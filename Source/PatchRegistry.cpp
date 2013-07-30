@@ -31,6 +31,7 @@
 #include "Patches/WaveshaperPatch.hpp"
 #include "Patches/FreeVerbPatch.hpp"
 #include "Patches/EnvelopeFilterPatch.hpp"
+#include "Patches/OctaveDownPatch.hpp"
 
 #include "Patches/contest/BiasPatch.hpp"
 #include "Patches/contest/BiasedDelayPatch.hpp"
@@ -61,6 +62,7 @@ PatchRegistry::PatchRegistry(){
   REGISTER_PATCH(WaveshaperPatch, "Waveshaper");
   REGISTER_PATCH(FreeVerbPatch, "FreeVerb");
   REGISTER_PATCH(EnvelopeFilterPatch, "Envelope Filter");
+  REGISTER_PATCH(OctaveDownPatch, "Octave Pitch Shifter");
 
   REGISTER_PATCH(BiasPatch, "contest/BiasPatch");
   REGISTER_PATCH(BiasedDelayPatch, "contest/BiasedDelayPatch");
