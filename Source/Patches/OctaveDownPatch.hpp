@@ -2,44 +2,45 @@
 
 #include "StompBox.h"
 
+namespace OctaveDown {
 
+	class LPF {
+	public:
+	  float z;
+	  float x;
+	  float y;
+	  float r;
+	  float c;
+	  LPF() {
+	    z = x = y = r = c = 0;
+	  }
+	#define SQRT2 1.414213562f
+	#define TWOPI 6.2831853071f
+	#define TWOPI_BY_SAMPLERATE 0.00014247585731f
+	  void setCoeffs(float cutoff, float resonance) {
+	    if(cutoff>11025) cutoff = 11025;
+	      z=cos(TWOPI_BY_SAMPLERATE*cutoff);
+	      c = 2 - 2*z;
+	      float zzz = z-1;
+	      zzz = zzz*zzz*zzz;
+	      r = (SQRT2*sqrt(-zzz)+resonance*(z-1))/(resonance*(z-1));
+	  }
+	  // cutoff in hz/2 (min 10Hz/2), resonance 1 to 10
+	  float process(float input) {
+	      
 
-class LPF {
-public:
-  float z;
-  float x;
-  float y;
-  float r;
-  float c;
-  LPF() {
-    z = x = y = r = c = 0;
-  }
-#define SQRT2 1.414213562f
-#define TWOPI 6.2831853071f
-#define TWOPI_BY_SAMPLERATE 0.00014247585731f
-  void setCoeffs(float cutoff, float resonance) {
-    if(cutoff>11025) cutoff = 11025;
-      z=cos(TWOPI_BY_SAMPLERATE*cutoff);
-      c = 2 - 2*z;
-      float zzz = z-1;
-      zzz = zzz*zzz*zzz;
-      r = (SQRT2*sqrt(-zzz)+resonance*(z-1))/(resonance*(z-1));
-  }
-  // cutoff in hz/2 (min 10Hz/2), resonance 1 to 10
-  float process(float input) {
-      
-
-      x += (input - y)*c;
-      y += x;
-      x *= r;
-      return y; 
-  }
+	      x += (input - y)*c;
+	      y += x;
+	      x *= r;
+	      return y; 
+	  }
+	};
 };
 
 #define ABS(X) (X>0?X:-X)
 class OctaveDownPatch : public Patch {
 public:
-  LPF inLpf, out1Lpf, out2Lpf;
+  OctaveDown::LPF inLpf, out1Lpf, out2Lpf;
   bool lastRect;
   bool oct1;
   bool oct2;
