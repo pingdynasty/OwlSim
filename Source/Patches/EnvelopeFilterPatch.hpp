@@ -5,38 +5,41 @@
 #include <math.h>
 // originally https://github.com/micknoise/Maximilian/blob/master/ofxMaxim/ofxMaxim/libs/maximilian.h
 // ported to js, ported back again
-class LPF {
-public:
-	float z;
-	float x;
-	float y;
-	float r;
-	float c;
-	LPF() {
-		z = x = y = r = c = 0;
-	}
-#define SQRT2 1.414213562f
-#define TWOPI 6.2831853071f
-#define TWOPI_BY_SAMPLERATE 0.00014247585731f
-	// cutoff in hz/2 (min 10Hz/2), resonance 1 to 10
-	float process(float input, float cutoff, float resonance) {
-  		if(cutoff>11025) cutoff = 11025;
-  		z=cos(TWOPI_BY_SAMPLERATE*cutoff);
-	    c = 2 - 2*z;
-	    float zzz = z-1;
-	    zzz = zzz*zzz*zzz;
-	    r = (SQRT2*sqrt(-zzz)+resonance*(z-1))/(resonance*(z-1));
+namespace EnvelopeFilter {
+	class LPF {
+	public:
+		float z;
+		float x;
+		float y;
+		float r;
+		float c;
+		LPF() {
+			z = x = y = r = c = 0;
+		}
+	#define SQRT2 1.414213562f
+	#define TWOPI 6.2831853071f
+	#define TWOPI_BY_SAMPLERATE 0.00014247585731f
+		// cutoff in hz/2 (min 10Hz/2), resonance 1 to 10
+		float process(float input, float cutoff, float resonance) {
+	  		if(cutoff>11025) cutoff = 11025;
+	  		z=cos(TWOPI_BY_SAMPLERATE*cutoff);
+		    c = 2 - 2*z;
+		    float zzz = z-1;
+		    zzz = zzz*zzz*zzz;
+		    r = (SQRT2*sqrt(-zzz)+resonance*(z-1))/(resonance*(z-1));
 
-	    x += (input - y)*c;
-	    y += x;
-	    x *= r;
-	    return y; 
- 	}
+		    x += (input - y)*c;
+		    y += x;
+		    x *= r;
+		    return y; 
+	 	}
+	};
+
 };
 
 class EnvelopeFilterPatch : public Patch {
 public:
-  LPF filter;
+  EnvelopeFilter::LPF filter;
   EnvelopeFilterPatch(){
     registerParameter(PARAMETER_A, "Cutoff");
     registerParameter(PARAMETER_B, "Range");
