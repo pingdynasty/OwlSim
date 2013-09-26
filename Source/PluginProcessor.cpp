@@ -152,12 +152,11 @@ void StompBoxAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer&
   // Mutex
   const ScopedLock myScopedLock(mutex);
 
-  InputSampleBuffer input(buffer);
-  OutputSampleBuffer output(buffer);
+  SampleBuffer samples(buffer);
 
   // let the patch do the audio processing if not bypassed
   if(!bypass)
-    patch->processAudio(input, output);
+    patch->processAudio(samples);
 
   // clear any extra output channels
   for(int i = 1; i < getNumOutputChannels(); ++i)

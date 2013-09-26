@@ -8,7 +8,7 @@ public:
   TemplatePatch(){
     registerParameter(PARAMETER_A, "My Knob");
   }
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
+  void processAudio(AudioBuffer &buffer){
     // put your code here!
   }
 };

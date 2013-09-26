@@ -2,7 +2,6 @@
 #define __StompBox_h__
 
 #include <string>
-
 class PatchProcessor;
 
 enum PatchParameterId {
@@ -13,20 +12,10 @@ enum PatchParameterId {
   PARAMETER_E
 };
 
-class AudioInputBuffer {
+class AudioBuffer {
 public:
-  virtual ~AudioInputBuffer(){}
-  virtual void getSamples(int from, int length, float* data) = 0;
-  virtual float* getSamples() = 0;
-  virtual int getSize() = 0;
-};
-
-class AudioOutputBuffer {
-public:    
-  virtual ~AudioOutputBuffer(){}
-  virtual void setSamples(int from, int length, float* data) = 0;
-  virtual void setSamples(float* data) = 0;
-  virtual float* getSamples() = 0;
+  virtual float* getSamples(int channel) = 0;
+  virtual int getChannels() = 0;
   virtual int getSize() = 0;
 };
 
@@ -38,10 +27,10 @@ public:
   float getParameterValue(PatchParameterId pid);
   int getBlockSize();
   double getSampleRate();
-  virtual void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output) = 0;
+public:
+  virtual void processAudio(AudioBuffer& output) = 0;
 private:
   PatchProcessor* processor;
-//   PatchProcessor* getPatchProcessor();
 };
 
 #endif // __StompBox_h__
