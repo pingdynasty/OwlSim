@@ -14,12 +14,14 @@ public:
   }
   void processAudio(AudioBuffer &buffer){
     float gain = getParameterValue(PARAMETER_A);
+      
     int size = buffer.getSize();
-    for(int ch=0; ch<buffer.getChannels(); ++ch){
-      float* buf = buffer.getSamples(ch);
-      for(int i=0; i<size; ++i)
-	buf[i] = gain*buf[i];
-    }
+      
+        for(int ch=0; ch<buffer.getChannels(); ++ch){
+            
+          float* buf = buffer.getSamples(ch);
+          for(int i=0; i<size; ++i) buf[i] = gain*buf[i];
+        }
   }
 };
 

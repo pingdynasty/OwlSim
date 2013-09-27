@@ -5,7 +5,11 @@
 #include "CircularBuffer.hpp"
 
 template<unsigned int bufsize>
-class LpfDelayPatch : public Patch {    
+class LpfDelayPatch : public Patch {
+    
+private:
+    float* outBuf;
+    
 public:    
   LpfDelayPatch() : x1(0.0f), x2(0.0f), y1(0.0f), y2(0.0f) {
     registerParameter(PARAMETER_A, "Delay");
@@ -13,8 +17,12 @@ public:
     registerParameter(PARAMETER_C, "Fc");
     registerParameter(PARAMETER_D, "Dry/Wet");
     setCoeffs(getLpFreq()/getSampleRate(), 0.6f);
+    outBuf = new float[getBlockSize()];
+      
   }    
-  ~LpfDelayPatch() {}
+  ~LpfDelayPatch() {
+    delete outBuf;
+  }
         
   void initLpf (){        
     for (int i=0 ; i<3 ; i++){
@@ -103,11 +111,8 @@ public:
     }
   }
     
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
-    float* x = input.getSamples();
-    float* y = output.getSamples();
-    float w;
-        
+  void processAudio(AudioBuffer &buffer){
+    
     setCoeffs(getLpFreq(), 0.8f);
         
     float delayTime = getParameterValue(PARAMETER_A); // get delay time value    
@@ -116,14 +121,20 @@ public:
         
     float delaySamples = delayTime * (DELAY_BUFFER_LENGTH-1);
         
-    int size = input.getSize();
-    process(size, x, y);     // low pass filter for delay buffer
-        
-    for(int n = 0; n < size; n++){
-      y[n] = x[n] + feedback * delayBuffer.read(delaySamples);            
-      y[n] = (1.f - wetDry) * w + wetDry * y[n];  //crossfade for wet/dry balance
-      delayBuffer.write(y[n]);
-    }
+    int size = buffer.getSize();
+      
+      for (int ch = 0; ch<buffer.getChannels(); ++ch) {
+          
+          float* buf = buffer.getSamples(ch);
+          process(size, buf, outBuf);     // low pass filter for delay buffer
+          
+          for(int i = 0; i < size; i++){
+
+              outBuf[i] = outBuf[i] + feedback * delayBuffer.read(delaySamples);
+              buf[i] = (1.f - wetDry) * buf[i] + wetDry * outBuf[i];  //crossfade for wet/dry balance
+              delayBuffer.write(buf[i]);
+          }
+      }
   }
     
 private:

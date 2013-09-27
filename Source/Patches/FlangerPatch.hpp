@@ -29,23 +29,28 @@ public:
     return output;
   };
 
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){    
-    int size = input.getSize();
-    float* x = input.getSamples();        
+  void processAudio(AudioBuffer &buffer){
+    int size = buffer.getSize();
     float y;        
     rate     = getParameterValue(PARAMETER_A);
     depth    = getParameterValue(PARAMETER_B);
     feedback = getParameterValue(PARAMETER_C);
     wetDry   = getParameterValue(PARAMETER_D);    
     unsigned int delaySamples;    
-    rate *= 0.1f;    
-    for (int n = 0 ; n < size; n++) {        
-      delaySamples = (depth * modulate(rate)) * (DELAY_BUFFER_LENGTH-1);
-      y = x[n] + feedback * delayBuffer.read(delaySamples);
-      x[n] = x[n] * (1.f - wetDry)+ wetDry * y;
-      delayBuffer.write(x[n]);        
-    }    
-    output.setSamples(x);    
+    rate *= 0.1f;
+      
+      for (int ch = 0; ch<buffer.getChannels(); ++ch) {
+          
+          for (int i = 0 ; i < size; i++) {
+              
+              float* buf = buffer.getSamples(ch);
+              
+              delaySamples = (depth * modulate(rate)) * (DELAY_BUFFER_LENGTH-1);
+              y = buf[i] + feedback * delayBuffer.read(delaySamples);
+              buf[i] = buf[i] * (1.f - wetDry)+ wetDry * y;
+              delayBuffer.write(buf[i]);
+          }
+      }
   }
     
 };

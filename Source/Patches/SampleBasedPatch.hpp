@@ -11,13 +11,14 @@ class SampleBasedPatch : public Patch {
 public:
   virtual void prepare() = 0;
   virtual float processSample(float sample) = 0;
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
+  void processAudio(AudioBuffer &buffer){
     prepare();
-    int size = input.getSize();
-    float* in = input.getSamples();
-    float* out = output.getSamples();
-    for(int i=0; i<size; ++i)
-      out[i] = processSample(in[i]);
+    int size = buffer.getSize();
+      
+    for (int ch = 0; ch<buffer.getChannels(); ++ch) {
+        float* buf = buffer.getSamples(ch);
+        for(int i = 0; i < size; ++i) buf[i] = processSample(buf[i]);
+    }
   }
 };
 

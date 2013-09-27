@@ -7,7 +7,11 @@
 // #define DELAY_BUFFER_LENGTH 32768 // must be a power of 2
 
 template<unsigned int bufsize>
-class LpfDelayPhaserPatch : public Patch {    
+class LpfDelayPhaserPatch : public Patch {
+    
+private:
+    float* outBuf;
+    
 public:    
   LpfDelayPhaserPatch() : x1(0.0f), x2(0.0f), y1(0.0f), y2(0.0f),
 			  _lfoPhase( 0.f ), depth( 1.f ),
@@ -19,8 +23,11 @@ public:
     setCoeffs(getLpFreq()/getSampleRate(), 0.6f) ;
     Range( 440.f, 1600.f );
     Rate( .5f );
+    outBuf = new float[getBlockSize()];
   }
-  ~LpfDelayPhaserPatch() {}
+  ~LpfDelayPhaserPatch() {
+     delete outBuf;
+  }
         
   void initLpf (){        
     for (int i=0 ; i<3 ; i++){
@@ -115,10 +122,9 @@ public:
     }
   }
     
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){        
-    int size = input.getSize();
-    float* x = input.getSamples();
-    float* y = output.getSamples();
+  void processAudio(AudioBuffer &buffer){
+      
+    int size = buffer.getSize();
     float w, z;  //implement with less arrays?
     setCoeffs(getLpFreq(), 0.8f);
     rate = 0.01f, depth = 0.3f;
@@ -128,34 +134,36 @@ public:
     float wetDry    = getParameterValue(PARAMETER_D); // get gain value
         
     float delaySamples = delayTime * (DELAY_BUFFER_LENGTH-1);
-        
-    process(size, x, y);     // low pass filter for delay buffer
-        
-    float d  = _dmin + (_dmax-_dmin) * ((sin( _lfoPhase ) + 1.f)/2.f);
-        
-    _lfoPhase += rate;
-    if( _lfoPhase >= M_PI * 2.f )
-      _lfoPhase -= M_PI * 2.f;
-        
-    //update filter coeffs
-    for( int i=0; i<6; i++ )
-      _alps[i].Delay( d );
-        
-    for (int n = 0; n < size; n++){
-            
-      y[n] = x[n] + feedback * delayBuffer.read(delaySamples);
-      y[n] = (1.f - wetDry) * w + wetDry * y[n];  //crossfade for wet/dry balance
-      delayBuffer.write(y[n]);
-            
-      //calculate output
-      z = _alps[0].Update(_alps[1].Update(_alps[2].Update(_alps[3].Update(_alps[4].Update(_alps[5].Update(y[n] + _zm1 * (feedback*0.1)))))));
-											  
-      _zm1 = z;
-            
-      y[n] = y[n] + z * depth;
-    }
-        
-    //         output.setSamples(x);
+      
+      for (int ch = 0; ch<buffer.getChannels(); ++ch) {
+          
+          float* buf = buffer.getSamples(ch);
+          process(size, buf, outBuf);     // low pass filter for delay buffer
+          
+          float d  = _dmin + (_dmax-_dmin) * ((sin( _lfoPhase ) + 1.f)/2.f);
+          
+          _lfoPhase += rate;
+          if( _lfoPhase >= M_PI * 2.f )
+              _lfoPhase -= M_PI * 2.f;
+          
+          //update filter coeffs
+          for( int i=0; i<6; i++ )
+              _alps[i].Delay( d );
+          
+          for (int i = 0; i < size; i++){
+              
+              outBuf[i] = outBuf[i] + feedback * delayBuffer.read(delaySamples);
+              buf[i] = (1.f - wetDry) * buf[i] + wetDry * outBuf[i];  //crossfade for wet/dry balance
+              delayBuffer.write(buf[i]);
+              
+              //calculate output
+              z = _alps[0].Update(_alps[1].Update(_alps[2].Update(_alps[3].Update(_alps[4].Update(_alps[5].Update(buf[i] + _zm1 * (feedback*0.1)))))));
+              
+              _zm1 = z;
+              
+              buf[i] = buf[i] + z * depth;
+          }
+      }
         
   }
     

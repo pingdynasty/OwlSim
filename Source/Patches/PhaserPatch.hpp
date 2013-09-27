@@ -47,10 +47,9 @@ public:
     return _lfoInc * 1000.f;
   }    
     
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output) {
+  void processAudio(AudioBuffer &buffer) {
         
-    int size  = input.getSize();
-    float* x  = input.getSamples();
+    int size  = buffer.getSize();
     float y;
         
     rate      = Rate(getParameterValue(PARAMETER_A));
@@ -67,19 +66,21 @@ public:
     //update filter coeffs
     for( int i=0; i<6; i++ )
       _alps[i].Delay( d );
-        
-    for (int n = 0; n < size; n++) {        
-      //calculate output
-      y = _alps[0].Update(_alps[1].Update(_alps[2].Update(_alps[3].Update(_alps[4].Update(
-											  _alps[5].Update( x[n] + _zm1 * feedback ))))));
-      _zm1 = y;
-        
-      x[n] = x[n] + y * depth;
-        
-    }
-        
-    output.setSamples(x);
-        
+      
+      
+      for (int ch = 0; ch<buffer.getChannels(); ++ch) {
+          
+            float* buf  = buffer.getSamples(ch);
+            for (int i = 0; i < size; i++) {
+              //calculate output
+              y = _alps[0].Update(_alps[1].Update(_alps[2].Update(_alps[3].Update(_alps[4].Update(
+                                                      _alps[5].Update( buf[i] + _zm1 * feedback ))))));
+              _zm1 = y;
+                
+              buf[i] = buf[i] + y * depth;
+                
+            }
+      }
   }
     
 private:
