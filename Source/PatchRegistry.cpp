@@ -33,16 +33,16 @@
 // #include "Patches/EnvelopeFilterPatch.hpp"
 // #include "Patches/OctaveDownPatch.hpp"
 
-// #include "Patches/contest/BiasPatch.hpp"
-// #include "Patches/contest/BiasedDelayPatch.hpp" 
-// #include "Patches/contest/BitH8rPatch.hpp"
-// #include "Patches/contest/ConnyPatch.hpp"
-// #include "Patches/contest/DroneBox.hpp"
-// #include "Patches/contest/DualTremoloPatch.hpp"
-// #include "Patches/contest/JumpDelay.hpp"
-// #include "Patches/contest/SampleJitterPatch.hpp"
-// #include "Patches/contest/SirenPatch.hpp"
-// #include "Patches/contest/blo_bleep.hpp"
+#include "Patches/Contest/BiasPatch.hpp"
+#include "Patches/Contest/BiasedDelayPatch.hpp" 
+#include "Patches/Contest/BitH8rPatch.hpp"
+#include "Patches/Contest/ConnyPatch.hpp"
+#include "Patches/Contest/DroneBox.hpp"
+#include "Patches/Contest/DualTremoloPatch.hpp"
+#include "Patches/Contest/JumpDelay.hpp"
+#include "Patches/Contest/SampleJitterPatch.hpp"
+#include "Patches/Contest/SirenPatch.hpp"
+#include "Patches/Contest/blo_bleep.hpp"
 
 #define REGISTER_PATCH(T, STR) registerPatch(STR, Register<T>::construct)
 
@@ -64,16 +64,16 @@ PatchRegistry::PatchRegistry(){
 //   REGISTER_PATCH(EnvelopeFilterPatch, "Envelope Filter");
 //   REGISTER_PATCH(OctaveDownPatch, "Octave Pitch Shifter");
 
-//   REGISTER_PATCH(BiasPatch, "contest/BiasPatch");
-//   REGISTER_PATCH(BiasedDelayPatch, "contest/BiasedDelayPatch");
-//   REGISTER_PATCH(BitH8rPatch, "contest/BitH8rPatch");
-//   REGISTER_PATCH(ConnyPatch, "contest/ConnyPatch");
-//   REGISTER_PATCH(DroneBoxPatch, "contest/DroneBox");
-//   REGISTER_PATCH(DualTremoloPatch, "contest/DualTremoloPatch");
-//   REGISTER_PATCH(JumpDelay, "contest/JumpDelay");
-//   REGISTER_PATCH(SampleJitterPatch, "contest/SampleJitterPatch");
-//   REGISTER_PATCH(SirenPatch, "contest/SirenPatch");
-//   REGISTER_PATCH(little_blo_bleep, "contest/blo_bleep");
+  REGISTER_PATCH(BiasPatch, "Contest/BiasPatch");
+  REGISTER_PATCH(BiasedDelayPatch, "Contest/BiasedDelayPatch");
+  REGISTER_PATCH(BitH8rPatch, "Contest/BitH8rPatch");
+  REGISTER_PATCH(ConnyPatch, "Contest/ConnyPatch");
+  REGISTER_PATCH(DroneBoxPatch, "contest/DroneBox");
+  REGISTER_PATCH(DualTremoloPatch, "contest/DualTremoloPatch");
+  REGISTER_PATCH(JumpDelay, "contest/JumpDelay");
+  REGISTER_PATCH(SampleJitterPatch, "contest/SampleJitterPatch");
+  REGISTER_PATCH(SirenPatch, "contest/SirenPatch");
+  REGISTER_PATCH(little_blo_bleep, "Contest/blo_bleep");
 }
 
 StringArray PatchRegistry::getNames(){

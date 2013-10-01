@@ -40,8 +40,9 @@ public:
         return in;
     }
     
-    void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
-        int size = input.getSize();
+    void processAudio(AudioBuffer &buffer)
+    {
+        int size = buffer.getSize();
         
         //Dist 1's parameter, needed to sanitize by *0.9 or the filter would be quiet. also the waveshaper wants a specific range.
         float paramA = getParameterValue(PARAMETER_A)*1.0;
@@ -57,11 +58,14 @@ public:
         
         //Dry/wet.
         float paramD = getParameterValue(PARAMETER_D);
-        
+       
+    for(int ch = 0; ch<buffer.getChannels(); ++ch)
+    { 
         //Getting the number of samples in the inputstream
-        float* buf = input.getSamples();
+        float* buf = buffer.getSamples(ch);
         
         //main loop, let's have some fun
+
         for(int i=0; i<size; ++i)
         {
             //unless we have a silent stream, let's do some processing.
@@ -80,9 +84,9 @@ public:
                 buf[i] = clip(paramD*(dist_1+(dist_2*paramC)) + ((1.0-paramD)*buf[i] ));
             }
         }
+    }
         
-        //give the buffer back so we can hear the beauty.
-        output.setSamples(buf);
+       
     }
     
 };

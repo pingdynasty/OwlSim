@@ -60,7 +60,8 @@ public:
     registerParameter(PARAMETER_B, "Bias");
     registerParameter(PARAMETER_D, "Dry/Wet");
   }
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
+ void processAudio(AudioBuffer &buffer) 
+  {
 
     double rate = getSampleRate();
     
@@ -82,24 +83,28 @@ public:
     // float cutoff = p3;
     float dryWetMix = p4;
     
-    int size = input.getSize();
-    float* buf = input.getSamples();
-    Random r;
-    for (int i=0; i<size; ++i)
-    {
-      int offset = floor(maxSampleDelay * pow(r.nextFloat(), bias) + 0.5);
-      int readIdx = writeIdx - offset;
-      while (readIdx<0)
-        readIdx += bufferSize;
+    int size = buffer.getSize();
 
-      circularBuffer[writeIdx] = buf[i];
-      buf[i] =
-        circularBuffer[readIdx] * dryWetMix +
-        buf[i] * (1 - dryWetMix);
+	for(int ch = 0; ch<buffer.getChannels(); ++ch)
+	 { 	
+	    float* buf = buffer.getSamples(ch);
+	    Random r;
+	    for (int i=0; i<size; ++i)
+	    {
+	      int offset = floor(maxSampleDelay * pow(r.nextFloat(), bias) + 0.5);
+	      int readIdx = writeIdx - offset;
+	      while (readIdx<0)
+		readIdx += bufferSize;
 
-      writeIdx = (++writeIdx) % bufferSize;
-    }
-    output.setSamples(buf);
+	      circularBuffer[writeIdx] = buf[i];
+	      buf[i] =
+		circularBuffer[readIdx] * dryWetMix +
+		buf[i] * (1 - dryWetMix);
+
+	      writeIdx = (++writeIdx) % bufferSize;
+	    }
+	 }
+     
   }
   
   ~SampleJitterPatch(){
