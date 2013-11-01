@@ -159,26 +159,27 @@ public:
   JDelay::Parameters* pParams;
   JDelay::Buffer* pBuffer;
 
-  void processAudio(AudioBuffer &buffer) {
+  void processAudio(AudioBuffer &buffer) 
+  {
     int size = buffer.getSize();
 
+	for(int ch = 0; ch<buffer.getChannels(); ++ch)
+	  { 
+	    float* Buf = buffer.getSamples(ch);
+	   
 		
-    pParams->update();
-    pBuffer->setBufferSize(pParams->bufferSize);
-    pBuffer->setWindowSize(pParams->windowSize);
-      
-      for (int ch = 0; ch<buffer.getChannels(); ++ch) {
-          
-          float* buf = buffer.getSamples(ch);
-          
-          for(int i = 0; i < size; ++i) {
-              pBuffer->write(buf[i] + pParams->feedback * pBuffer->readRecordHead());
-              buf[i] = buf[i] + pBuffer->readPlayHead();
-              pBuffer->nextSample();
-              checkJump();
-          }
-      }
+	    pParams->update();
+	    pBuffer->setBufferSize(pParams->bufferSize);
+	    pBuffer->setWindowSize(pParams->windowSize);
 
+	    for(int i = 0; i < size; ++i) 
+	    {
+	      pBuffer->write(Buf[i] + pParams->feedback * pBuffer->readRecordHead());
+	      Buf[i] = Buf[i] + pBuffer->readPlayHead();
+				pBuffer->nextSample();
+	      checkJump();
+	    }
+	  }
   }
 };
 

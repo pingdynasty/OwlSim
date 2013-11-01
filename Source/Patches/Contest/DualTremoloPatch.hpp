@@ -54,7 +54,7 @@ public:
     registerParameter(PARAMETER_D, "Amount 2");
     memset(oldVal, 0, sizeof(oldVal));
   }
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
+  void processAudio(AudioBuffer &buffer){
     double rate = getSampleRate();
 
     float p1 = getRampedParameterValue(PARAMETER_A);
@@ -67,8 +67,12 @@ public:
     float amt2 = getRampedParameterValue(PARAMETER_D);
     double step2 = freq2 / rate;
     
-    int size = input.getSize();
-    float* buf = input.getSamples();
+    int size = buffer.getSize();
+
+  for(int ch = 0; ch<buffer.getChannels(); ++ch)
+  { 
+    float* buf = buffer.getSamples(ch);
+
     for (int i=0; i<size; ++i)
     {
       float mod1 = sin(2 * M_PI * phase1) / 2 + .5; // 0..1
@@ -79,7 +83,8 @@ public:
       phase1 += step1;
       phase2 += step2;
     }
-    output.setSamples(buf);
+  }
+    
   }
 
 private:

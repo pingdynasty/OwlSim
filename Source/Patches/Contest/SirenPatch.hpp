@@ -547,7 +547,7 @@ public:
       registerParameter(PARAMETER_D, "tr60");
     }
     
-    void processAudio(AudioBuffer &buffer)
+    void processAudio(AudioBuffer &buffer) 
     {
         int bufferSize = buffer.getSize();
         
@@ -557,13 +557,13 @@ public:
         this->_Siren.setFMSynthMode(this->getMode());
         this->_Siren.setTR60(this->getTR60());
         
+        // process samples
+     for(int ch = 0; ch<buffer.getChannels(); ++ch)
+       { 
+        float* buf = buffer.getSamples(ch);
+        this->_Siren.processReplacing(buf, bufferSize);
+       }	
         
-        for (int ch = 0; ch<buffer.getChannels(); ++ch) {
-            
-            // process samples
-            float* buf = buffer.getSamples(ch);
-            this->_Siren.processReplacing(buf, bufferSize);
-        }
     }
     
 private:

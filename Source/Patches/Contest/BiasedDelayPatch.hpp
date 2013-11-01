@@ -64,7 +64,7 @@ public:
     memset(oldVal, 0, sizeof(oldVal));
   }
 
-  void processAudio(AudioBuffer &buffer){
+    void processAudio(AudioBuffer &buffer){
 
     double rate = getSampleRate();
     
@@ -77,29 +77,29 @@ public:
     }
 
     unsigned int sampleDelay = getSampleDelay(getRampedParameterValue(PARAMETER_A), rate);
-    float feedback           = getRampedParameterValue(PARAMETER_B);
-    float bias               = getBiasExponent(1 - getRampedParameterValue(PARAMETER_C));
-    float dryWetMix          = getRampedParameterValue(PARAMETER_D);
+    float feedback = getRampedParameterValue(PARAMETER_B);
+    float bias = getBiasExponent(1 - getRampedParameterValue(PARAMETER_C));
+    float dryWetMix = getRampedParameterValue(PARAMETER_D);
     
-    int size = buffer.getSize();
-      
-      
-      for (int ch = 0; ch<buffer.getChannels(); ++ch) {
-          
-          float* buf = buffer.getSamples(ch);
-          
-          for (int i=0; i<size; ++i)
-          {
-              float delaySample = circularBuffer[writeIdx];
-              float v = buf[i] + circularBuffer[writeIdx] * feedback;
-              v = applyBias(v, bias);
-              circularBuffer[writeIdx] = min(1, max(-1, v)); // Guard: hard range limits.
-              buf[i] = linearBlend(buf[i], delaySample, dryWetMix);
-              
-              writeIdx = (++writeIdx) % sampleDelay;
-          }
-      }
 
+    int size = buffer.getSize();
+
+ 	for(int ch = 0; ch<buffer.getChannels(); ++ch)
+ 	{
+	    float* buf = buffer.getSamples(ch);
+
+	    for (int i=0; i<size; ++i)
+	    {
+	      float delaySample = circularBuffer[writeIdx];
+	      float v = buf[i] + circularBuffer[writeIdx] * feedback;
+	      v = applyBias(v, bias);
+	      circularBuffer[writeIdx] = min(1, max(-1, v)); // Guard: hard range limits.
+	      buf[i] = linearBlend(buf[i], delaySample, dryWetMix);
+
+	      writeIdx = (++writeIdx) % sampleDelay;
+	    }
+		
+  	}
   }
   
   ~BiasedDelayPatch(){

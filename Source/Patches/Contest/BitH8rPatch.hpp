@@ -32,7 +32,7 @@ public:
 	registerParameter(PARAMETER_D, "OWL is cool, however");
 
   }
-  void processAudio(AudioBuffer &buffer){
+   void processAudio(AudioBuffer &buffer){
     
 	  int totalBits = 8;
 
@@ -44,30 +44,28 @@ public:
 	  int loopCount = bitStutter;	
 	  float currentSample = 0;
 
-
 	  int size = buffer.getSize();
-      
-      for (int ch = 0; ch<buffer.getChannels(); ++ch) {
 
-          float* buf = buffer.getSamples(ch);
-          
-          for(int i = 0; i < size; i++)
-          {
-             if(--loopCount <= 0)
-              {
-                  float x = buf[i];
-                  x = (x + 1.0) * crushedMax;
-                  x = x > 0 ? floor(x + 0.5) : ceil(x - 0.5);
-                  x = (x / crushedMax) - 1.0;
-                  x = x * gain;
-                    
-                  currentSample = x;
+	for(int ch = 0; ch<buffer.getChannels(); ++ch)
+	{
+	  float* buf = buffer.getSamples(ch);
+	  for(int i = 0; i < size; i++)
+	  {
+		 if(--loopCount <= 0)
+		  {
+			  float x = buf[i];
+			  x = (x + 1.0) * crushedMax;
+			  x = x > 0 ? floor(x + 0.5) : ceil(x - 0.5);
+			  x = (x / crushedMax) - 1.0;
+			  x = x * gain;
+				
+			  currentSample = x;
 
-                  loopCount = bitStutter;
-              }
-                  buf[i] = currentSample;
-          }
-      }
+			  loopCount = bitStutter;
+		  }
+			  buf[i] = currentSample;
+	  }
+       }
 
   }
 

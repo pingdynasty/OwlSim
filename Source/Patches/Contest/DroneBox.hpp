@@ -210,12 +210,11 @@ public:
     mOldValues[1] = 0.;
     mOldValues[2] = 0.;
     mOldValues[3] = 0.;
-      
     
     //printf("size of patch %ld bytes\n", sizeof(*this));
   }
   
-  void processAudio(AudioBuffer &buffer)
+ void processAudio(AudioBuffer &buffer)
   {
     const int size = buffer.getSize();
     const float coarsePitch = getRampedParameterValue(PARAMETER_A);
@@ -237,26 +236,27 @@ public:
       mPrevFinePitch = finePitch;
       mPrevDecay = decay;
     }
+      
+	  for(int ch = 0; ch<buffer.getChannels(); ++ch)
+	  {   
+	    float* buf = buffer.getSamples(ch);
+	    
+	    for(int i = 0; i < size; i++)
+	    {
+	      float ips = buf[i];
+	      float ops = 0.;
+	      const float smoothMix = mMixSmoother.process(mix);
+	      
+	      for (int c = 0; c < NUM_COMBS; c++) 
+	      {
+		ops += mCombs[c].process(ips);
+	      }
+	      
+	      buf[i] = mDCBlocker.process( ((ops * 0.1) * smoothMix) + (ips * (1.-smoothMix)) );
+	    }
+	  }
     
-      for (int ch = 0; ch<buffer.getChannels(); ++ch) {
-          
-          float* buf = buffer.getSamples(ch);
-          
-          for(int i = 0; i < size; i++)
-          {
-              float ips = buf[i];
-              float ops = 0.;
-              const float smoothMix = mMixSmoother.process(mix);
-              
-              for (int c = 0; c < NUM_COMBS; c++)
-              {
-                  ops += mCombs[c].process(ips);
-              }
-              
-              buf[i] = mDCBlocker.process( ((ops * 0.1) * smoothMix) + (ips * (1.-smoothMix)) );
-          }
-      }
-
+   
   }
   
 };

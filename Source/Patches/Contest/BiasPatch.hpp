@@ -49,27 +49,33 @@ class BiasPatch : public Patch {
   const float MAX_BIAS;
 
 public:
-  BiasPatch() : MIN_BIAS(0.1), MED_BIAS(1), MAX_BIAS(6), ramp(0.1) {
+  BiasPatch() : MIN_BIAS(0.1), MED_BIAS(1), MAX_BIAS(6), ramp(0.1) 
+  {
     registerParameter(PARAMETER_A, "Bias");
     registerParameter(PARAMETER_D, "Dry/Wet");
     memset(oldVal, 0, sizeof(oldVal));
   }
-  void processAudio(AudioInputBuffer &input, AudioOutputBuffer &output){
+  void processAudio(AudioBuffer &buffer)
+  {
     float bias = getBias(1 - getRampedParameterValue(PARAMETER_A));
     float dryWetMix = getRampedParameterValue(PARAMETER_D);
 
-    int size = input.getSize();
-    float* buf = input.getSamples();
-    for (int i=0; i<size; ++i)
-    {
-      float v =
-      powf(fabs(buf[i]), bias) * // bias
-        (buf[i] < 0 ? -1 : 1);    // sign
-      buf[i] =
-        v * dryWetMix +
-        buf[i] * (1 - dryWetMix);
-    }
-    output.setSamples(buf);
+    int size = buffer.getSize();
+    
+	for(int ch = 0; ch<buffer.getChannels(); ++ch)
+	 {
+	     float* buf = buffer.getSamples(ch);
+	     for (int i=0; i<size; ++i)
+	     {
+		 float v =
+		      powf(fabs(buf[i]), bias) * // bias
+			(buf[i] < 0 ? -1 : 1);    // sign
+		      buf[i] =
+			v * dryWetMix +
+			buf[i] * (1 - dryWetMix);
+	      }
+		     
+	 }
   }
 
 private:
