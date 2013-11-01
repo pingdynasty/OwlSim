@@ -128,6 +128,9 @@
   <Files>
     <Filter Name="OwlSim">
       <Filter Name="Source">
+        <File RelativePath="..\..\Source\MemoryBuffer.hpp"/>
+        <File RelativePath="..\..\Source\PluginPatchProcessor.cpp"/>
+        <File RelativePath="..\..\Source\PluginPatchProcessor.h"/>
         <Filter Name="Patches">
           <Filter Name="Contest">
             <File RelativePath="..\..\Source\Patches\Contest\BiasedDelayPatch.hpp"/>

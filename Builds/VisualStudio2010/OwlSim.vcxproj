@@ -127,6 +127,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\PluginPatchProcessor.cpp"/>
     <ClCompile Include="..\..\Source\PatchProcessor.cpp"/>
     <ClCompile Include="..\..\Source\StompGui.cpp"/>
     <ClCompile Include="..\..\Source\SampleBuffer.cpp"/>
@@ -1175,6 +1176,8 @@
     <ClCompile Include="..\..\modules\juce_audio_plugin_client\VST\juce_VST_Wrapper.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\MemoryBuffer.hpp"/>
+    <ClInclude Include="..\..\Source\PluginPatchProcessor.h"/>
     <ClInclude Include="..\..\Source\Patches\Contest\BiasedDelayPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\Contest\BiasPatch.hpp"/>
     <ClInclude Include="..\..\Source\Patches\Contest\BitH8rPatch.hpp"/>

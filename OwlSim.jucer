@@ -11,6 +11,12 @@
               companyName="Rebel Technology">
   <MAINGROUP id="WHVxNd" name="OwlSim">
     <GROUP id="{38D29851-9657-B61F-ADA4-1EDE4BF89C63}" name="Source">
+      <FILE id="g8jeIP" name="MemoryBuffer.hpp" compile="0" resource="0"
+            file="Source/MemoryBuffer.hpp"/>
+      <FILE id="k1lt69" name="PluginPatchProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginPatchProcessor.cpp"/>
+      <FILE id="QvbaEQ" name="PluginPatchProcessor.h" compile="0" resource="0"
+            file="Source/PluginPatchProcessor.h"/>
       <GROUP id="{5899F8C7-8969-B7C3-DE7F-C03A2EBBDDD0}" name="Patches">
         <GROUP id="{3B2F5EEA-90B8-FAB2-30AE-70774863895A}" name="Contest">
           <FILE id="oH9WSt" name="BiasedDelayPatch.hpp" compile="0" resource="0"

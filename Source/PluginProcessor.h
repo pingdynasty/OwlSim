@@ -2,10 +2,10 @@
 #define __PLUGINPROCESSOR_H__
 
 #include "JuceHeader.h"
-#include "PatchProcessor.h"
+#include "PluginPatchProcessor.h"
 #include "PatchRegistry.h"
 
-class StompBoxAudioProcessor  : public AudioProcessor, public PatchProcessor {
+class StompBoxAudioProcessor  : public AudioProcessor {
 public:
   StompBoxAudioProcessor();
   ~StompBoxAudioProcessor();
@@ -39,7 +39,8 @@ public:
 
   const String getParameterDescription(int index);
   void setPatch(std::string name);
-  static StompBoxAudioProcessor* getThreadLocalInstance();
+/*   static StompBoxAudioProcessor* getThreadLocalInstance(); */
+  static PatchProcessor* getPatchProcessor();
   bool bypass;
 
   /*** PatchProcessor methods */
@@ -47,15 +48,14 @@ public:
   const String getCurrentPatchName();
   void registerParameter(PatchParameterId pid, const std::string& name, 
 			 const std::string& description = "");
-  float getParameterValue(PatchParameterId pid);
-  int getBlockSize();
-  double getSampleRate();
+/*   float getParameterValue(PatchParameterId pid); */
+/*   int getBlockSize(); */
+/*   double getSampleRate(); */
 
 private:
   static ThreadLocalValue<StompBoxAudioProcessor*> instance;
-
   PatchRegistry patches;
-  ScopedPointer<Patch> patch;
+  ScopedPointer<PluginPatchProcessor> patchprocessor;
   float parameterValues[16];
   std::string currentPatchName;
   CriticalSection mutex;

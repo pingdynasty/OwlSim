@@ -301,6 +301,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\PluginPatchProcessor.cpp">
+      <Filter>OwlSim\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\PatchProcessor.cpp">
       <Filter>OwlSim\Source</Filter>
     </ClCompile>
@@ -1470,6 +1473,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\MemoryBuffer.hpp">
+      <Filter>OwlSim\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PluginPatchProcessor.h">
+      <Filter>OwlSim\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Patches\Contest\BiasedDelayPatch.hpp">
       <Filter>OwlSim\Source\Patches\Contest</Filter>
     </ClInclude>
