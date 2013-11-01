@@ -1,4 +1,4 @@
-//
+ //
 //  SampleJitterPatch.hpp
 //
 //  A distortion effect: delays incoming samples by random amounts of time.

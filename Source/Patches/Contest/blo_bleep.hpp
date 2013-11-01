@@ -39,13 +39,10 @@ class little_blo_bleep : public Patch {
     
     
 
-    void processAudio (AudioInputBuffer& input, AudioOutputBuffer& output) {
+    void processAudio (AudioBuffer &buffer) {
 
-      int size   = input.getSize ();
-      float* buf = input.getSamples();
-      float* outbuf = output.getSamples();
+      int size   = buffer.getSize ();
       
-
       // 
       // do we have to get these every cycle? 
       // have to cos the user could change during performance...
@@ -55,19 +52,25 @@ class little_blo_bleep : public Patch {
       float bps = bpm / 60.0; // beats per second
       int samples_per_beat = (int) (getSampleRate() / bps + 0.5); // we bit shift the pattern every beat
 
-      
 
       // apply blo_bleep to input buffer!
-      for (int i = 0; i < size; ++i) {
-          
-          if (++current_sample >= samples_per_beat) {
-              current_sample = 0;
-              blo_bleep = (pattern >> num_shifts) & extract; // extract the right most bit >> bloopity, bleepity!
-              if (++num_shifts >= num_bits_less1) num_shifts = 1;
-          }
-          
-        outbuf[i] = blo_bleep * buf[i]; // 1 or 0 gain based on extracted bit pattern, bloppity bleepity!
-      }
+        
+        for (int ch = 0; ch<buffer.getChannels(); ++ch) {
+            
+            float* buf = buffer.getSamples(ch);
+            
+            for (int i = 0; i < size; ++i) {
+                
+                if (++current_sample >= samples_per_beat) {
+                    current_sample = 0;
+                    blo_bleep = (pattern >> num_shifts) & extract; // extract the right most bit >> bloopity, bleepity!
+                    if (++num_shifts >= num_bits_less1) num_shifts = 1;
+                }
+                
+                buf[i] = blo_bleep * buf[i]; // 1 or 0 gain based on extracted bit pattern, bloppity bleepity!
+            }
+        }
+
 
     }
 

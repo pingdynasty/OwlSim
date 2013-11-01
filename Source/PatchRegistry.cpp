@@ -55,7 +55,7 @@ PatchRegistry::PatchRegistry(){
   REGISTER_PATCH(PhaserPatch, "Phaser");
   REGISTER_PATCH(StateVariableFilterPatch, "State Variable Filter");
   REGISTER_PATCH(ResonantFilterPatch, "Resonant Low Pass Filter");
-  REGISTER_PATCH(FlangerPatch, "Flanger");
+  REGISTER_PATCH(FlangerPatch<1024>, "Flanger");
   REGISTER_PATCH(LeakyIntegratorPatch, "Leaky Integrator");
   REGISTER_PATCH(LpfDelayPatch<32768>, "Low Pass Filtered Delay");
   REGISTER_PATCH(LpfDelayPhaserPatch<32768>, "Low Pass Filtered Delay with Phaser");

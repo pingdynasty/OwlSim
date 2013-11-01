@@ -14,8 +14,8 @@ private:
     
 public:    
   LpfDelayPhaserPatch() : x1(0.0f), x2(0.0f), y1(0.0f), y2(0.0f),
-			  _lfoPhase( 0.f ), depth( 1.f ),
-			  feedback( .7f ),_zm1( 0.f ) {        
+                                    _lfoPhase( 0.f ), depth( 1.f ),
+                                        feedback( .7f ),_zm1( 0.f ) {        
     registerParameter(PARAMETER_A, "Delay");
     registerParameter(PARAMETER_B, "Feedback");
     registerParameter(PARAMETER_C, "Fc");
@@ -125,7 +125,7 @@ public:
   void processAudio(AudioBuffer &buffer){
       
     int size = buffer.getSize();
-    float w, z;  //implement with less arrays?
+    float z;  //implement with less arrays?
     setCoeffs(getLpFreq(), 0.8f);
     rate = 0.01f, depth = 0.3f;
         
@@ -152,7 +152,9 @@ public:
           
           for (int i = 0; i < size; i++){
               
-              outBuf[i] = outBuf[i] + feedback * delayBuffer.read(delaySamples);
+              dSamples = olddelaySamples + (delaySamples - olddelaySamples) * i / size;
+              
+              outBuf[i] = outBuf[i] + feedback * delayBuffer.read(dSamples);
               buf[i] = (1.f - wetDry) * buf[i] + wetDry * outBuf[i];  //crossfade for wet/dry balance
               delayBuffer.write(buf[i]);
               
@@ -163,8 +165,8 @@ public:
               
               buf[i] = buf[i] + z * depth;
           }
+      olddelaySamples = delaySamples;
       }
-        
   }
     
 private:
@@ -204,7 +206,8 @@ private:
   float _lfoInc;
   float depth, rate, feedback;    
   float _zm1;
-  CircularBuffer<float, bufsize> delayBuffer;    
+  CircularBuffer<float, bufsize> delayBuffer;
+  float olddelaySamples = 0, dSamples;
 };
 
 #endif

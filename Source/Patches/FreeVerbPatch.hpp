@@ -312,7 +312,7 @@ public:
 	
 
 
-	void processAudio(AudioInputBuffer &inp, AudioOutputBuffer &output){
+	void processAudio(AudioBuffer &buffer){
 		
 	    float _mix = getParameterValue(PARAMETER_A);
 	    float _roomsize = getParameterValue(PARAMETER_B);
@@ -322,34 +322,37 @@ public:
 	    setroomsize(_roomsize);
 	    setdamp(_damp);
 		float outL,input;
+        
+        int numsamples = buffer.getSize();
 
-		float* inputL = inp.getSamples();
-		float* outputL = output.getSamples();
-		int numsamples = inp.getSize();
-		while(numsamples-- > 0)
-		{
-			outL = 0;
-			input = (*inputL) * gain;
-			
-			// Accumulate comb filters in parallel
-			for(int i=0; i<numcombs; i++)
-			{
-				outL += combL[i].process(input);
-			}
-			
-			// Feed through allpasses in series
-			for(int i=0; i<numallpasses; i++)
-			{
-				outL = allpassL[i].process(outL);
-			}
-			
-			// Calculate output MIXING with anything already there
-			*inputL += outL*wet + *inputL*dry;
-			*outputL = *inputL;
-			// Increment sample pointers, allowing for interleave (if any)
-			inputL += 1;
-			outputL += 1;
-		}
+        for (int ch = 0; ch<buffer.getChannels(); ++ch) {
+            
+            float* buf = buffer.getSamples(ch);
+            
+            while(numsamples-- > 0)
+            {
+                outL = 0;
+                input = (*buf) * gain;
+                
+                // Accumulate comb filters in parallel
+                for(int i=0; i<numcombs; i++)
+                {
+                    outL += combL[i].process(input);
+                }
+                
+                // Feed through allpasses in series
+                for(int i=0; i<numallpasses; i++)
+                {
+                    outL = allpassL[i].process(outL);
+                }
+                
+                // Calculate output MIXING with anything already there
+                *buf += outL*wet + *buf*dry;
+                // Increment sample pointers, allowing for interleave (if any)
+                buf += 1;
+            }
+        }
+        
 	}
 };
 

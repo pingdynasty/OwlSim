@@ -129,12 +129,16 @@ public:
           process(size, buf, outBuf);     // low pass filter for delay buffer
           
           for(int i = 0; i < size; i++){
+              
+              dSamples = olddelaySamples + (delaySamples - olddelaySamples) * i / size;
 
-              outBuf[i] = outBuf[i] + feedback * delayBuffer.read(delaySamples);
+              outBuf[i] = outBuf[i] + feedback * delayBuffer.read(dSamples);
               buf[i] = (1.f - wetDry) * buf[i] + wetDry * outBuf[i];  //crossfade for wet/dry balance
               delayBuffer.write(buf[i]);
           }
       }
+      
+      olddelaySamples = delaySamples;
   }
     
 private:
@@ -142,8 +146,10 @@ private:
   float b[3] ; // bi coefficients
   float pa[3] ; // previous ai coefficients
   float pb[3] ; // previous bi coefficients
-  float x1, x2, y1, y2 ; // state variables to compute samples    
-  CircularBuffer<float, bufsize> delayBuffer;
+  float x1, x2, y1, y2 ; // state variables to compute samples
+    
+  CircularBuffer<float, bufsize> delayBuffer;   //buffer for delay
+  float olddelaySamples = 0, dSamples;          //variables for interpolating delay buffer
 };
 
 #endif
