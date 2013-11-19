@@ -8,7 +8,7 @@
               pluginSilenceInIsSilenceOut="0" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="" pluginRTASCategory="" aaxIdentifier="com.yourcompany.stompBox"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="3.1.0"
-              companyName="Rebel Technology">
+              companyName="Rebel Technology" includeBinaryInAppConfig="1">
   <MAINGROUP id="WHVxNd" name="OwlSim">
     <GROUP id="{38D29851-9657-B61F-ADA4-1EDE4BF89C63}" name="Source">
       <FILE id="g8jeIP" name="MemoryBuffer.hpp" compile="0" resource="0"
@@ -17,53 +17,6 @@
             file="Source/PluginPatchProcessor.cpp"/>
       <FILE id="QvbaEQ" name="PluginPatchProcessor.h" compile="0" resource="0"
             file="Source/PluginPatchProcessor.h"/>
-      <GROUP id="{5899F8C7-8969-B7C3-DE7F-C03A2EBBDDD0}" name="Patches">
-        <GROUP id="{3B2F5EEA-90B8-FAB2-30AE-70774863895A}" name="Contest">
-          <FILE id="oH9WSt" name="BiasedDelayPatch.hpp" compile="0" resource="0"
-                file="Source/Patches/Contest/BiasedDelayPatch.hpp"/>
-          <FILE id="IUfrhY" name="BiasPatch.hpp" compile="0" resource="0" file="Source/Patches/Contest/BiasPatch.hpp"/>
-          <FILE id="teDpys" name="BitH8rPatch.hpp" compile="0" resource="0" file="Source/Patches/Contest/BitH8rPatch.hpp"/>
-          <FILE id="zlfZwF" name="blo_bleep.hpp" compile="0" resource="0" file="Source/Patches/Contest/blo_bleep.hpp"/>
-          <FILE id="BqJdwa" name="ConnyPatch.hpp" compile="0" resource="0" file="Source/Patches/Contest/ConnyPatch.hpp"/>
-          <FILE id="kqCDTD" name="DroneBox.hpp" compile="0" resource="0" file="Source/Patches/Contest/DroneBox.hpp"/>
-          <FILE id="f6DaL7" name="DualTremoloPatch.hpp" compile="0" resource="0"
-                file="Source/Patches/Contest/DualTremoloPatch.hpp"/>
-          <FILE id="K3Qn8P" name="JumpDelay.hpp" compile="0" resource="0" file="Source/Patches/Contest/JumpDelay.hpp"/>
-          <FILE id="SZiZ3U" name="SampleJitterPatch.hpp" compile="0" resource="0"
-                file="Source/Patches/Contest/SampleJitterPatch.hpp"/>
-          <FILE id="LmW2Lz" name="SirenPatch.hpp" compile="0" resource="0" file="Source/Patches/Contest/SirenPatch.hpp"/>
-        </GROUP>
-        <FILE id="br6Qxq" name="EnvelopeFilterPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/EnvelopeFilterPatch.hpp"/>
-        <FILE id="a5OIoG" name="FreeVerbPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/FreeVerbPatch.hpp"/>
-        <FILE id="vgTlvv" name="CircularBuffer.hpp" compile="0" resource="0"
-              file="Source/Patches/CircularBuffer.hpp"/>
-        <FILE id="CdDjKP" name="FlangerPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/FlangerPatch.hpp"/>
-        <FILE id="cYygQH" name="GainPatch.hpp" compile="0" resource="0" file="Source/Patches/GainPatch.hpp"/>
-        <FILE id="cB50yV" name="LeakyIntegratorPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/LeakyIntegratorPatch.hpp"/>
-        <FILE id="BdEkrx" name="LpfDelayPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/LpfDelayPatch.hpp"/>
-        <FILE id="ctBzD0" name="LpfDelayPhaserPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/LpfDelayPhaserPatch.hpp"/>
-        <FILE id="P1uUS7" name="OverdrivePatch.hpp" compile="0" resource="0"
-              file="Source/Patches/OverdrivePatch.hpp"/>
-        <FILE id="PzYpp1" name="TemplatePatch.hpp" compile="0" resource="0"
-              file="Source/Patches/TemplatePatch.hpp"/>
-        <FILE id="FbQdH2" name="PhaserPatch.hpp" compile="0" resource="0" file="Source/Patches/PhaserPatch.hpp"/>
-        <FILE id="fQLRcB" name="ResonantFilterPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/ResonantFilterPatch.hpp"/>
-        <FILE id="FDmeLM" name="SampleBasedPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/SampleBasedPatch.hpp"/>
-        <FILE id="iQl02D" name="SimpleDelayPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/SimpleDelayPatch.hpp"/>
-        <FILE id="orF0aW" name="StateVariableFilterPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/StateVariableFilterPatch.hpp"/>
-        <FILE id="PGdjFy" name="ParametricEqPatch.hpp" compile="0" resource="0"
-              file="Source/Patches/ParametricEqPatch.hpp"/>
-      </GROUP>
       <FILE id="meheFz" name="PatchProcessor.cpp" compile="1" resource="0"
             file="Source/PatchProcessor.cpp"/>
       <FILE id="vjDnoH" name="PatchProcessor.h" compile="0" resource="0"
