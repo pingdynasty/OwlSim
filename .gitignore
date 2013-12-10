@@ -13,3 +13,19 @@
 *.lai
 *.la
 *.a
+
+# Compiled Visual Studio Folders
+Builds/VisualStudio2012/Debug/
+Builds/VisualStudio2012/Release/
+Builds/VisualStudio2010/Debug/
+Builds/VisualStudio2010/Release/
+
+# Visual Studio Solution and User Settings
+Builds/VisualStudio2012/OwlSim.sdf
+Builds/VisualStudio2012/OwlSim.opensdf
+Builds/VisualStudio2012/OwlSim.v11.suo
+Builds/VisualStudio2010/OwlSim.sdf
+Builds/VisualStudio2010/OwlSim.opensdf
+Builds/VisualStudio2010/OwlSim.suo
+Builds/VisualStudio2010/OwlSim.sln.docstates.suo
+Builds/VisualStudio2010/OwlSim.vcxproj.user
