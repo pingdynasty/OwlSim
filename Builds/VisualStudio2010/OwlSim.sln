@@ -1,6 +1,49 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{28A06354-B874-7819-2C19-52357B7AB955}") = "OwlSim", "OwlSim.vcxproj", "{59C21696-E4C4-F552-6573-A87FC0BF0214}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OwlSim", "OwlSim.vcxproj", "{59C21696-E4C4-F552-6573-A87FC0BF0214}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PatchRegistry", "PatchRegistry", "{BC1045E5-019B-43C3-AA03-C40BCE7F497F}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Source\OwlPatches\CircularBuffer.hpp = ..\..\Source\OwlPatches\CircularBuffer.hpp
+		..\..\Source\OwlPatches\DroneBoxPatch.hpp = ..\..\Source\OwlPatches\DroneBoxPatch.hpp
+		..\..\Source\OwlPatches\EnvelopeFilterPatch.hpp = ..\..\Source\OwlPatches\EnvelopeFilterPatch.hpp
+		..\..\Source\OwlPatches\FixedDelayPatch.hpp = ..\..\Source\OwlPatches\FixedDelayPatch.hpp
+		..\..\Source\OwlPatches\FlangerPatch.hpp = ..\..\Source\OwlPatches\FlangerPatch.hpp
+		..\..\Source\OwlPatches\FreeVerbPatch.hpp = ..\..\Source\OwlPatches\FreeVerbPatch.hpp
+		..\..\Source\OwlPatches\GainPatch.hpp = ..\..\Source\OwlPatches\GainPatch.hpp
+		..\..\Source\OwlPatches\includes.h = ..\..\Source\OwlPatches\includes.h
+		..\..\Source\OwlPatches\LeakyIntegratorPatch.hpp = ..\..\Source\OwlPatches\LeakyIntegratorPatch.hpp
+		..\..\Source\OwlPatches\LpfDelayPatch.hpp = ..\..\Source\OwlPatches\LpfDelayPatch.hpp
+		..\..\Source\OwlPatches\LpfDelayPhaserPatch.hpp = ..\..\Source\OwlPatches\LpfDelayPhaserPatch.hpp
+		..\..\Source\OwlPatches\OctaveDownPatch.hpp = ..\..\Source\OwlPatches\OctaveDownPatch.hpp
+		..\..\Source\OwlPatches\OverdrivePatch.hpp = ..\..\Source\OwlPatches\OverdrivePatch.hpp
+		..\..\Source\OwlPatches\ParametricEqPatch.hpp = ..\..\Source\OwlPatches\ParametricEqPatch.hpp
+		..\..\Source\OwlPatches\patches.cpp = ..\..\Source\OwlPatches\patches.cpp
+		..\..\Source\OwlPatches\PhaserPatch.hpp = ..\..\Source\OwlPatches\PhaserPatch.hpp
+		..\..\Source\OwlPatches\ResonantFilterPatch.hpp = ..\..\Source\OwlPatches\ResonantFilterPatch.hpp
+		..\..\Source\OwlPatches\SampleBasedPatch.hpp = ..\..\Source\OwlPatches\SampleBasedPatch.hpp
+		..\..\Source\OwlPatches\SimpleDelayPatch.hpp = ..\..\Source\OwlPatches\SimpleDelayPatch.hpp
+		..\..\Source\OwlPatches\StateVariableFilterPatch.hpp = ..\..\Source\OwlPatches\StateVariableFilterPatch.hpp
+		..\..\Source\OwlPatches\StereoGainPatch.hpp = ..\..\Source\OwlPatches\StereoGainPatch.hpp
+		..\..\Source\OwlPatches\StereoMixerPatch.hpp = ..\..\Source\OwlPatches\StereoMixerPatch.hpp
+		..\..\Source\OwlPatches\TemplatePatch.hpp = ..\..\Source\OwlPatches\TemplatePatch.hpp
+		..\..\Source\OwlPatches\TestTonePatch.hpp = ..\..\Source\OwlPatches\TestTonePatch.hpp
+		..\..\Source\OwlPatches\WaveshaperPatch.hpp = ..\..\Source\OwlPatches\WaveshaperPatch.hpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contest", "Contest", "{7DA0DD83-99BC-4716-8DB7-3CA7FD97BB0F}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Source\OwlPatches\Contest\BiasedDelayPatch.hpp = ..\..\Source\OwlPatches\Contest\BiasedDelayPatch.hpp
+		..\..\Source\OwlPatches\Contest\BiasPatch.hpp = ..\..\Source\OwlPatches\Contest\BiasPatch.hpp
+		..\..\Source\OwlPatches\Contest\BitH8rPatch.hpp = ..\..\Source\OwlPatches\Contest\BitH8rPatch.hpp
+		..\..\Source\OwlPatches\Contest\blo_bleep.hpp = ..\..\Source\OwlPatches\Contest\blo_bleep.hpp
+		..\..\Source\OwlPatches\Contest\ConnyPatch.hpp = ..\..\Source\OwlPatches\Contest\ConnyPatch.hpp
+		..\..\Source\OwlPatches\Contest\DroneBox.hpp = ..\..\Source\OwlPatches\Contest\DroneBox.hpp
+		..\..\Source\OwlPatches\Contest\DualTremoloPatch.hpp = ..\..\Source\OwlPatches\Contest\DualTremoloPatch.hpp
+		..\..\Source\OwlPatches\Contest\JumpDelay.hpp = ..\..\Source\OwlPatches\Contest\JumpDelay.hpp
+		..\..\Source\OwlPatches\Contest\SampleJitterPatch.hpp = ..\..\Source\OwlPatches\Contest\SampleJitterPatch.hpp
+		..\..\Source\OwlPatches\Contest\SirenPatch.hpp = ..\..\Source\OwlPatches\Contest\SirenPatch.hpp
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,5 +58,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7DA0DD83-99BC-4716-8DB7-3CA7FD97BB0F} = {BC1045E5-019B-43C3-AA03-C40BCE7F497F}
 	EndGlobalSection
 EndGlobal
