@@ -7,12 +7,6 @@
     <Filter Include="OwlSim\Source">
       <UniqueIdentifier>{3D480287-0B92-5D13-4CA3-F851109E0F77}</UniqueIdentifier>
     </Filter>
-    <Filter Include="OwlSim\Source\Patches">
-      <UniqueIdentifier>{C0FB07C1-6FB7-EFC5-FACC-C932309341D4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="OwlSim\Source\Patches\Contest">
-      <UniqueIdentifier>{8642F420-45CB-A758-D9E9-1767CB27A822}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Juce Modules">
       <UniqueIdentifier>{422C46B7-0467-2DB0-BF3C-16DFCAFD69AC}</UniqueIdentifier>
     </Filter>
@@ -2638,84 +2632,6 @@
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h">
       <Filter>Juce Library Code</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\BiasedDelayPatch.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\BiasPatch.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\BitH8rPatch.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\blo_bleep.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\ConnyPatch.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\DroneBox.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\DualTremoloPatch.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\JumpDelay.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\SampleJitterPatch.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\SirenPatch.hpp">
-      <Filter>OwlSim\Source\Patches\Contest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\CircularBuffer.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\EnvelopeFilterPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\FlangerPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\FreeVerbPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\GainPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\LeakyIntegratorPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\LpfDelayPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\LpfDelayPhaserPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\OverdrivePatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\ParametricEqPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\PhaserPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\ResonantFilterPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\SampleBasedPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\SimpleDelayPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\StateVariableFilterPatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\TemplatePatch.hpp">
-      <Filter>OwlSim\Source\Patches</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

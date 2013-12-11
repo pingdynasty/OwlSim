@@ -1175,32 +1175,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\MemoryBuffer.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\CircularBuffer.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\BiasedDelayPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\BiasPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\BitH8rPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\blo_bleep.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\ConnyPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\DroneBox.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\DualTremoloPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\JumpDelay.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\SampleJitterPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\Contest\SirenPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\EnvelopeFilterPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\FlangerPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\FreeVerbPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\GainPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\LeakyIntegratorPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\LpfDelayPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\LpfDelayPhaserPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\OverdrivePatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\ParametricEqPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\PhaserPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\ResonantFilterPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\SampleBasedPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\SimpleDelayPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\StateVariableFilterPatch.hpp" />
-    <ClInclude Include="..\..\Source\OwlPatches\TemplatePatch.hpp" />
     <ClInclude Include="..\..\Source\PluginPatchProcessor.h" />
     <ClInclude Include="..\..\Source\PatchProcessor.h" />
     <ClInclude Include="..\..\Source\StompGui.h" />
