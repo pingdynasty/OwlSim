@@ -19,6 +19,7 @@ Builds/VisualStudio2012/Debug/
 Builds/VisualStudio2012/Release/
 Builds/VisualStudio2010/Debug/
 Builds/VisualStudio2010/Release/
+Builds/VisualStudio2010/ipch/
 
 # Visual Studio Solution and User Settings
 Builds/VisualStudio2012/OwlSim.sdf
