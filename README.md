@@ -7,14 +7,18 @@ Simulator for the [OWL](http://hoxtonowl.com/), a programmable effects pedal. Al
 -----------------------
 
 ### 1.1. VST SDK (All platforms)
-To build the OwlSim as a VST, you need the VST SDK 2.4, available on the [Steinberg website](http://www.steinberg.net/en/company/developer.html).
-Please check your project settings to ensure the path to the VST SDK is correct. By default it is set to: ~/SDKs/vstsdk2.4
+To build the OwlSim as a VST, you need at least the VST Audio Plug-Ins SDK 2.4.
+The current available version on [Steinberg website](http://www.steinberg.net/en/company/developer.html) is the 3.6.0.
 
 ### 1.2. Windows 
-For Windows users, Visual Studio solutions (2008, 2010 or 2012) are available in Builds/VisualStudio20xx
+For Windows users, Visual Studio solutions (2008, 2010 or 2012) are available in Builds/VisualStudio20xx.
+
+Please check your project settings to ensure the path to the VST Audio Plug-Ins SDK is correct. By default it is set to: __C:\SDKs\vstsdk2.4__
 
 ### 1.3. Linux
-For Linux users, a Makefile is available in Builds/Linux
+For Linux users, a Makefile is available in Builds/Linux.
+
+Please check your project settings to ensure the path to the VST Audio Plug-Ins SDK is correct. By default it is set to: __~/SDKs/vstsdk2.4__
 
 ### 1.4. Mac OS X
 There is an Xcode project in Builds/MacOSX.
@@ -29,15 +33,17 @@ You will find addtional support on the [Juce Forum](http://rawmaterialsoftware.c
 2. Write your patch
 -------------------
 
-To write your patch, please use the template provided in Source/Patches/TemplatePatch.hpp.
-You can write your code directly into it, or create a new file.
+To write your patch, please use the template provided in __Source/OwlPatches/TemplatePatch.hpp__.
+You can write your code directly into it, or create a new file in Source/OwlPatches.
 
-If you create a new file (say, “MyPatch.hpp”) you will need to register it in Source/PatchRegistry.cpp: 
-- add the relevant #include:
+If you use GitHub desktop application and forked this repository, changes made in Source/OwlPatches directory will not be commited to your fork.
 
-```#include "Patches/MyPatch.hpp"```
+After creating a new file (say “Source/OwlPatches/MyPatch.hpp”), you will need to:
+- add the relevant #include to the file __Source/OwlPatches/includes.h__:
 
-- add the following line to the constructor, Patchregistry::PatchRegistry():
+```#include "MyPatch.hpp"```
+
+- register it into the file __Source/OwlPatches/patches.cpp__:
 
 ```REGISTER_PATCH(MyPatch, "My Patch");```
 
