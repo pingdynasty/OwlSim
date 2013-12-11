@@ -1,6 +1,12 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{28A06354-B874-7819-2C19-52357B7AB955}") = "OwlSim", "OwlSim.vcxproj", "{59C21696-E4C4-F552-6573-A87FC0BF0214}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OwlSim", "OwlSim.vcxproj", "{59C21696-E4C4-F552-6573-A87FC0BF0214}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PatchRegistry", "PatchRegistry", "{BC1045E5-019B-43C3-AA03-C40BCE7F497F}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Source\OwlPatches\includes.h = ..\..\Source\OwlPatches\includes.h
+		..\..\Source\OwlPatches\patches.cpp = ..\..\Source\OwlPatches\patches.cpp
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
