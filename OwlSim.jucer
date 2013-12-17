@@ -67,7 +67,6 @@
       <FILE id="lTdyAZ" name="FreeVerbPatch.hpp" compile="0" resource="0"
             file="Source/OwlPatches/FreeVerbPatch.hpp"/>
       <FILE id="bOoafP" name="GainPatch.hpp" compile="0" resource="0" file="Source/OwlPatches/GainPatch.hpp"/>
-      <FILE id="g8RFQe" name="includes.h" compile="0" resource="0" file="Source/OwlPatches/includes.h"/>
       <FILE id="mBxzhf" name="LeakyIntegratorPatch.hpp" compile="0" resource="0"
             file="Source/OwlPatches/LeakyIntegratorPatch.hpp"/>
       <FILE id="rSY5Cr" name="LpfDelayPatch.hpp" compile="0" resource="0"
@@ -80,7 +79,6 @@
             file="Source/OwlPatches/OverdrivePatch.hpp"/>
       <FILE id="xzUtdX" name="ParametricEqPatch.hpp" compile="0" resource="0"
             file="Source/OwlPatches/ParametricEqPatch.hpp"/>
-      <FILE id="oSmiSO" name="patches.cpp" compile="0" resource="0" file="Source/OwlPatches/patches.cpp"/>
       <FILE id="ZxxJgQ" name="PhaserPatch.hpp" compile="0" resource="0" file="Source/OwlPatches/PhaserPatch.hpp"/>
       <FILE id="zw8wfD" name="ResonantFilterPatch.hpp" compile="0" resource="0"
             file="Source/OwlPatches/ResonantFilterPatch.hpp"/>
@@ -101,6 +99,8 @@
       <FILE id="XkNt0y" name="WaveshaperPatch.hpp" compile="0" resource="0"
             file="Source/OwlPatches/WaveshaperPatch.hpp"/>
     </GROUP>
+    <FILE id="g8RFQe" name="includes.h" compile="0" resource="0" file="Source/OwlPatches/includes.h"/>
+    <FILE id="oSmiSO" name="patches.cpp" compile="0" resource="0" file="Source/OwlPatches/patches.cpp"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>

@@ -2232,7 +2232,6 @@
     <ClInclude Include="..\..\Source\OwlPatches\FlangerPatch.hpp"/>
     <ClInclude Include="..\..\Source\OwlPatches\FreeVerbPatch.hpp"/>
     <ClInclude Include="..\..\Source\OwlPatches\GainPatch.hpp"/>
-    <ClInclude Include="..\..\Source\OwlPatches\includes.h"/>
     <ClInclude Include="..\..\Source\OwlPatches\LeakyIntegratorPatch.hpp"/>
     <ClInclude Include="..\..\Source\OwlPatches\LpfDelayPatch.hpp"/>
     <ClInclude Include="..\..\Source\OwlPatches\LpfDelayPhaserPatch.hpp"/>
@@ -2249,6 +2248,7 @@
     <ClInclude Include="..\..\Source\OwlPatches\TemplatePatch.hpp"/>
     <ClInclude Include="..\..\Source\OwlPatches\TestTonePatch.hpp"/>
     <ClInclude Include="..\..\Source\OwlPatches\WaveshaperPatch.hpp"/>
+    <ClInclude Include="..\..\Source\OwlPatches\includes.h"/>
     <ClInclude Include="..\..\modules\juce_audio_basics\buffers\._juce_AudioDataConverters.h"/>
     <ClInclude Include="..\..\modules\juce_audio_basics\buffers\._juce_AudioSampleBuffer.h"/>
     <ClInclude Include="..\..\modules\juce_audio_basics\buffers\._juce_FloatVectorOperations.h"/>

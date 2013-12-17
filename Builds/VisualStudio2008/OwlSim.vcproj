@@ -165,23 +165,12 @@
         <File RelativePath="..\..\Source\OwlPatches\FlangerPatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\FreeVerbPatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\GainPatch.hpp"/>
-        <File RelativePath="..\..\Source\OwlPatches\includes.h"/>
         <File RelativePath="..\..\Source\OwlPatches\LeakyIntegratorPatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\LpfDelayPatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\LpfDelayPhaserPatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\OctaveDownPatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\OverdrivePatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\ParametricEqPatch.hpp"/>
-        <File RelativePath="..\..\Source\OwlPatches\patches.cpp">
-          <FileConfiguration Name="Debug|Win32"
-                             ExcludedFromBuild="true">
-            <Tool Name="VCCLCompilerTool"/>
-          </FileConfiguration>
-          <FileConfiguration Name="Release|Win32"
-                             ExcludedFromBuild="true">
-            <Tool Name="VCCLCompilerTool"/>
-          </FileConfiguration>
-        </File>
         <File RelativePath="..\..\Source\OwlPatches\PhaserPatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\ResonantFilterPatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\SampleBasedPatch.hpp"/>
@@ -193,6 +182,17 @@
         <File RelativePath="..\..\Source\OwlPatches\TestTonePatch.hpp"/>
         <File RelativePath="..\..\Source\OwlPatches\WaveshaperPatch.hpp"/>
       </Filter>
+      <File RelativePath="..\..\Source\OwlPatches\includes.h"/>
+      <File RelativePath="..\..\Source\OwlPatches\patches.cpp">
+        <FileConfiguration Name="Debug|Win32"
+                           ExcludedFromBuild="true">
+          <Tool Name="VCCLCompilerTool"/>
+        </FileConfiguration>
+        <FileConfiguration Name="Release|Win32"
+                           ExcludedFromBuild="true">
+          <Tool Name="VCCLCompilerTool"/>
+        </FileConfiguration>
+      </File>
     </Filter>
     <Filter Name="Juce Modules">
       <Filter Name="juce_audio_basics">

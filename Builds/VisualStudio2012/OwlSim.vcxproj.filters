@@ -323,7 +323,7 @@
       <Filter>OwlSim\Application</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\OwlPatches\patches.cpp">
-      <Filter>OwlSim\OwlPatches</Filter>
+      <Filter>OwlSim</Filter>
     </ClCompile>
     <ClCompile Include="..\..\modules\juce_audio_basics\buffers\._juce_AudioDataConverters.cpp">
       <Filter>Juce Modules\juce_audio_basics\buffers</Filter>
@@ -2664,9 +2664,6 @@
     <ClInclude Include="..\..\Source\OwlPatches\GainPatch.hpp">
       <Filter>OwlSim\OwlPatches</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\OwlPatches\includes.h">
-      <Filter>OwlSim\OwlPatches</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\OwlPatches\LeakyIntegratorPatch.hpp">
       <Filter>OwlSim\OwlPatches</Filter>
     </ClInclude>
@@ -2714,6 +2711,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\OwlPatches\WaveshaperPatch.hpp">
       <Filter>OwlSim\OwlPatches</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OwlPatches\includes.h">
+      <Filter>OwlSim</Filter>
     </ClInclude>
     <ClInclude Include="..\..\modules\juce_audio_basics\buffers\._juce_AudioDataConverters.h">
       <Filter>Juce Modules\juce_audio_basics\buffers</Filter>
