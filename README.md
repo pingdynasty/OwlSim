@@ -63,12 +63,9 @@ The footswitch is currently not tied to the API, but acts as a standard True Byp
 3. Test 
 -------
 
-Start up your favourite DAW, create a track, and load the OwlSim VST plugin. The build script should have copied the compiled files to the right location, but if it does not appear, you may have to tell the DAW to scan or reload the VST directory.
+Start up your favourite DAW, create a track, and load the OwlSim VST plugin. The build script should have copied the plugin to the right location, but if it does not appear, you may have to tell the DAW to scan or reload the VST directory.
 
 In the OwlSim plugin you can use the drop-down box to select the patch: Template (if you have put your code into TemplatePatch.hpp) or your own patch if you have registered it in the PatchRegistry.
-
-Please note that currently, OwlSim is a mono plugin. For the moment it is limited to one instance at a time (so don’t try to put the OwlSim into more than 1 track at a time). We will change that later of course!
-
 
 #### Compiling for Audio Units - tips
 
