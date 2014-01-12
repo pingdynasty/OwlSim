@@ -1,26 +1,24 @@
 /*
   ==============================================================================
 
-  This is an automatically generated file created by the Jucer!
-
-  Creation date:  24 Jun 2013 12:03:45pm
+  This is an automatically generated GUI class created by the Introjucer!
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Jucer version: 1.12
+  Created with Introjucer version: 3.1.0
 
   ------------------------------------------------------------------------------
 
-  The Jucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright 2004-6 by Raw Material Software ltd.
+  The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
+  Copyright 2004-13 by Raw Material Software Ltd.
 
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_STOMPGUI_STOMPGUI_5A5A7FF4__
-#define __JUCER_HEADER_STOMPGUI_STOMPGUI_5A5A7FF4__
+#ifndef __JUCE_HEADER_C09E1113F370FC98__
+#define __JUCE_HEADER_C09E1113F370FC98__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
@@ -73,16 +71,19 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    Slider* slider4;
-    Slider* slider3;
-    Label* label3;
-    Label* label4;
-    ComboBox* menu;
-    Label* label1;
-    Slider* slider1;
-    Label* label2;
-    Slider* slider2;
-    TextButton* switchButton;
+    ScopedPointer<Slider> slider4;
+    ScopedPointer<Slider> slider3;
+    ScopedPointer<Label> label3;
+    ScopedPointer<Label> label4;
+    ScopedPointer<ComboBox> menu;
+    ScopedPointer<Label> label1;
+    ScopedPointer<Slider> slider1;
+    ScopedPointer<Label> label2;
+    ScopedPointer<Slider> slider2;
+    ScopedPointer<TextButton> switchButton;
+    ScopedPointer<Slider> slider5;
+    ScopedPointer<Label> label5;
+    ScopedPointer<Label> label6;
     Image cachedImage_owlFaceplate_png;
 
 
@@ -93,4 +94,4 @@ private:
 //[EndFile] You can add extra defines here...
 //[/EndFile]
 
-#endif   // __JUCER_HEADER_STOMPGUI_STOMPGUI_5A5A7FF4__
+#endif   // __JUCE_HEADER_C09E1113F370FC98__
