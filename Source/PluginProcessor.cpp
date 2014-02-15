@@ -24,8 +24,12 @@ StompBoxAudioProcessor::StompBoxAudioProcessor() : bypass(false) {
   for(int i=0;i<5;i++)
     setParameter(i, 0.0f);
 
-  // set default patch
-  setPatch("Gain");
+  // set default patch Gain if available, first one otherwise
+  if (patches.getNames().contains("Gain")) {
+	  setPatch("Gain");
+  } else {
+	  setPatch(patches.getNames()[0].toStdString());
+  }
 
 #ifdef DEBUG
   StringArray names = patches.getNames();
@@ -46,18 +50,20 @@ const String StompBoxAudioProcessor::getCurrentPatchName(){
 }
 
 void StompBoxAudioProcessor::setPatch(std::string name){
-  const ScopedLock myScopedLock(mutex);
-  parameterNames.clear();  
-  parameterDescriptions.clear();
-  registerParameter(PARAMETER_A, "");
-  registerParameter(PARAMETER_B, "");
-  registerParameter(PARAMETER_C, "");
-  registerParameter(PARAMETER_D, "");
-  registerParameter(PARAMETER_E, "");
-  currentPatchName = name;
-  instance = this; // thread local instance must be set before Patch constructor is called
-  patchprocessor = new PluginPatchProcessor(this);
-  patchprocessor->setPatch(patches.create(name));
+	if (currentPatchName.compare(name) != 0) {
+		const ScopedLock myScopedLock(mutex);
+		parameterNames.clear();
+		parameterDescriptions.clear();
+		registerParameter(PARAMETER_A, "");
+		registerParameter(PARAMETER_B, "");
+		registerParameter(PARAMETER_C, "");
+		registerParameter(PARAMETER_D, "");
+		registerParameter(PARAMETER_E, "");
+		currentPatchName = name;
+		instance = this; // thread local instance must be set before Patch constructor is called
+		patchprocessor = new PluginPatchProcessor(this);
+		patchprocessor->setPatch(patches.create(name));
+	}
 }
 
 const String StompBoxAudioProcessor::getName() const{
@@ -185,12 +191,45 @@ void StompBoxAudioProcessor::getStateInformation(MemoryBlock& destData){
   // You should use this method to store your parameters in the memory block.
   // You could do that either as raw data, or use the XML or ValueTree classes
   // as intermediaries to make it easy to save and load complex data.
+	XmlElement root("Root");
+	XmlElement *el = root.createNewChildElement("AllUserParam");
+	String data;
+	data << getParameter(PARAMETER_A) << ","
+		<< getParameter(PARAMETER_B) << ","
+		<< getParameter(PARAMETER_C) << ","
+		<< getParameter(PARAMETER_D) << ","
+		<< currentPatchName;
+	el->addTextElement(data);
+	copyXmlToBinary(root, destData);
 }
 
 void StompBoxAudioProcessor::setStateInformation(const void* data, int sizeInBytes){
   // You should use this method to restore your parameters from this memory block,
   // whose contents will have been created by the getStateInformation() call.
+
+	XmlElement* pRoot = getXmlFromBinary(data, sizeInBytes);
+	if (pRoot != NULL) {
+		forEachXmlChildElement((*pRoot), pChild) {
+			if (pChild->hasTagName("AllUserParam")) {
+				String sFloatCSV = pChild->getAllSubText();
+				StringArray Tokenizer;
+				int tokenCount = Tokenizer.addTokens(sFloatCSV, ",", "");
+				for (int i = 0; i < 4; i++) {
+					setParameter(i, Tokenizer[i].getFloatValue());
+				}
+				StringArray names = patches.getNames();
+				String patch(Tokenizer[4]);
+				if (names.contains(patch)) {
+					setPatch(patch.toStdString());
+				}
+
+				uIUpdateFlag = true;
+			}
+		}
+		delete pRoot;
+	}
 }
+
 
 //==============================================================================
 // This creates new instances of the plugin..
