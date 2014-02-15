@@ -222,7 +222,6 @@ void StompBoxAudioProcessor::setStateInformation(const void* data, int sizeInByt
 				if (names.contains(patch)) {
 					setPatch(patch.toStdString());
 				}
-
 				uIUpdateFlag = true;
 			}
 		}
