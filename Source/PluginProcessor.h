@@ -52,6 +52,10 @@ public:
 /*   int getBlockSize(); */
 /*   double getSampleRate(); */
 
+  bool needsUIUpdate(){ return uIUpdateFlag; };
+  void requestUIUpdate(){ uIUpdateFlag = true; };
+  void clearUIUpdateFlag(){ uIUpdateFlag = false; };
+
 private:
   static ThreadLocalValue<StompBoxAudioProcessor*> instance;
   PatchRegistry patches;
@@ -61,6 +65,7 @@ private:
   CriticalSection mutex;
   StringArray parameterNames;
   StringArray parameterDescriptions;
+  bool uIUpdateFlag;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StompBoxAudioProcessor)
 };

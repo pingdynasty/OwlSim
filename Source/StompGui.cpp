@@ -341,6 +341,11 @@ void StompGui::timerCallback()
     slider3->setValue(processor->getParameter(2), dontSendNotification);
     slider4->setValue(processor->getParameter(3), dontSendNotification);
     slider5->setValue(processor->getParameter(4), dontSendNotification);
+
+	if (processor->needsUIUpdate()) {
+		updateLabels();
+		menu->setText(processor->getCurrentPatchName());
+	}
 }
 
 //[/MiscUserCode]
