@@ -49,7 +49,7 @@ StompGui::StompGui (StompBoxAudioProcessor* ptr)
     slider3->addListener (this);
 
     addAndMakeVisible (label3 = new Label ("new label",
-                                           "label text"));
+                                           TRANS("label text")));
     label3->setFont (Font (15.00f, Font::bold));
     label3->setJustificationType (Justification::centred);
     label3->setEditable (false, false, false);
@@ -57,7 +57,7 @@ StompGui::StompGui (StompBoxAudioProcessor* ptr)
     label3->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (label4 = new Label ("new label",
-                                           "label text"));
+                                           TRANS("label text")));
     label4->setFont (Font (15.00f, Font::bold));
     label4->setJustificationType (Justification::centred);
     label4->setEditable (false, false, false);
@@ -68,11 +68,11 @@ StompGui::StompGui (StompBoxAudioProcessor* ptr)
     menu->setEditableText (false);
     menu->setJustificationType (Justification::centredLeft);
     menu->setTextWhenNothingSelected (String::empty);
-    menu->setTextWhenNoChoicesAvailable ("(no choices)");
+    menu->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     menu->addListener (this);
 
     addAndMakeVisible (label1 = new Label ("new label",
-                                           "label text"));
+                                           TRANS("label text")));
     label1->setFont (Font (15.00f, Font::bold));
     label1->setJustificationType (Justification::centred);
     label1->setEditable (false, false, false);
@@ -88,7 +88,7 @@ StompGui::StompGui (StompBoxAudioProcessor* ptr)
     slider1->addListener (this);
 
     addAndMakeVisible (label2 = new Label ("new label",
-                                           "label text"));
+                                           TRANS("label text")));
     label2->setFont (Font (15.00f, Font::bold));
     label2->setJustificationType (Justification::centred);
     label2->setEditable (false, false, false);
@@ -119,7 +119,7 @@ StompGui::StompGui (StompBoxAudioProcessor* ptr)
     slider5->addListener (this);
 
     addAndMakeVisible (label5 = new Label ("new label",
-                                           "label text"));
+                                           TRANS("label text")));
     label5->setFont (Font (15.00f, Font::bold));
     label5->setJustificationType (Justification::centred);
     label5->setEditable (false, false, false);
@@ -127,12 +127,20 @@ StompGui::StompGui (StompBoxAudioProcessor* ptr)
     label5->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (label6 = new Label ("new label",
-                                           "E"));
+                                           TRANS("E")));
     label6->setFont (Font (15.00f, Font::bold));
     label6->setJustificationType (Justification::centred);
     label6->setEditable (false, false, false);
     label6->setColour (TextEditor::textColourId, Colours::black);
     label6->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (labelNbInOut = new Label ("new label",
+                                                 String::empty));
+    labelNbInOut->setFont (Font (15.00f, Font::bold));
+    labelNbInOut->setJustificationType (Justification::centredLeft);
+    labelNbInOut->setEditable (false, false, false);
+    labelNbInOut->setColour (TextEditor::textColourId, Colours::black);
+    labelNbInOut->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     cachedImage_owlFaceplate_png = ImageCache::getFromMemory (owlFaceplate_png, owlFaceplate_pngSize);
 
@@ -182,6 +190,7 @@ StompGui::~StompGui()
     slider5 = nullptr;
     label5 = nullptr;
     label6 = nullptr;
+    labelNbInOut = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -221,7 +230,9 @@ void StompGui::resized()
     slider5->setBounds (416, 229, 90, 90);
     label5->setBounds (416, 317, 90, 24);
     label6->setBounds (504, 260, 24, 24);
+    labelNbInOut->setBounds (344, 8, 90, 24);
     //[UserResized] Add your own custom resize handling here..
+    //labelInOut->setBounds(340, 8, 80, 24);
     //[/UserResized]
 }
 
@@ -265,9 +276,9 @@ void StompGui::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == slider5)
     {
         //[UserSliderCode_slider5] -- add your slider handling code here..
-        
+
         processor->setParameterNotifyingHost(4, slider5->getValue());
-        
+
         //[/UserSliderCode_slider5]
     }
 
@@ -332,6 +343,11 @@ void StompGui::updateLabels(){
   label4->setTooltip(processor->getParameterDescription(3));
   label5->setText(processor->getParameterName(4), dontSendNotification);
   label5->setTooltip(processor->getParameterDescription(4));
+  String t = String(processor->getCurrentPatchNbInputs())
+            + " in / "
+            + String(processor->getCurrentPatchNbOutputs())
+            + " out";
+  labelNbInOut->setText(t, dontSendNotification);
 }
 
 void StompGui::timerCallback()
@@ -425,6 +441,11 @@ BEGIN_JUCER_METADATA
          edBkgCol="0" labelText="E" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="1" italic="0" justification="36"/>
+  <LABEL name="new label" id="57211fd5f5283847" memberName="labelNbInOut"
+         virtualName="" explicitFocusOrder="0" pos="344 8 90 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         bold="1" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

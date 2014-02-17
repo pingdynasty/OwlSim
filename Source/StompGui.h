@@ -84,6 +84,7 @@ private:
     ScopedPointer<Slider> slider5;
     ScopedPointer<Label> label5;
     ScopedPointer<Label> label6;
+    ScopedPointer<Label> labelNbInOut;
     Image cachedImage_owlFaceplate_png;
 
 
