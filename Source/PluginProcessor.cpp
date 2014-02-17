@@ -45,6 +45,14 @@ const String StompBoxAudioProcessor::getCurrentPatchName(){
   return (const char*) currentPatchName.c_str(); // std::string to Juce::String
 }
 
+const int StompBoxAudioProcessor::getCurrentPatchNbInputs(){
+    return patches.getNumberInputChannels(currentPatchName);
+}
+
+const int StompBoxAudioProcessor::getCurrentPatchNbOutputs(){
+    return patches.getNumberOutputChannels(currentPatchName);
+}
+
 void StompBoxAudioProcessor::setPatch(std::string name){
   const ScopedLock myScopedLock(mutex);
   parameterNames.clear();  

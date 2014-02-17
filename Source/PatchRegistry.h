@@ -10,23 +10,32 @@ class PatchRegistry {
   typedef Patch* PatchCreator(); // function pointer to create Patch
 public:
   PatchRegistry();
+  ~PatchRegistry();
   StringArray getNames();
+  int getNumberInputChannels(const std::string& name);
+  int getNumberOutputChannels(const std::string& name);
   Patch* create(const std::string& name);
-  void registerPatch(const std::string& name, PatchCreator creator);
+  void registerPatch(const std::string& name, PatchCreator creator, const int nbInputCh, const int nbOutputCh);
   template<class T> struct Register {
     static Patch* construct() {
       return new T();
     };
     static PatchCreator* init_creator(std::string& name) {
-      return getCreators()[name] = construct;
+      return getInfos()[name]->ctor = construct;
     }
     static PatchCreator* creator;
   };
 private:
-  typedef std::map<std::string, PatchCreator*> Creators; // map from id to creator
-  static Creators& getCreators() { 
-    static Creators creators; 
-    return creators; 
+  struct PatchInfo {
+        int nbInputChannels;
+        int nbOutputChannels;
+        PatchCreator* ctor;
+    };
+  typedef std::map<std::string, PatchInfo*> PatchInfos; // map from id to creator
+  
+  static PatchInfos& getInfos() {
+    static PatchInfos infos;
+    return infos;
   }
 };
 

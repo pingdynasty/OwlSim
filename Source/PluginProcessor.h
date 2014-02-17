@@ -46,6 +46,9 @@ public:
   /*** PatchProcessor methods */
   StringArray getPatchNames();
   const String getCurrentPatchName();
+  const int getCurrentPatchNbInputs();
+  const int getCurrentPatchNbOutputs();
+    
   void registerParameter(PatchParameterId pid, const std::string& name, 
 			 const std::string& description = "");
 /*   float getParameterValue(PatchParameterId pid); */
