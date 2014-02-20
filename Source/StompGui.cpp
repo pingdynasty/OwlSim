@@ -297,7 +297,7 @@ void StompGui::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
         String js=menu->getText(); // JUCE string
         std::string ss (js.toUTF8()); // convert to std::string
         processor->setPatch(ss);
-	updateLabels();
+		updateLabels();
         //[/UserComboBoxCode_menu]
     }
 
@@ -357,6 +357,11 @@ void StompGui::timerCallback()
     slider3->setValue(processor->getParameter(2), dontSendNotification);
     slider4->setValue(processor->getParameter(3), dontSendNotification);
     slider5->setValue(processor->getParameter(4), dontSendNotification);
+
+	if (processor->needsUIUpdate()) {
+		processor->clearUIUpdateFlag();
+		menu->setText(processor->getCurrentPatchName());
+	}
 }
 
 //[/MiscUserCode]
