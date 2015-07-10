@@ -13,7 +13,7 @@ Patch::~Patch(){
   processor = NULL;
 }
 
-void Patch::registerParameter(PatchParameterId pid, const std::string& name, const std::string& description){
+void Patch::registerParameter(PatchParameterId pid, const char* name, const char* description){
   processor->registerParameter(pid, name, description);
 }
 
@@ -33,3 +33,5 @@ AudioBuffer* Patch::createMemoryBuffer(int channels, int samples){
   return processor->createMemoryBuffer(channels, samples);
 }
 
+void PatchProcessor::registerParameter(PatchParameterId pid, const char* name, const char* description){
+}

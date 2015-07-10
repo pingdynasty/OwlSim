@@ -15,7 +15,7 @@
 
 #include "OwlPatches/includes.h"
 
-#define REGISTER_PATCH(T, STR) registerPatch(STR, Register<T>::construct)
+#define REGISTER_PATCH(T, STR, IN, OUT) registerPatch(STR, Register<T>::construct)
 
 PatchRegistry::PatchRegistry(){
 #include "OwlPatches/patches.cpp"
