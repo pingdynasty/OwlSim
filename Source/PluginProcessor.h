@@ -46,11 +46,18 @@ public:
   /*** PatchProcessor methods */
   StringArray getPatchNames();
   const String getCurrentPatchName();
+  const int getCurrentPatchNbInputs();
+  const int getCurrentPatchNbOutputs();
+    
   void registerParameter(PatchParameterId pid, const std::string& name, 
 			 const std::string& description = "");
 /*   float getParameterValue(PatchParameterId pid); */
 /*   int getBlockSize(); */
 /*   double getSampleRate(); */
+
+  inline bool needsUIUpdate() { return uIUpdateFlag; };
+  inline void requestUIUpdate() { uIUpdateFlag = true; };
+  inline void clearUIUpdateFlag() { uIUpdateFlag = false; };
 
 private:
   static ThreadLocalValue<StompBoxAudioProcessor*> instance;
@@ -61,6 +68,7 @@ private:
   CriticalSection mutex;
   StringArray parameterNames;
   StringArray parameterDescriptions;
+  bool uIUpdateFlag;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StompBoxAudioProcessor)
 };
