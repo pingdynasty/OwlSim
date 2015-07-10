@@ -57,7 +57,6 @@ void StompBoxAudioProcessor::setPatch(std::string name){
   currentPatchName = name;
   instance = this; // thread local instance must be set before Patch constructor is called
   patchprocessor = new PluginPatchProcessor(this);
-  patchprocessor->setPatch(patches.create(name));
 }
 
 const String StompBoxAudioProcessor::getName() const{
@@ -150,7 +149,7 @@ void StompBoxAudioProcessor::changeProgramName(int index, const String& newName)
 void StompBoxAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock){
   // Use this method as the place to do any pre-playback
   // initialisation that you need..
-    
+  patchprocessor->setPatch(patches.create(currentPatchName));    
 }
 
 void StompBoxAudioProcessor::releaseResources(){
