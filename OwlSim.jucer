@@ -8,11 +8,14 @@
               pluginSilenceInIsSilenceOut="0" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="" pluginRTASCategory="" aaxIdentifier="com.yourcompany.stompBox"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="3.1.0"
-              companyName="Rebel Technology" includeBinaryInAppConfig="1">
+              companyName="Rebel Technology" includeBinaryInAppConfig="1" buildVST3="0"
+              buildRTAS="0" buildAAX="0">
   <MAINGROUP id="WHVxNd" name="OwlSim">
     <GROUP id="{38D29851-9657-B61F-ADA4-1EDE4BF89C63}" name="Source">
       <FILE id="g8jeIP" name="MemoryBuffer.hpp" compile="0" resource="0"
             file="Source/MemoryBuffer.hpp"/>
+      <FILE id="Geor7z" name="OpenWareMidiControl.h" compile="0" resource="0"
+            file="Source/OpenWareMidiControl.h"/>
       <FILE id="k1lt69" name="PluginPatchProcessor.cpp" compile="1" resource="0"
             file="Source/PluginPatchProcessor.cpp"/>
       <FILE id="QvbaEQ" name="PluginPatchProcessor.h" compile="0" resource="0"
