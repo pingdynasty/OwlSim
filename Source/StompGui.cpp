@@ -165,7 +165,7 @@ StompGui::StompGui (StompBoxAudioProcessor* ptr)
     slider5->setValue(processor->getParameter(4), dontSendNotification);
 
     // Switch Button as a Bypass button
-    switchButton->setToggleState(! processor->bypass, 0);
+    switchButton->setToggleState(!processor->bypass, dontSendNotification);
 
     startTimer(100);
 
@@ -314,11 +314,11 @@ void StompGui::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_switchButton] -- add your button handler code here..
         if (switchButton->getToggleState() == 0){
-            switchButton->setToggleState(1,0);
+            switchButton->setToggleState(true, dontSendNotification);
             processor->bypass = false ;
         }
         else{
-            switchButton->setToggleState(0,0);
+            switchButton->setToggleState(false, dontSendNotification);
             processor->bypass = true ;
         }
         //[/UserButtonCode_switchButton]

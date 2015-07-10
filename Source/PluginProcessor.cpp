@@ -72,6 +72,17 @@ void StompBoxAudioProcessor::setPatch(std::string name){
 		patchprocessor = new PluginPatchProcessor(this);
 		patchprocessor->setPatch(patches.create(name));
 	}
+  const ScopedLock myScopedLock(mutex);
+  parameterNames.clear();  
+  parameterDescriptions.clear();
+  registerParameter(PARAMETER_A, "");
+  registerParameter(PARAMETER_B, "");
+  registerParameter(PARAMETER_C, "");
+  registerParameter(PARAMETER_D, "");
+  registerParameter(PARAMETER_E, "");
+  currentPatchName = name;
+  instance = this; // thread local instance must be set before Patch constructor is called
+  patchprocessor = new PluginPatchProcessor(this);
 }
 
 const String StompBoxAudioProcessor::getName() const{
@@ -164,7 +175,7 @@ void StompBoxAudioProcessor::changeProgramName(int index, const String& newName)
 void StompBoxAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock){
   // Use this method as the place to do any pre-playback
   // initialisation that you need..
-    
+  patchprocessor->setPatch(patches.create(currentPatchName));    
 }
 
 void StompBoxAudioProcessor::releaseResources(){
