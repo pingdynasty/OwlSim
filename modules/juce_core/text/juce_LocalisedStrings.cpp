@@ -36,6 +36,21 @@ LocalisedStrings::LocalisedStrings (const File& fileToLoad, bool ignoreCase)
     loadFromText (fileToLoad.loadFileAsString(), ignoreCase);
 }
 
+LocalisedStrings::LocalisedStrings (const LocalisedStrings& other)
+    : languageName (other.languageName), countryCodes (other.countryCodes),
+      translations (other.translations), fallback (createCopyIfNotNull (other.fallback.get()))
+{
+}
+
+LocalisedStrings& LocalisedStrings::operator= (const LocalisedStrings& other)
+{
+    languageName = other.languageName;
+    countryCodes = other.countryCodes;
+    translations = other.translations;
+    fallback = createCopyIfNotNull (other.fallback.get());
+    return *this;
+}
+
 LocalisedStrings::~LocalisedStrings()
 {
 }
@@ -179,11 +194,11 @@ LocalisedStrings* LocalisedStrings::getCurrentMappings()
 String LocalisedStrings::translateWithCurrentMappings (const String& text)  { return juce::translate (text); }
 String LocalisedStrings::translateWithCurrentMappings (const char* text)    { return juce::translate (text); }
 
-String translate (const String& text)       { return juce::translate (text, text); }
-String translate (const char* text)         { return juce::translate (String (text)); }
-String translate (CharPointer_UTF8 text)    { return juce::translate (String (text)); }
+JUCE_API String translate (const String& text)       { return juce::translate (text, text); }
+JUCE_API String translate (const char* text)         { return juce::translate (String (text)); }
+JUCE_API String translate (CharPointer_UTF8 text)    { return juce::translate (String (text)); }
 
-String translate (const String& text, const String& resultIfNotFound)
+JUCE_API String translate (const String& text, const String& resultIfNotFound)
 {
     const SpinLock::ScopedLockType sl (currentMappingsLock);
 
