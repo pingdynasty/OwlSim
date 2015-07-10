@@ -22,11 +22,17 @@ float PluginPatchProcessor::getParameterValue(PatchParameterId pid){
 }
 
 int PluginPatchProcessor::getBlockSize(){
-  return plugin->getBlockSize();
+  int bs = plugin->getBlockSize();
+  if(bs == 0)
+    bs = 512;
+  return bs;
 }
 
 double PluginPatchProcessor::getSampleRate(){
-  return plugin->getSampleRate();
+  double sr = plugin->getSampleRate();
+  if(sr == 0)
+    sr = 44100;
+  return sr;
 }
 
 AudioBuffer* PluginPatchProcessor::createMemoryBuffer(int channels, int samples){
