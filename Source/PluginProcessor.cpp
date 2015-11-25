@@ -58,31 +58,20 @@ const int StompBoxAudioProcessor::getCurrentPatchNbOutputs(){
 }
 
 void StompBoxAudioProcessor::setPatch(std::string name){
-	if (currentPatchName.compare(name) != 0) {
-		const ScopedLock myScopedLock(mutex);
-		parameterNames.clear();
-		parameterDescriptions.clear();
-		registerParameter(PARAMETER_A, "");
-		registerParameter(PARAMETER_B, "");
-		registerParameter(PARAMETER_C, "");
-		registerParameter(PARAMETER_D, "");
-		registerParameter(PARAMETER_E, "");
-		currentPatchName = name;
-		instance = this; // thread local instance must be set before Patch constructor is called
-		patchprocessor = new PluginPatchProcessor(this);
-		patchprocessor->setPatch(patches.create(name));
-	}
-  const ScopedLock myScopedLock(mutex);
-  parameterNames.clear();  
-  parameterDescriptions.clear();
-  registerParameter(PARAMETER_A, "");
-  registerParameter(PARAMETER_B, "");
-  registerParameter(PARAMETER_C, "");
-  registerParameter(PARAMETER_D, "");
-  registerParameter(PARAMETER_E, "");
-  currentPatchName = name;
-  instance = this; // thread local instance must be set before Patch constructor is called
-  patchprocessor = new PluginPatchProcessor(this);
+  if(currentPatchName.compare(name) != 0) {
+    const ScopedLock myScopedLock(mutex);
+    parameterNames.clear();  
+    parameterDescriptions.clear();
+    registerParameter(PARAMETER_A, "");
+    registerParameter(PARAMETER_B, "");
+    registerParameter(PARAMETER_C, "");
+    registerParameter(PARAMETER_D, "");
+    registerParameter(PARAMETER_E, "");
+    currentPatchName = name;
+    instance = this; // thread local instance must be set before Patch constructor is called
+    patchprocessor = new PluginPatchProcessor(this);
+    patchprocessor->setPatch(patches.create(name));
+  }
 }
 
 const String StompBoxAudioProcessor::getName() const{
