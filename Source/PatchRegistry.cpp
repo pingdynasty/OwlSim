@@ -29,10 +29,10 @@ PatchRegistry::~PatchRegistry(){
     }
 }
 
-StringArray PatchRegistry::getNames(){
+juce::StringArray PatchRegistry::getNames(){
   PatchInfos::iterator iterator = getInfos().begin();
   PatchInfos::iterator last = getInfos().end();
-  StringArray result;
+  juce::StringArray result;
   for(; iterator != last; ++iterator){
     result.add((const char*)(iterator->first).c_str());
   }

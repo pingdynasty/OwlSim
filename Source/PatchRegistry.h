@@ -4,6 +4,7 @@
 #include <string>
 
 #include "StompBox.h"
+#define DONT_SET_USING_JUCE_NAMESPACE 1
 #include "JuceHeader.h"
 
 class PatchRegistry {
@@ -11,7 +12,7 @@ class PatchRegistry {
 public:
   PatchRegistry();
   ~PatchRegistry();
-  StringArray getNames();
+  juce::StringArray getNames();
   int getNumberInputChannels(const std::string& name);
   int getNumberOutputChannels(const std::string& name);
   Patch* create(const std::string& name);
