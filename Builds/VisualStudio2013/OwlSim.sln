@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual Studio 2013
 Project("{28A06354-B874-7819-2C19-52357B7AB955}") = "OwlSim", "OwlSim.vcxproj", "{59C21696-E4C4-F552-6573-A87FC0BF0214}"
 EndProject
 Global
