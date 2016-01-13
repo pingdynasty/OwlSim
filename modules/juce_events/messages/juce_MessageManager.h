@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -91,6 +91,13 @@ public:
    #endif
 
     //==============================================================================
+   #if JUCE_COMPILER_SUPPORTS_LAMBDAS
+    /** Asynchronously invokes a function or C++11 lambda on the message thread.
+        Internally this uses the CallbackMessage class to invoke the callback.
+    */
+    static void callAsync (std::function<void(void)>);
+   #endif
+
     /** Calls a function using the message-thread.
 
         This can be used by any thread to cause this function to be called-back
@@ -195,7 +202,7 @@ private:
     friend class QuitMessage;
     friend class MessageManagerLock;
 
-    ScopedPointer <ActionBroadcaster> broadcaster;
+    ScopedPointer<ActionBroadcaster> broadcaster;
     bool quitMessagePosted, quitMessageReceived;
     Thread::ThreadID messageThreadId;
     Thread::ThreadID volatile threadWithLock;
@@ -235,6 +242,9 @@ private:
 
     Obviously be careful not to create one of these and leave it lying around, or
     your app will grind to a halt!
+
+    MessageManagerLocks are re-entrant, so can be safely nested if the current thread
+    already has the lock.
 
     Another caveat is that using this in conjunction with other CriticalSections
     can create lots of interesting ways of producing a deadlock! In particular, if
