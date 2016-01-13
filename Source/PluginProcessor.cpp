@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+using namespace juce;
+
 ThreadLocalValue<StompBoxAudioProcessor*> StompBoxAudioProcessor::instance;
 
 // StompBoxAudioProcessor* StompBoxAudioProcessor::getThreadLocalInstance(){

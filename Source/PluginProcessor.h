@@ -5,24 +5,24 @@
 #include "PluginPatchProcessor.h"
 #include "PatchRegistry.h"
 
-class StompBoxAudioProcessor  : public AudioProcessor {
+class StompBoxAudioProcessor  : public juce::AudioProcessor {
 public:
   StompBoxAudioProcessor();
   ~StompBoxAudioProcessor();
   void prepareToPlay (double sampleRate, int samplesPerBlock);
   void releaseResources();
-  void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
+  void processBlock (juce::AudioSampleBuffer& buffer, juce::MidiBuffer& midiMessages);
 
-  AudioProcessorEditor* createEditor();
+  juce::AudioProcessorEditor* createEditor();
   bool hasEditor() const;
-  const String getName() const;
+  const juce::String getName() const;
   int getNumParameters();
   float getParameter (int index);
   void setParameter (int index, float newValue);
-  const String getParameterName (int index);
-  const String getParameterText (int index);
-  const String getInputChannelName (int channelIndex) const;
-  const String getOutputChannelName (int channelIndex) const;
+  const juce::String getParameterName (int index);
+  const juce::String getParameterText (int index);
+  const juce::String getInputChannelName (int channelIndex) const;
+  const juce::String getOutputChannelName (int channelIndex) const;
   bool isInputChannelStereoPair (int index) const;
   bool isOutputChannelStereoPair (int index) const;
   bool acceptsMidi() const;
@@ -32,20 +32,20 @@ public:
   int getNumPrograms();
   int getCurrentProgram();
   void setCurrentProgram (int index);
-  const String getProgramName (int index);
-  void changeProgramName (int index, const String& newName);
-  void getStateInformation (MemoryBlock& destData);
+  const juce::String getProgramName (int index);
+  void changeProgramName (int index, const juce::String& newName);
+  void getStateInformation (juce::MemoryBlock& destData);
   void setStateInformation (const void* data, int sizeInBytes);
 
-  const String getParameterDescription(int index);
+  const juce::String getParameterDescription(int index);
   void setPatch(std::string name);
 /*   static StompBoxAudioProcessor* getThreadLocalInstance(); */
   static PatchProcessor* getPatchProcessor();
   bool bypass;
 
   /*** PatchProcessor methods */
-  StringArray getPatchNames();
-  const String getCurrentPatchName();
+  juce::StringArray getPatchNames();
+  const juce::String getCurrentPatchName();
   const int getCurrentPatchNbInputs();
   const int getCurrentPatchNbOutputs();
     
@@ -60,14 +60,14 @@ public:
   inline void clearUIUpdateFlag() { uIUpdateFlag = false; };
 
 private:
-  static ThreadLocalValue<StompBoxAudioProcessor*> instance;
+  static juce::ThreadLocalValue<StompBoxAudioProcessor*> instance;
   PatchRegistry patches;
-  ScopedPointer<PluginPatchProcessor> patchprocessor;
+  juce::ScopedPointer<PluginPatchProcessor> patchprocessor;
   float parameterValues[16];
   std::string currentPatchName;
-  CriticalSection mutex;
-  StringArray parameterNames;
-  StringArray parameterDescriptions;
+  juce::CriticalSection mutex;
+  juce::StringArray parameterNames;
+  juce::StringArray parameterDescriptions;
   bool uIUpdateFlag;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StompBoxAudioProcessor)

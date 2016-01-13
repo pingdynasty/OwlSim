@@ -4,16 +4,16 @@
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
 
-class StompBoxAudioProcessorEditor  : public AudioProcessorEditor
+class StompBoxAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
     StompBoxAudioProcessorEditor (StompBoxAudioProcessor* ownerFilter);
     ~StompBoxAudioProcessorEditor();
 
     // This is just a standard Juce paint method...
-    void paint (Graphics& g);
+    void paint (juce::Graphics& g);
 private:
-    ScopedPointer<Component> panel;
+    juce::ScopedPointer<juce::Component> panel;
 };
 
 
