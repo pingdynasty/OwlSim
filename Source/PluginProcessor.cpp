@@ -146,7 +146,7 @@ double StompBoxAudioProcessor::getTailLengthSeconds() const {
 }
 
 int StompBoxAudioProcessor::getNumPrograms() {
-  return 0;
+  return 1;
 }
 
 int StompBoxAudioProcessor::getCurrentProgram(){
