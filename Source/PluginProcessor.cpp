@@ -185,7 +185,7 @@ void StompBoxAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer&
     patchprocessor->processAudio(samples);
 
   // clear any extra output channels
-  for(int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+  for(int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
     buffer.clear(i, 0, buffer.getNumSamples());    
 }
 
