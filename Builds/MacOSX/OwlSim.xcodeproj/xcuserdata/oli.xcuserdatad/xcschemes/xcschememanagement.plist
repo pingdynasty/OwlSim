@@ -4,15 +4,35 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>OwlSim.xcscheme</key>
+		<key>OwlSim (All).xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>OwlSim (Shared Code).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>OwlSim (VST).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>431CA4C272C8C6224F49B5D8</key>
+		<key>088822CB01B2919F3C8BEC23</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>334165CC9A43ABA1FC57CF87</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>57D7E078EA511CB01FCF2BD2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
