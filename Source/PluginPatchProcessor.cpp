@@ -13,7 +13,7 @@ void PluginPatchProcessor::setPatch(Patch* p){
   patch = p;
 }
 
-void PluginPatchProcessor::registerParameter(PatchParameterId pid, const std::string& name, const std::string& description){
+void PluginPatchProcessor::registerParameter(PatchParameterId pid, const char* name, const char* description){
   plugin->registerParameter(pid, name, description);
 }
 
