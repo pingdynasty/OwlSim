@@ -32,6 +32,3 @@ double Patch::getSampleRate(){
 AudioBuffer* Patch::createMemoryBuffer(int channels, int samples){
   return processor->createMemoryBuffer(channels, samples);
 }
-
-void PatchProcessor::registerParameter(PatchParameterId pid, const char* name, const char* description){
-}

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -25,8 +25,6 @@
 #ifndef JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 #define JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 
-extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
-
 //==============================================================================
 /**
     An object that creates and plays a standalone instance of an AudioProcessor.
@@ -40,39 +38,64 @@ class StandalonePluginHolder
 public:
     /** Creates an instance of the default plugin.
 
-        The settings object can be a PropertySet that the class should use to
-        store its settings - the object that is passed-in will be owned by this
-        class and deleted automatically when no longer needed. (It can also be null)
+        The settings object can be a PropertySet that the class should use to store its
+        settings - the takeOwnershipOfSettings indicates whether this object will delete
+        the settings automatically when no longer needed. The settings can also be nullptr.
+
+        A default device name can be passed in.
+
+        Preferably a complete setup options object can be used, which takes precedence over
+        the preferredDefaultDeviceName and allows you to select the input & output device names,
+        sample rate, buffer size etc.
+
+        In all instances, the settingsToUse will take precedence over the "preferred" options if not null.
     */
-    StandalonePluginHolder (PropertySet* settingsToUse, bool takeOwnershipOfSettings)
+    StandalonePluginHolder (PropertySet* settingsToUse,
+                            bool takeOwnershipOfSettings = true,
+                            const String& preferredDefaultDeviceName = String(),
+                            const AudioDeviceManager::AudioDeviceSetup* preferredSetupOptions = nullptr)
+
         : settings (settingsToUse, takeOwnershipOfSettings)
     {
         createPlugin();
-        setupAudioDevices();
+        setupAudioDevices (preferredDefaultDeviceName, preferredSetupOptions);
         reloadPluginState();
         startPlaying();
     }
 
-    ~StandalonePluginHolder()
+    virtual ~StandalonePluginHolder()
     {
         deletePlugin();
         shutDownAudioDevices();
     }
 
     //==============================================================================
-    void createPlugin()
+    virtual void createPlugin()
     {
+
+      #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+        processor = ::createPluginFilterOfType (AudioProcessor::wrapperType_Standalone);
+      #else
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
         processor = createPluginFilter();
-        jassert (processor != nullptr); // Your createPluginFilter() function must return a valid object!
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Undefined);
+      #endif
+        jassert (processor != nullptr); // Your createPluginFilter() function must return a valid object!
 
-        processor->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
-                                         JucePlugin_MaxNumOutputChannels,
-                                         44100, 512);
+        // try to disable sidechain and aux buses
+        const int numInBuses  = processor->busArrangement.inputBuses.size();
+        const int numOutBuses = processor->busArrangement.inputBuses.size();
+
+        for (int busIdx = 1; busIdx < numInBuses; ++busIdx)
+            processor->setPreferredBusArrangement (true, busIdx, AudioChannelSet::disabled());
+
+        for (int busIdx = 1; busIdx < numOutBuses; ++busIdx)
+            processor->setPreferredBusArrangement (false, busIdx, AudioChannelSet::disabled());
+
+        processor->setRateAndBufferSizeDetails(44100, 512);
     }
 
-    void deletePlugin()
+    virtual void deletePlugin()
     {
         stopPlaying();
         processor = nullptr;
@@ -120,9 +143,9 @@ public:
             processor->getStateInformation (data);
 
             if (! fc.getResult().replaceWithData (data.getData(), data.getSize()))
-                AlertWindow::showMessageBox (AlertWindow::WarningIcon,
-                                             TRANS("Error whilst saving"),
-                                             TRANS("Couldn't write to the specified file!"));
+                AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                                  TRANS("Error whilst saving"),
+                                                  TRANS("Couldn't write to the specified file!"));
         }
     }
 
@@ -140,9 +163,9 @@ public:
             if (fc.getResult().loadFileAsData (data))
                 processor->setStateInformation (data.getData(), (int) data.getSize());
             else
-                AlertWindow::showMessageBox (AlertWindow::WarningIcon,
-                                             TRANS("Error whilst loading"),
-                                             TRANS("Couldn't read from the specified file!"));
+                AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                                  TRANS("Error whilst loading"),
+                                                  TRANS("Couldn't read from the specified file!"));
         }
     }
 
@@ -163,10 +186,10 @@ public:
     {
         DialogWindow::LaunchOptions o;
         o.content.setOwned (new AudioDeviceSelectorComponent (deviceManager,
-                                                              processor->getNumInputChannels(),
-                                                              processor->getNumInputChannels(),
-                                                              processor->getNumOutputChannels(),
-                                                              processor->getNumOutputChannels(),
+                                                              processor->getTotalNumInputChannels(),
+                                                              processor->getTotalNumInputChannels(),
+                                                              processor->getTotalNumOutputChannels(),
+                                                              processor->getTotalNumOutputChannels(),
                                                               true, false,
                                                               true, false));
         o.content->setSize (500, 450);
@@ -189,17 +212,20 @@ public:
         }
     }
 
-    void reloadAudioDeviceState()
+    void reloadAudioDeviceState (const String& preferredDefaultDeviceName,
+                                 const AudioDeviceManager::AudioDeviceSetup* preferredSetupOptions)
     {
         ScopedPointer<XmlElement> savedState;
 
         if (settings != nullptr)
             savedState = settings->getXmlValue ("audioSetup");
 
-        deviceManager.initialise (processor->getNumInputChannels(),
-                                  processor->getNumOutputChannels(),
+        deviceManager.initialise (processor->getTotalNumInputChannels(),
+                                  processor->getTotalNumOutputChannels(),
                                   savedState,
-                                  true);
+                                  true,
+                                  preferredDefaultDeviceName,
+                                  preferredSetupOptions);
     }
 
     //==============================================================================
@@ -232,19 +258,20 @@ public:
     AudioProcessorPlayer player;
 
 private:
-    void setupAudioDevices()
+    void setupAudioDevices (const String& preferredDefaultDeviceName,
+                            const AudioDeviceManager::AudioDeviceSetup* preferredSetupOptions)
     {
         deviceManager.addAudioCallback (&player);
-        deviceManager.addMidiInputCallback (String::empty, &player);
+        deviceManager.addMidiInputCallback (String(), &player);
 
-        reloadAudioDeviceState();
+        reloadAudioDeviceState (preferredDefaultDeviceName, preferredSetupOptions);
     }
 
     void shutDownAudioDevices()
     {
         saveAudioDeviceState();
 
-        deviceManager.removeMidiInputCallback (String::empty, &player);
+        deviceManager.removeMidiInputCallback (String(), &player);
         deviceManager.removeAudioCallback (&player);
     }
 
@@ -273,7 +300,9 @@ public:
     StandaloneFilterWindow (const String& title,
                             Colour backgroundColour,
                             PropertySet* settingsToUse,
-                            bool takeOwnershipOfSettings)
+                            bool takeOwnershipOfSettings,
+                            const String& preferredDefaultDeviceName = String(),
+                            const AudioDeviceManager::AudioDeviceSetup* preferredSetupOptions = nullptr)
         : DocumentWindow (title, backgroundColour, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
           optionsButton ("options")
     {
@@ -283,7 +312,8 @@ public:
         optionsButton.addListener (this);
         optionsButton.setTriggeredOnMouseDown (true);
 
-        pluginHolder = new StandalonePluginHolder (settingsToUse, takeOwnershipOfSettings);
+        pluginHolder = new StandalonePluginHolder (settingsToUse, takeOwnershipOfSettings,
+                                                   preferredDefaultDeviceName, preferredSetupOptions);
 
         createEditorComp();
 
@@ -365,7 +395,13 @@ public:
         m.addSeparator();
         m.addItem (4, TRANS("Reset to default state"));
 
-        switch (m.showAt (&optionsButton))
+        m.showMenuAsync (PopupMenu::Options(),
+                         ModalCallbackFunction::forComponent (menuCallback, this));
+    }
+
+    void handleMenuResult (int result)
+    {
+        switch (result)
         {
             case 1:  pluginHolder->showAudioSettingsDialog(); break;
             case 2:  pluginHolder->askUserToSaveState(); break;
@@ -373,6 +409,12 @@ public:
             case 4:  resetToDefaultState(); break;
             default: break;
         }
+    }
+
+    static void menuCallback (int result, StandaloneFilterWindow* button)
+    {
+        if (button != nullptr && result != 0)
+            button->handleMenuResult (result);
     }
 
     void resized() override

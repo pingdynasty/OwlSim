@@ -297,7 +297,7 @@ void StompGui::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
         String js=menu->getText(); // JUCE string
         std::string ss (js.toUTF8()); // convert to std::string
         processor->setPatch(ss);
-		updateLabels();
+		    updateLabels();
         //[/UserComboBoxCode_menu]
     }
 

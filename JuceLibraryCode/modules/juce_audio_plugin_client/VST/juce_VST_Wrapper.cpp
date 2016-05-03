@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -22,10 +22,7 @@
   ==============================================================================
 */
 
-// Your project must contain an AppConfig.h file with your project-specific settings in it,
-// and your header search path must make it accessible to the module's files.
-#include "AppConfig.h"
-
+#include "../../juce_core/system/juce_TargetPlatform.h"
 #include "../utility/juce_CheckSettingMacros.h"
 
 #if JucePlugin_Build_VST
@@ -34,27 +31,13 @@
  #pragma warning (disable : 4996 4100)
 #endif
 
-#ifdef _WIN32
- #undef _WIN32_WINNT
- #define _WIN32_WINNT 0x500
- #undef STRICT
- #define STRICT 1
- #include <windows.h>
-#elif defined (LINUX)
- #include <X11/Xlib.h>
- #include <X11/Xutil.h>
- #include <X11/Xatom.h>
- #undef KeyPress
-#else
- #include <Carbon/Carbon.h>
-#endif
+#include "../utility/juce_IncludeSystemHeaders.h"
 
 #ifdef PRAGMA_ALIGN_SUPPORTED
  #undef PRAGMA_ALIGN_SUPPORTED
  #define PRAGMA_ALIGN_SUPPORTED 1
 #endif
 
-//==============================================================================
 #ifndef _MSC_VER
  #define __cdecl
 #endif
@@ -69,13 +52,18 @@
  #pragma clang diagnostic ignored "-Wnon-virtual-dtor"
 #endif
 
+#ifdef _MSC_VER
+ #pragma warning (push)
+ #pragma warning (disable : 4458)
+#endif
+
 /*  These files come with the Steinberg VST SDK - to get them, you'll need to
     visit the Steinberg website and agree to whatever is currently required to
     get them. The best version to get is the VST3 SDK, which also contains
     the older VST2.4 files.
 
     Then, you'll need to make sure your include path contains your "VST SDK3"
-    directory (or whatever you've named it on your machine). The introjucer has
+    directory (or whatever you've named it on your machine). The Projucer has
     a special box for setting this path.
 */
 #include <public.sdk/source/vst2.x/audioeffectx.h>
@@ -96,6 +84,10 @@
  namespace juce { extern Steinberg::FUID getJuceVST3ComponentIID(); }
 #endif
 
+#ifdef _MSC_VER
+ #pragma warning (pop)
+#endif
+
 #ifdef __clang__
  #pragma clang diagnostic pop
 #endif
@@ -108,6 +100,7 @@
 #include "../utility/juce_IncludeModuleHeaders.h"
 #include "../utility/juce_FakeMouseMoveGenerator.h"
 #include "../utility/juce_WindowsHooks.h"
+#include "../utility/juce_PluginBusUtilities.h"
 
 #ifdef _MSC_VER
  #pragma pack (pop)
@@ -117,19 +110,20 @@
 
 class JuceVSTWrapper;
 static bool recursionCheck = false;
-static juce::uint32 lastMasterIdleCall = 0;
+
+JUCE_DEFINE_WRAPPER_TYPE (wrapperType_VST);
 
 namespace juce
 {
  #if JUCE_MAC
-  extern void initialiseMac();
-  extern void* attachComponentToWindowRef (Component*, void* parent, bool isNSView);
-  extern void detachComponentFromWindowRef (Component*, void* window, bool isNSView);
-  extern void setNativeHostWindowSize (void* window, Component*, int newWidth, int newHeight, bool isNSView);
-  extern void checkWindowVisibility (void* window, Component*, bool isNSView);
-  extern bool forwardCurrentKeyEventToHost (Component*, bool isNSView);
+  extern JUCE_API void initialiseMacVST();
+  extern JUCE_API void* attachComponentToWindowRefVST (Component*, void* parent, bool isNSView);
+  extern JUCE_API void detachComponentFromWindowRefVST (Component*, void* window, bool isNSView);
+  extern JUCE_API void setNativeHostWindowSizeVST (void* window, Component*, int newWidth, int newHeight, bool isNSView);
+  extern JUCE_API void checkWindowVisibilityVST (void* window, Component*, bool isNSView);
+  extern JUCE_API bool forwardCurrentKeyEventToHostVST (Component*, bool isNSView);
  #if ! JUCE_64BIT
-  extern void updateEditorCompBounds (Component*);
+  extern JUCE_API void updateEditorCompBoundsVST (Component*);
  #endif
  #endif
 
@@ -144,13 +138,16 @@ namespace juce
 
 namespace
 {
-    HWND findMDIParentOf (HWND w)
+    // Returns the actual container window, unlike GetParent, which can also return a separate owner window.
+    static HWND getWindowParent (HWND w) noexcept    { return GetAncestor (w, GA_PARENT); }
+
+    static HWND findMDIParentOf (HWND w)
     {
         const int frameThickness = GetSystemMetrics (SM_CYFIXEDFRAME);
 
         while (w != 0)
         {
-            HWND parent = GetParent (w);
+            HWND parent = getWindowParent (w);
 
             if (parent == 0)
                 break;
@@ -218,7 +215,7 @@ public:
         {}
     }
 
-    juce_DeclareSingleton (SharedMessageThread, false);
+    juce_DeclareSingleton (SharedMessageThread, false)
 
 private:
     bool initialised;
@@ -240,19 +237,38 @@ class JuceVSTWrapper  : public AudioEffectX,
                         private Timer,
                         private AsyncUpdater
 {
+private:
+    //==============================================================================
+    template <typename FloatType>
+    struct VstTempBuffers
+    {
+        VstTempBuffers() {}
+        ~VstTempBuffers() { release(); }
+
+        void release() noexcept
+        {
+            for (int i = tempChannels.size(); --i >= 0;)
+                delete[] (tempChannels.getUnchecked(i));
+
+            tempChannels.clear();
+        }
+
+        HeapBlock<FloatType*> channels;
+        Array<FloatType*> tempChannels;  // see note in processReplacing()
+        juce::AudioBuffer<FloatType> processTempBuffer;
+    };
+
 public:
     //==============================================================================
-    JuceVSTWrapper (audioMasterCallback audioMaster, AudioProcessor* const af)
-       : AudioEffectX (audioMaster, af->getNumPrograms(), af->getNumParameters()),
+    JuceVSTWrapper (audioMasterCallback audioMasterCB, AudioProcessor* const af)
+       : AudioEffectX (audioMasterCB, af->getNumPrograms(), af->getNumParameters()),
          filter (af),
+         busUtils (*filter, true, 64),
          chunkMemoryTime (0),
-         speakerIn (kSpeakerArrEmpty),
-         speakerOut (kSpeakerArrEmpty),
-         numInChans (JucePlugin_MaxNumInputChannels),
-         numOutChans (JucePlugin_MaxNumOutputChannels),
          isProcessing (false),
          isBypassed (false),
          hasShutdown (false),
+         isInSizeWindow (false),
          firstProcessCallback (true),
          shouldDeleteEditor (false),
         #if JUCE_64BIT
@@ -260,10 +276,32 @@ public:
         #else
          useNSView (false),
         #endif
-         processTempBuffer (1, 1),
          hostWindow (0)
     {
-        filter->setPlayConfigDetails (numInChans, numOutChans, 0, 0);
+        busUtils.init();
+
+        // VST-2 does not support disabling buses: so always enable all of them
+        if (busUtils.hasDynamicInBuses() || busUtils.hasDynamicOutBuses())
+            busUtils.enableAllBuses();
+
+        {
+            // Using the legacy Projucer field? Then keep the maximum number of channels
+            // as the default plug-in layout. Otherwise, leave it up to the user
+            // which default layout the prefer.
+          #ifndef JucePlugin_PreferredChannelConfigurations
+            PluginBusUtilities::ScopedBusRestorer busRestorer (busUtils);
+          #endif
+
+            findMaxTotalChannels (maxNumInChannels, maxNumOutChannels);
+            bool success = setBusArrangementFromTotalChannelNum (maxNumInChannels, maxNumOutChannels);
+            ignoreUnused (success);
+
+            // please file a bug if you hit this assertsion!
+            jassert (maxNumInChannels  == busUtils.findTotalNumChannels (true) && success
+                  && maxNumOutChannels == busUtils.findTotalNumChannels (false));
+        }
+
+        filter->setRateAndBufferSizeDetails (0, 0);
         filter->setPlayHead (this);
         filter->addListener (this);
 
@@ -272,13 +310,13 @@ public:
 
         setUniqueID ((int) (JucePlugin_VSTUniqueID));
 
-        setNumInputs (numInChans);
-        setNumOutputs (numOutChans);
+        setNumInputs  (maxNumInChannels);
+        setNumOutputs (maxNumOutChannels);
 
         canProcessReplacing (true);
+        canDoubleReplacing (filter->supportsDoublePrecisionProcessing());
 
         isSynth ((JucePlugin_IsSynth) != 0);
-        noTail (filter->getTailLengthSeconds() <= 0);
         setInitialDelay (filter->getLatencySamples());
         programsAreChunks (true);
 
@@ -307,7 +345,6 @@ public:
 
                 jassert (editorComp == 0);
 
-                channels.free();
                 deleteTempChannels();
 
                 jassert (activePlugins.contains (this));
@@ -395,18 +432,19 @@ public:
             return 1;
         }
 
+        // This tells Wavelab to use the UI thread to invoke open/close,
+        // like all other hosts do.
         if (strcmp (text, "openCloseAnyThread") == 0)
-        {
-            // This tells Wavelab to use the UI thread to invoke open/close,
-            // like all other hosts do.
             return -1;
-        }
+
+        if (strcmp (text, "MPE") == 0)
+            return filter->supportsMPE() ? 1 : 0;
 
        #if JUCE_MAC
         if (strcmp (text, "hasCockosViewAsConfig") == 0)
         {
             useNSView = true;
-            return 0xbeef0000;
+            return (VstInt32) 0xbeef0000;
         }
        #endif
 
@@ -415,7 +453,7 @@ public:
 
     VstIntPtr vendorSpecific (VstInt32 lArg, VstIntPtr lArg2, void* ptrArg, float floatArg) override
     {
-        (void) lArg; (void) lArg2; (void) ptrArg; (void) floatArg;
+        ignoreUnused (lArg, lArg2, ptrArg, floatArg);
 
        #if JucePlugin_Build_VST3 && JUCE_VST3_CAN_REPLACE_VST2
         if ((lArg == 'stCA' || lArg == 'stCa') && lArg2 == 'FUID' && ptrArg != nullptr)
@@ -426,47 +464,6 @@ public:
        #endif
 
         return 0;
-    }
-
-    bool getInputProperties (VstInt32 index, VstPinProperties* properties) override
-    {
-        if (filter == nullptr || index >= JucePlugin_MaxNumInputChannels)
-            return false;
-
-        setPinProperties (*properties, filter->getInputChannelName ((int) index),
-                          speakerIn, filter->isInputChannelStereoPair ((int) index));
-        return true;
-    }
-
-    bool getOutputProperties (VstInt32 index, VstPinProperties* properties) override
-    {
-        if (filter == nullptr || index >= JucePlugin_MaxNumOutputChannels)
-            return false;
-
-        setPinProperties (*properties, filter->getOutputChannelName ((int) index),
-                          speakerOut, filter->isOutputChannelStereoPair ((int) index));
-        return true;
-    }
-
-    static void setPinProperties (VstPinProperties& properties, const String& name,
-                                  VstSpeakerArrangementType type, const bool isPair)
-    {
-        name.copyToUTF8 (properties.label, (size_t) (kVstMaxLabelLen - 1));
-        name.copyToUTF8 (properties.shortLabel, (size_t) (kVstMaxShortLabelLen - 1));
-
-        if (type != kSpeakerArrEmpty)
-        {
-            properties.flags = kVstPinUseSpeaker;
-            properties.arrangementType = type;
-        }
-        else
-        {
-            properties.flags = kVstPinIsActive;
-            properties.arrangementType = 0;
-
-            if (isPair)
-                properties.flags |= kVstPinIsStereo;
-        }
     }
 
     bool setBypass (bool b) override
@@ -490,30 +487,14 @@ public:
         VSTMidiEventList::addEventsToMidiBuffer (events, midiEvents);
         return 1;
        #else
-        (void) events;
+        ignoreUnused (events);
         return 0;
        #endif
     }
 
-    void process (float** inputs, float** outputs, VstInt32 numSamples)
-    {
-        const int numIn = numInChans;
-        const int numOut = numOutChans;
-
-        processTempBuffer.setSize (numIn, numSamples, false, false, true);
-
-        for (int i = numIn; --i >= 0;)
-            processTempBuffer.copyFrom (i, 0, outputs[i], numSamples);
-
-        processReplacing (inputs, outputs, numSamples);
-
-        AudioSampleBuffer dest (outputs, numOut, numSamples);
-
-        for (int i = jmin (numIn, numOut); --i >= 0;)
-            dest.addFrom (i, 0, processTempBuffer, i, 0, numSamples);
-    }
-
-    void processReplacing (float** inputs, float** outputs, VstInt32 numSamples) override
+    template <typename FloatType>
+    void internalProcessReplacing (FloatType** inputs, FloatType** outputs,
+                                   VstInt32 numSamples, VstTempBuffers<FloatType>& tmpBuffers)
     {
         if (firstProcessCallback)
         {
@@ -530,9 +511,13 @@ public:
             filter->setNonRealtime (getCurrentProcessLevel() == 4 /* kVstProcessLevelOffline */);
 
            #if JUCE_WINDOWS
-            if (GetThreadPriority (GetCurrentThread()) <= THREAD_PRIORITY_NORMAL
-                  && GetThreadPriority (GetCurrentThread()) >= THREAD_PRIORITY_LOWEST)
-                filter->setNonRealtime (true);
+            if (getHostType().isWavelab())
+            {
+                int priority = GetThreadPriority (GetCurrentThread());
+
+                if (priority <= THREAD_PRIORITY_NORMAL && priority >= THREAD_PRIORITY_LOWEST)
+                    filter->setNonRealtime (true);
+            }
            #endif
         }
 
@@ -543,10 +528,10 @@ public:
         jassert (activePlugins.contains (this));
 
         {
-            const ScopedLock sl (filter->getCallbackLock());
+            const int numIn  = filter->getTotalNumInputChannels();
+            const int numOut = filter->getTotalNumOutputChannels();
 
-            const int numIn = numInChans;
-            const int numOut = numOutChans;
+            const ScopedLock sl (filter->getCallbackLock());
 
             if (filter->isSuspended())
             {
@@ -558,7 +543,7 @@ public:
                 int i;
                 for (i = 0; i < numOut; ++i)
                 {
-                    float* chan = tempChannels.getUnchecked(i);
+                    FloatType* chan = tmpBuffers.tempChannels.getUnchecked(i);
 
                     if (chan == nullptr)
                     {
@@ -571,24 +556,32 @@ public:
                         {
                             if (outputs[j] == chan)
                             {
-                                chan = new float [blockSize * 2];
-                                tempChannels.set (i, chan);
+                                chan = new FloatType [blockSize * 2];
+                                tmpBuffers.tempChannels.set (i, chan);
                                 break;
                             }
                         }
                     }
 
-                    if (i < numIn && chan != inputs[i])
-                        memcpy (chan, inputs[i], sizeof (float) * (size_t) numSamples);
+                    if (i < numIn)
+                    {
+                        if (chan != inputs[i])
+                            memcpy (chan, inputs[i], sizeof (FloatType) * (size_t) numSamples);
+                    }
+                    else
+                    {
+                        FloatVectorOperations::clear (chan, numSamples);
+                    }
 
-                    channels[i] = chan;
+                    tmpBuffers.channels[i] = chan;
                 }
 
                 for (; i < numIn; ++i)
-                    channels[i] = inputs[i];
+                    tmpBuffers.channels[i] = inputs[i];
 
                 {
-                    AudioSampleBuffer chans (channels, jmax (numIn, numOut), numSamples);
+                    const int numChannels = jmax (numIn, numOut);
+                    AudioBuffer<FloatType> chans (tmpBuffers.channels, numChannels, numSamples);
 
                     if (isBypassed)
                         filter->processBlockBypassed (chans, midiEvents);
@@ -598,8 +591,8 @@ public:
 
                 // copy back any temp channels that may have been used..
                 for (i = 0; i < numOut; ++i)
-                    if (const float* const chan = tempChannels.getUnchecked(i))
-                        memcpy (outputs[i], chan, sizeof (float) * (size_t) numSamples);
+                    if (const FloatType* const chan = tmpBuffers.tempChannels.getUnchecked(i))
+                        memcpy (outputs[i], chan, sizeof (FloatType) * (size_t) numSamples);
             }
         }
 
@@ -645,33 +638,60 @@ public:
         }
     }
 
+    void processReplacing (float** inputs, float** outputs, VstInt32 sampleFrames) override
+    {
+        jassert (! filter->isUsingDoublePrecision());
+        internalProcessReplacing (inputs, outputs, sampleFrames, floatTempBuffers);
+    }
+
+    void processDoubleReplacing (double** inputs, double** outputs, VstInt32 sampleFrames) override
+    {
+        jassert (filter->isUsingDoublePrecision());
+        internalProcessReplacing (inputs, outputs, sampleFrames, doubleTempBuffers);
+    }
+
     //==============================================================================
     VstInt32 startProcess() override  { return 0; }
     VstInt32 stopProcess() override   { return 0; }
+
+    //==============================================================================
+    bool setProcessPrecision (VstInt32 vstPrecision) override
+    {
+        if (! isProcessing)
+        {
+            if (filter != nullptr)
+            {
+                filter->setProcessingPrecision (vstPrecision == kVstProcessPrecision64 && filter->supportsDoublePrecisionProcessing()
+                                                    ? AudioProcessor::doublePrecision
+                                                    : AudioProcessor::singlePrecision);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     void resume() override
     {
         if (filter != nullptr)
         {
             isProcessing = true;
-            channels.calloc ((size_t) (numInChans + numOutChans));
 
-            double rate = getSampleRate();
-            jassert (rate > 0);
-            if (rate <= 0.0)
-                rate = 44100.0;
+            floatTempBuffers .channels.calloc ((size_t) (cEffect.numInputs + cEffect.numOutputs));
+            doubleTempBuffers.channels.calloc ((size_t) (cEffect.numInputs + cEffect.numOutputs));
 
-            const int blockSize = getBlockSize();
-            jassert (blockSize > 0);
+            const double currentRate = getSampleRate();
+            const int currentBlockSize = getBlockSize();
 
             firstProcessCallback = true;
 
             filter->setNonRealtime (getCurrentProcessLevel() == 4 /* kVstProcessLevelOffline */);
-            filter->setPlayConfigDetails (numInChans, numOutChans, rate, blockSize);
+            filter->setRateAndBufferSizeDetails (currentRate, currentBlockSize);
 
             deleteTempChannels();
 
-            filter->prepareToPlay (rate, blockSize);
+            filter->prepareToPlay (currentRate, currentBlockSize);
 
             midiEvents.ensureSize (2048);
             midiEvents.clear();
@@ -696,7 +716,8 @@ public:
             outgoingEvents.freeEvents();
 
             isProcessing = false;
-            channels.free();
+            floatTempBuffers.channels.free();
+            doubleTempBuffers.channels.free();
 
             deleteTempChannels();
         }
@@ -843,12 +864,37 @@ public:
         }
     }
 
+    bool string2parameter (VstInt32 index, char* text) override
+    {
+        if (filter != nullptr)
+        {
+            jassert (isPositiveAndBelow (index, filter->getNumParameters()));
+
+            if (AudioProcessorParameter* p = filter->getParameters()[index])
+            {
+                filter->setParameter (index, p->getValueForText (String::fromUTF8 (text)));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     void getParameterName (VstInt32 index, char* text) override
     {
         if (filter != nullptr)
         {
             jassert (isPositiveAndBelow (index, filter->getNumParameters()));
             filter->getParameterName (index, 16).copyToUTF8 (text, 16); // length should technically be kVstMaxParamStrLen, which is 8, but hosts will normally allow a bit more.
+        }
+    }
+
+    void getParameterLabel (VstInt32 index, char* text) override
+    {
+        if (filter != nullptr)
+        {
+            jassert (isPositiveAndBelow (index, filter->getNumParameters()));
+            filter->getParameterLabel (index).copyToUTF8 (text, 24); // length should technically be kVstMaxParamStrLen, which is 8, but hosts will normally allow a bit more.
         }
     }
 
@@ -878,94 +924,329 @@ public:
         return filter != nullptr && filter->isParameterAutomatable ((int) index);
     }
 
-    struct ChannelConfigComparator
-    {
-        static int compareElements (const short* const first, const short* const second) noexcept
-        {
-            if (first[0] < second[0])  return -1;
-            if (first[0] > second[0])  return 1;
-            if (first[1] < second[1])  return -1;
-            if (first[1] > second[1])  return 1;
-            return 0;
-        }
-    };
-
     bool setSpeakerArrangement (VstSpeakerArrangement* pluginInput,
                                 VstSpeakerArrangement* pluginOutput) override
     {
-        short channelConfigs[][2] = { JucePlugin_PreferredChannelConfigurations };
+        const int numIns  = busUtils.getBusCount (true);
+        const int numOuts = busUtils.getBusCount (false);;
 
-        Array <short*> channelConfigsSorted;
-        ChannelConfigComparator comp;
+        if (pluginInput != nullptr && numIns == 0)
+            return false;
 
-        for (int i = 0; i < numElementsInArray (channelConfigs); ++i)
-            channelConfigsSorted.addSorted (comp, channelConfigs[i]);
+        if (pluginOutput != nullptr && numOuts == 0)
+            return false;
 
-        for (int i = channelConfigsSorted.size(); --i >= 0;)
+        if (numIns > 1 || numOuts > 1)
         {
-            const short* const config = channelConfigsSorted.getUnchecked(i);
-            bool inCountMatches  = (config[0] == pluginInput->numChannels);
-            bool outCountMatches = (config[1] == pluginOutput->numChannels);
+            int newNumInChannels  = (pluginInput  != nullptr && pluginInput-> numChannels >= 0) ? pluginInput-> numChannels
+                                                                                                : busUtils.findTotalNumChannels (true);
+            int newNumOutChannels = (pluginOutput != nullptr && pluginOutput->numChannels >= 0) ? pluginOutput->numChannels
+                                                                                                : busUtils.findTotalNumChannels (false);
 
-            if (inCountMatches && outCountMatches)
+            newNumInChannels  = jmin (newNumInChannels,  maxNumInChannels);
+            newNumOutChannels = jmin (newNumOutChannels, maxNumOutChannels);
+
+            if (! setBusArrangementFromTotalChannelNum (newNumInChannels, newNumOutChannels))
+                return false;
+        }
+        else
+        {
+            PluginBusUtilities::ScopedBusRestorer busRestorer (busUtils);
+            AudioChannelSet inLayoutType;
+
+            if (pluginInput  != nullptr && pluginInput-> numChannels >= 0)
             {
-                speakerIn  = (VstSpeakerArrangementType) pluginInput->type;
-                speakerOut = (VstSpeakerArrangementType) pluginOutput->type;
-                numInChans  = pluginInput->numChannels;
-                numOutChans = pluginOutput->numChannels;
+                inLayoutType = SpeakerMappings::vstArrangementTypeToChannelSet (*pluginInput);
+                if (busUtils.getChannelSet (true, 0) != inLayoutType)
+                    if (! filter->setPreferredBusArrangement (true, 0, inLayoutType))
+                        return false;
+            }
 
-                filter->setPlayConfigDetails (numInChans, numOutChans,
-                                              filter->getSampleRate(),
-                                              filter->getBlockSize());
+            if (pluginOutput != nullptr && pluginOutput->numChannels >= 0)
+            {
+                AudioChannelSet newType = SpeakerMappings::vstArrangementTypeToChannelSet (*pluginOutput);
+                if (busUtils.getChannelSet (false, 0) != newType)
+                    if (! filter->setPreferredBusArrangement (false, 0, newType))
+                        return false;
 
-                filter->setSpeakerArrangement (getSpeakerArrangementString (speakerIn),
-                                               getSpeakerArrangementString (speakerOut));
-                return true;
+                // re-check the input
+                if ((! inLayoutType.isDisabled()) && busUtils.getChannelSet (true, 0) != inLayoutType)
+                    return false;
+
+                busRestorer.release();
             }
         }
 
-        filter->setSpeakerArrangement (String::empty, String::empty);
-        return false;
+        filter->setRateAndBufferSizeDetails(0, 0);
+        return true;
     }
 
-    static const char* getSpeakerArrangementString (VstSpeakerArrangementType type) noexcept
+    bool getSpeakerArrangement (VstSpeakerArrangement** pluginInput, VstSpeakerArrangement** pluginOutput) override
     {
-        switch (type)
+        *pluginInput = 0;
+        *pluginOutput = 0;
+
+        if (! AudioEffectX::allocateArrangement (pluginInput, busUtils.findTotalNumChannels (true)))
+            return false;
+
+        if (! AudioEffectX::allocateArrangement (pluginOutput, busUtils.findTotalNumChannels (false)))
         {
-            case kSpeakerArrMono:           return "M";
-            case kSpeakerArrStereo:         return "L R";
-            case kSpeakerArrStereoSurround: return "Ls Rs";
-            case kSpeakerArrStereoCenter:   return "Lc Rc";
-            case kSpeakerArrStereoSide:     return "Sl Sr";
-            case kSpeakerArrStereoCLfe:     return "C Lfe";
-            case kSpeakerArr30Cine:         return "L R C";
-            case kSpeakerArr30Music:        return "L R S";
-            case kSpeakerArr31Cine:         return "L R C Lfe";
-            case kSpeakerArr31Music:        return "L R Lfe S";
-            case kSpeakerArr40Cine:         return "L R C S";
-            case kSpeakerArr40Music:        return "L R Ls Rs";
-            case kSpeakerArr41Cine:         return "L R C Lfe S";
-            case kSpeakerArr41Music:        return "L R Lfe Ls Rs";
-            case kSpeakerArr50:             return "L R C Ls Rs" ;
-            case kSpeakerArr51:             return "L R C Lfe Ls Rs";
-            case kSpeakerArr60Cine:         return "L R C Ls Rs Cs";
-            case kSpeakerArr60Music:        return "L R Ls Rs Sl Sr ";
-            case kSpeakerArr61Cine:         return "L R C Lfe Ls Rs Cs";
-            case kSpeakerArr61Music:        return "L R Lfe Ls Rs Sl Sr";
-            case kSpeakerArr70Cine:         return "L R C Ls Rs Lc Rc ";
-            case kSpeakerArr70Music:        return "L R C Ls Rs Sl Sr";
-            case kSpeakerArr71Cine:         return "L R C Lfe Ls Rs Lc Rc";
-            case kSpeakerArr71Music:        return "L R C Lfe Ls Rs Sl Sr";
-            case kSpeakerArr80Cine:         return "L R C Ls Rs Lc Rc Cs";
-            case kSpeakerArr80Music:        return "L R C Ls Rs Cs Sl Sr";
-            case kSpeakerArr81Cine:         return "L R C Lfe Ls Rs Lc Rc Cs";
-            case kSpeakerArr81Music:        return "L R C Lfe Ls Rs Cs Sl Sr" ;
-            case kSpeakerArr102:            return "L R C Lfe Ls Rs Tfl Tfc Tfr Trl Trr Lfe2";
-            default:                        break;
+            AudioEffectX::deallocateArrangement (pluginInput);
+            *pluginInput = 0;
+            return false;
         }
 
-        return nullptr;
+        if (pluginHasSidechainsOrAuxs())
+        {
+            int numIns  = busUtils.findTotalNumChannels (true);
+            int numOuts = busUtils.findTotalNumChannels (false);
+
+            AudioChannelSet layout = AudioChannelSet::canonicalChannelSet (numIns);
+            SpeakerMappings::channelSetToVstArrangement (layout,  **pluginInput);
+
+            layout = AudioChannelSet::canonicalChannelSet (numOuts);
+            SpeakerMappings::channelSetToVstArrangement (layout,  **pluginOutput);
+        }
+        else
+        {
+            SpeakerMappings::channelSetToVstArrangement (busUtils.getChannelSet (true,  0), **pluginInput);
+            SpeakerMappings::channelSetToVstArrangement (busUtils.getChannelSet (false, 0), **pluginOutput);
+        }
+
+        return true;
     }
+
+    bool getInputProperties (VstInt32 index, VstPinProperties* properties) override
+    {
+        return filter != nullptr
+                && getPinProperties (*properties, true, (int) index);
+    }
+
+    bool getOutputProperties (VstInt32 index, VstPinProperties* properties) override
+    {
+        return filter != nullptr
+                && getPinProperties (*properties, false, (int) index);
+    }
+
+    bool getPinProperties (VstPinProperties& properties, bool direction, int index) const
+    {
+        // fill with default
+        properties.flags = kVstPinUseSpeaker;
+        properties.label[0] = 0;
+        properties.shortLabel[0] = 0;
+        properties.arrangementType = kSpeakerArrEmpty;
+
+        // index refers to the absolute index when combining all channels of every bus
+        if (index >= (direction ? cEffect.numInputs : cEffect.numOutputs))
+            return false;
+
+        const int n = busUtils.getBusCount(direction);
+        int busIdx;
+        for (busIdx = 0; busIdx < n; ++busIdx)
+        {
+            const int numChans = busUtils.getNumChannels (direction, busIdx);
+            if (index < numChans)
+                break;
+
+            index -= numChans;
+        }
+
+        if (busIdx >= n)
+            return true;
+
+        const AudioProcessor::AudioProcessorBus& busInfo = busUtils.getFilterBus (direction).getReference (busIdx);
+
+       #ifdef JucePlugin_PreferredChannelConfigurations
+        String abbvChannelName = String (index);
+       #else
+        String abbvChannelName = AudioChannelSet::getAbbreviatedChannelTypeName (busInfo.channels.getTypeOfChannel(index));
+       #endif
+
+        String channelName = busInfo.name + String (" ") + abbvChannelName;
+
+        channelName.copyToUTF8 (properties.label, (size_t) (kVstMaxLabelLen - 1));
+        channelName.copyToUTF8 (properties.shortLabel, (size_t) (kVstMaxShortLabelLen - 1));
+
+        properties.flags = kVstPinUseSpeaker | kVstPinIsActive;
+        properties.arrangementType = SpeakerMappings::channelSetToVstArrangementType (busInfo.channels);
+
+        if (properties.arrangementType == kSpeakerArrEmpty)
+            properties.flags &= ~kVstPinIsActive;
+
+        if (busInfo.channels.size() == 2)
+            properties.flags |= kVstPinIsStereo;
+
+        return true;
+    }
+
+    //==============================================================================
+    struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give easier access to items in the namespace)
+    {
+        struct Mapping
+        {
+            VstInt32 vst2;
+            ChannelType channels[13];
+
+            bool matches (const Array<ChannelType>& chans) const noexcept
+            {
+                const int n = sizeof (channels) / sizeof (ChannelType);
+
+                for (int i = 0; i < n; ++i)
+                {
+                    if (channels[i] == unknown)  return (i == chans.size());
+                    if (i == chans.size())       return (channels[i] == unknown);
+
+                    if (channels[i] != chans.getUnchecked(i))
+                        return false;
+                }
+
+                return true;
+            }
+        };
+
+        static AudioChannelSet vstArrangementTypeToChannelSet (const VstSpeakerArrangement& arr)
+        {
+            for (const Mapping* m = getMappings(); m->vst2 != kSpeakerArrEmpty; ++m)
+            {
+                if (m->vst2 == arr.type)
+                {
+                    AudioChannelSet s;
+
+                    for (int i = 0; m->channels[i] != 0; ++i)
+                        s.addChannel (m->channels[i]);
+
+                    return s;
+                }
+            }
+
+            return AudioChannelSet::discreteChannels (arr.numChannels);
+        }
+
+        static VstInt32 channelSetToVstArrangementType (AudioChannelSet channels)
+        {
+            Array<AudioChannelSet::ChannelType> chans (channels.getChannelTypes());
+
+            if (channels == AudioChannelSet::disabled())
+                return kSpeakerArrEmpty;
+
+            for (const Mapping* m = getMappings(); m->vst2 != kSpeakerArrEmpty; ++m)
+                if (m->matches (chans))
+                    return m->vst2;
+
+            return kSpeakerArrUserDefined;
+        }
+
+        static void channelSetToVstArrangement (const AudioChannelSet& channels, VstSpeakerArrangement& result)
+        {
+            result.type = channelSetToVstArrangementType (channels);
+            result.numChannels = channels.size();
+
+            for (int i = 0; i < result.numChannels; ++i)
+            {
+                VstSpeakerProperties& speaker = result.speakers[i];
+
+                zeromem (&speaker, sizeof (VstSpeakerProperties));
+                speaker.type = getSpeakerType (channels.getTypeOfChannel (i));
+            }
+        }
+
+        static const Mapping* getMappings() noexcept
+        {
+            static const Mapping mappings[] =
+            {
+                { kSpeakerArrMono,           { centre, unknown } },
+                { kSpeakerArrStereo,         { left, right, unknown } },
+                { kSpeakerArrStereoSurround, { leftSurround, rightSurround, unknown } },
+                { kSpeakerArrStereoCenter,   { leftCentre, rightCentre, unknown } },
+                { kSpeakerArrStereoSide,     { leftRearSurround, rightRearSurround, unknown } },
+                { kSpeakerArrStereoCLfe,     { centre, subbass, unknown } },
+                { kSpeakerArr30Cine,         { left, right, centre, unknown } },
+                { kSpeakerArr30Music,        { left, right, surround, unknown } },
+                { kSpeakerArr31Cine,         { left, right, centre, subbass, unknown } },
+                { kSpeakerArr31Music,        { left, right, subbass, surround, unknown } },
+                { kSpeakerArr40Cine,         { left, right, centre, surround, unknown } },
+                { kSpeakerArr40Music,        { left, right, leftSurround, rightSurround, unknown } },
+                { kSpeakerArr41Cine,         { left, right, centre, subbass, surround, unknown } },
+                { kSpeakerArr41Music,        { left, right, subbass, leftSurround, rightSurround, unknown } },
+                { kSpeakerArr50,             { left, right, centre, leftSurround, rightSurround, unknown } },
+                { kSpeakerArr51,             { left, right, centre, subbass, leftSurround, rightSurround, unknown } },
+                { kSpeakerArr60Cine,         { left, right, centre, leftSurround, rightSurround, surround, unknown } },
+                { kSpeakerArr60Music,        { left, right, leftSurround, rightSurround, leftRearSurround, rightRearSurround, unknown } },
+                { kSpeakerArr61Cine,         { left, right, centre, subbass, leftSurround, rightSurround, surround, unknown } },
+                { kSpeakerArr61Music,        { left, right, subbass, leftSurround, rightSurround, leftRearSurround, rightRearSurround, unknown } },
+                { kSpeakerArr70Cine,         { left, right, centre, leftSurround, rightSurround, topFrontLeft, topFrontRight, unknown } },
+                { kSpeakerArr70Music,        { left, right, centre, leftSurround, rightSurround, leftRearSurround, rightRearSurround, unknown } },
+                { kSpeakerArr71Cine,         { left, right, centre, subbass, leftSurround, rightSurround, topFrontLeft, topFrontRight, unknown } },
+                { kSpeakerArr71Music,        { left, right, centre, subbass, leftSurround, rightSurround, leftRearSurround, rightRearSurround, unknown } },
+                { kSpeakerArr80Cine,         { left, right, centre, leftSurround, rightSurround, topFrontLeft, topFrontRight, surround, unknown } },
+                { kSpeakerArr80Music,        { left, right, centre, leftSurround, rightSurround, surround, leftRearSurround, rightRearSurround, unknown } },
+                { kSpeakerArr81Cine,         { left, right, centre, subbass, leftSurround, rightSurround, topFrontLeft, topFrontRight, surround, unknown } },
+                { kSpeakerArr81Music,        { left, right, centre, subbass, leftSurround, rightSurround, surround, leftRearSurround, rightRearSurround, unknown } },
+                { kSpeakerArr102,            { left, right, centre, subbass, leftSurround, rightSurround, topFrontLeft, topFrontCentre, topFrontRight, topRearLeft, topRearRight, subbass2, unknown } },
+                { kSpeakerArrEmpty,          { unknown } }
+            };
+
+            return mappings;
+        }
+
+        static inline VstInt32 getSpeakerType (AudioChannelSet::ChannelType type) noexcept
+        {
+            switch (type)
+            {
+                case AudioChannelSet::left:              return kSpeakerL;
+                case AudioChannelSet::right:             return kSpeakerR;
+                case AudioChannelSet::centre:            return kSpeakerC;
+                case AudioChannelSet::subbass:           return kSpeakerLfe;
+                case AudioChannelSet::leftSurround:      return kSpeakerLs;
+                case AudioChannelSet::rightSurround:     return kSpeakerRs;
+                case AudioChannelSet::leftCentre:        return kSpeakerLc;
+                case AudioChannelSet::rightCentre:       return kSpeakerRc;
+                case AudioChannelSet::surround:          return kSpeakerS;
+                case AudioChannelSet::leftRearSurround:  return kSpeakerSl;
+                case AudioChannelSet::rightRearSurround: return kSpeakerSr;
+                case AudioChannelSet::topMiddle:         return kSpeakerTm;
+                case AudioChannelSet::topFrontLeft:      return kSpeakerTfl;
+                case AudioChannelSet::topFrontCentre:    return kSpeakerTfc;
+                case AudioChannelSet::topFrontRight:     return kSpeakerTfr;
+                case AudioChannelSet::topRearLeft:       return kSpeakerTrl;
+                case AudioChannelSet::topRearCentre:     return kSpeakerTrc;
+                case AudioChannelSet::topRearRight:      return kSpeakerTrr;
+                case AudioChannelSet::subbass2:          return kSpeakerLfe2;
+                default: break;
+            }
+
+            return 0;
+        }
+
+        static inline AudioChannelSet::ChannelType getChannelType (VstInt32 type) noexcept
+        {
+            switch (type)
+            {
+                case kSpeakerL:     return AudioChannelSet::left;
+                case kSpeakerR:     return AudioChannelSet::right;
+                case kSpeakerC:     return AudioChannelSet::centre;
+                case kSpeakerLfe:   return AudioChannelSet::subbass;
+                case kSpeakerLs:    return AudioChannelSet::leftSurround;
+                case kSpeakerRs:    return AudioChannelSet::rightSurround;
+                case kSpeakerLc:    return AudioChannelSet::leftCentre;
+                case kSpeakerRc:    return AudioChannelSet::rightCentre;
+                case kSpeakerS:     return AudioChannelSet::surround;
+                case kSpeakerSl:    return AudioChannelSet::leftRearSurround;
+                case kSpeakerSr:    return AudioChannelSet::rightRearSurround;
+                case kSpeakerTm:    return AudioChannelSet::topMiddle;
+                case kSpeakerTfl:   return AudioChannelSet::topFrontLeft;
+                case kSpeakerTfc:   return AudioChannelSet::topFrontCentre;
+                case kSpeakerTfr:   return AudioChannelSet::topFrontRight;
+                case kSpeakerTrl:   return AudioChannelSet::topRearLeft;
+                case kSpeakerTrc:   return AudioChannelSet::topRearCentre;
+                case kSpeakerTrr:   return AudioChannelSet::topRearRight;
+                case kSpeakerLfe2:  return AudioChannelSet::subbass2;
+                default: break;
+            }
+
+            return AudioChannelSet::unknown;
+        }
+    };
 
     //==============================================================================
     VstInt32 getChunk (void** data, bool onlyStoreCurrentProgramData) override
@@ -1025,27 +1306,8 @@ public:
 
        #if JUCE_MAC
         if (hostWindow != 0)
-            checkWindowVisibility (hostWindow, editorComp, useNSView);
+            checkWindowVisibilityVST (hostWindow, editorComp, useNSView);
        #endif
-
-        tryMasterIdle();
-    }
-
-    void tryMasterIdle()
-    {
-        if (Component::isMouseButtonDownAnywhere() && ! recursionCheck)
-        {
-            const juce::uint32 now = juce::Time::getMillisecondCounter();
-
-            if (now > lastMasterIdleCall + 20 && editorComp != nullptr)
-            {
-                lastMasterIdleCall = now;
-
-                recursionCheck = true;
-                masterIdle();
-                recursionCheck = false;
-            }
-        }
     }
 
     void doIdleCallback()
@@ -1054,7 +1316,7 @@ public:
         if (MessageManager::getInstance()->isThisTheMessageThread()
              && ! recursionCheck)
         {
-            recursionCheck = true;
+            ScopedValueSetter<bool> svs (recursionCheck, true, false);
 
             JUCE_AUTORELEASEPOOL
             {
@@ -1063,8 +1325,6 @@ public:
                 for (int i = ComponentPeer::getNumPeers(); --i >= 0;)
                     if (ComponentPeer* p = ComponentPeer::getPeer(i))
                         p->performAnyPendingRepaintsNow();
-
-                recursionCheck = false;
             }
         }
     }
@@ -1100,7 +1360,7 @@ public:
             PopupMenu::dismissAllActiveMenus();
 
             jassert (! recursionCheck);
-            recursionCheck = true;
+            ScopedValueSetter<bool> svs (recursionCheck, true, false);
 
             if (editorComp != nullptr)
             {
@@ -1111,7 +1371,6 @@ public:
                     if (canDeleteLaterIfModal)
                     {
                         shouldDeleteEditor = true;
-                        recursionCheck = false;
                         return;
                     }
                 }
@@ -1119,7 +1378,7 @@ public:
                #if JUCE_MAC
                 if (hostWindow != 0)
                 {
-                    detachComponentFromWindowRef (editorComp, hostWindow, useNSView);
+                    detachComponentFromWindowRefVST (editorComp, hostWindow, useNSView);
                     hostWindow = 0;
                 }
                #endif
@@ -1136,8 +1395,6 @@ public:
            #if JUCE_LINUX
             hostWindow = 0;
            #endif
-
-            recursionCheck = false;
         }
     }
 
@@ -1173,8 +1430,10 @@ public:
               #elif JUCE_LINUX
                 editorComp->addToDesktop (0, ptr);
                 hostWindow = (Window) ptr;
+                Window editorWnd = (Window) editorComp->getWindowHandle();
+                XReparentWindow (display, editorWnd, hostWindow, 0, 0);
               #else
-                hostWindow = attachComponentToWindowRef (editorComp, ptr, useNSView);
+                hostWindow = attachComponentToWindowRefVST (editorComp, ptr, useNSView);
               #endif
                 editorComp->setVisible (true);
 
@@ -1198,7 +1457,7 @@ public:
             {
                 editorSize.left = 0;
                 editorSize.top = 0;
-                editorSize.right = (VstInt16) editorComp->getWidth();
+                editorSize.right  = (VstInt16) editorComp->getWidth();
                 editorSize.bottom = (VstInt16) editorComp->getHeight();
 
                 *((ERect**) ptr) = &editorSize;
@@ -1216,11 +1475,20 @@ public:
     {
         if (editorComp != nullptr)
         {
-            if (! (canHostDo (const_cast <char*> ("sizeWindow")) && sizeWindow (newWidth, newHeight)))
+            bool sizeWasSuccessful = false;
+
+            if (canHostDo (const_cast<char*> ("sizeWindow")))
+            {
+                isInSizeWindow = true;
+                sizeWasSuccessful = sizeWindow (newWidth, newHeight);
+                isInSizeWindow = false;
+            }
+
+            if (! sizeWasSuccessful)
             {
                 // some hosts don't support the sizeWindow call, so do it manually..
                #if JUCE_MAC
-                setNativeHostWindowSize (hostWindow, editorComp, newWidth, newHeight, useNSView);
+                setNativeHostWindowSizeVST (hostWindow, editorComp, newWidth, newHeight, useNSView);
 
                #elif JUCE_LINUX
                 // (Currently, all linux hosts support sizeWindow, so this should never need to happen)
@@ -1235,7 +1503,7 @@ public:
 
                 while (w != 0)
                 {
-                    HWND parent = GetParent (w);
+                    HWND parent = getWindowParent (w);
 
                     if (parent == 0)
                         break;
@@ -1272,15 +1540,17 @@ public:
             }
 
             if (ComponentPeer* peer = editorComp->getPeer())
+            {
                 peer->handleMovedOrResized();
+                peer->getComponent().repaint();
+            }
         }
     }
 
     //==============================================================================
     // A component to hold the AudioProcessorEditor, and cope with some housekeeping
     // chores when it changes or repaints.
-    class EditorCompWrapper  : public Component,
-                               public AsyncUpdater
+    class EditorCompWrapper  : public Component
     {
     public:
         EditorCompWrapper (JuceVSTWrapper& w, AudioProcessorEditor* editor)
@@ -1297,6 +1567,8 @@ public:
             if (! getHostType().isReceptor())
                 addMouseListener (this, true);
            #endif
+
+             ignoreUnused (fakeMouseGenerator);
         }
 
         ~EditorCompWrapper()
@@ -1307,21 +1579,12 @@ public:
 
         void paint (Graphics&) override {}
 
-        void paintOverChildren (Graphics&) override
-        {
-            // this causes an async call to masterIdle() to help
-            // creaky old DAWs like Nuendo repaint themselves while we're
-            // repainting. Otherwise they just seem to give up and sit there
-            // waiting.
-            triggerAsyncUpdate();
-        }
-
        #if JUCE_MAC
         bool keyPressed (const KeyPress&) override
         {
             // If we have an unused keypress, move the key-focus to a host window
             // and re-inject the event..
-            return forwardCurrentKeyEventToHost (this, wrapper.useNSView);
+            return forwardCurrentKeyEventToHostVST (this, wrapper.useNSView);
         }
        #endif
 
@@ -1332,43 +1595,41 @@ public:
 
         void resized() override
         {
-            if (Component* const editor = getChildComponent(0))
-                editor->setBounds (getLocalBounds());
+            if (Component* const editorChildComp = getChildComponent(0))
+                editorChildComp->setBounds (getLocalBounds());
 
            #if JUCE_MAC && ! JUCE_64BIT
             if (! wrapper.useNSView)
-                updateEditorCompBounds (this);
+                updateEditorCompBoundsVST (this);
            #endif
         }
 
         void childBoundsChanged (Component* child) override
         {
-            child->setTopLeftPosition (0, 0);
+            if (! wrapper.isInSizeWindow)
+            {
+                child->setTopLeftPosition (0, 0);
 
-            const int cw = child->getWidth();
-            const int ch = child->getHeight();
+                const int cw = child->getWidth();
+                const int ch = child->getHeight();
 
-           #if JUCE_MAC
-            if (wrapper.useNSView)
-                setTopLeftPosition (0, getHeight() - ch);
-           #endif
+               #if JUCE_MAC
+                if (wrapper.useNSView)
+                    setTopLeftPosition (0, getHeight() - ch);
+               #endif
 
-            wrapper.resizeHostWindow (cw, ch);
+                wrapper.resizeHostWindow (cw, ch);
 
-           #if ! JUCE_LINUX // setSize() on linux causes renoise and energyxt to fail.
-            setSize (cw, ch);
-           #else
-            XResizeWindow (display, (Window) getWindowHandle(), cw, ch);
-           #endif
+               #if ! JUCE_LINUX // setSize() on linux causes renoise and energyxt to fail.
+                setSize (cw, ch);
+               #else
+                XResizeWindow (display, (Window) getWindowHandle(), (unsigned int) cw, (unsigned int) ch);
+               #endif
 
-           #if JUCE_MAC
-            wrapper.resizeHostWindow (cw, ch);  // (doing this a second time seems to be necessary in tracktion)
-           #endif
-        }
-
-        void handleAsyncUpdate() override
-        {
-            wrapper.tryMasterIdle();
+               #if JUCE_MAC
+                wrapper.resizeHostWindow (cw, ch);  // (doing this a second time seems to be necessary in tracktion)
+               #endif
+            }
         }
 
        #if JUCE_WINDOWS
@@ -1402,19 +1663,18 @@ public:
     //==============================================================================
 private:
     AudioProcessor* filter;
+    PluginBusUtilities busUtils;
     juce::MemoryBlock chunkMemory;
     juce::uint32 chunkMemoryTime;
     ScopedPointer<EditorCompWrapper> editorComp;
     ERect editorSize;
     MidiBuffer midiEvents;
     VSTMidiEventList outgoingEvents;
-    VstSpeakerArrangementType speakerIn, speakerOut;
-    int numInChans, numOutChans;
-    bool isProcessing, isBypassed, hasShutdown, firstProcessCallback;
+    bool isProcessing, isBypassed, hasShutdown, isInSizeWindow, firstProcessCallback;
     bool shouldDeleteEditor, useNSView;
-    HeapBlock<float*> channels;
-    Array<float*> tempChannels;  // see note in processReplacing()
-    AudioSampleBuffer processTempBuffer;
+    VstTempBuffers<float> floatTempBuffers;
+    VstTempBuffers<double> doubleTempBuffers;
+    int maxNumInChannels, maxNumOutChannels;
 
    #if JUCE_MAC
     void* hostWindow;
@@ -1449,17 +1709,11 @@ private:
             {
                 MessageManager::getInstance()->setCurrentThreadAsMessageThread();
 
-                class MessageThreadCallback  : public CallbackMessage
+                struct MessageThreadCallback  : public CallbackMessage
                 {
-                public:
                     MessageThreadCallback (bool& tr) : triggered (tr) {}
+                    void messageCallback() override     { triggered = true; }
 
-                    void messageCallback() override
-                    {
-                        triggered = true;
-                    }
-
-                private:
                     bool& triggered;
                 };
 
@@ -1472,17 +1726,215 @@ private:
    #endif
 
     //==============================================================================
-    void deleteTempChannels()
+    template <typename FloatType>
+    void deleteTempChannels (VstTempBuffers<FloatType>& tmpBuffers)
     {
-        for (int i = tempChannels.size(); --i >= 0;)
-            delete[] (tempChannels.getUnchecked(i));
-
-        tempChannels.clear();
+        tmpBuffers.release();
 
         if (filter != nullptr)
-            tempChannels.insertMultiple (0, nullptr, filter->getNumInputChannels() + filter->getNumOutputChannels());
+        {
+            int numChannels = cEffect.numInputs + cEffect.numOutputs;
+            tmpBuffers.tempChannels.insertMultiple (0, nullptr, numChannels);
+        }
     }
 
+    void deleteTempChannels()
+    {
+        deleteTempChannels (floatTempBuffers);
+        deleteTempChannels (doubleTempBuffers);
+    }
+
+    //==============================================================================
+    void findMaxTotalChannels (int& maxTotalIns, int& maxTotalOuts)
+    {
+        setMaxChannelsOnAllBuses (true);
+        setMaxChannelsOnAllBuses (false);
+
+        maxTotalIns = busUtils.findTotalNumChannels (true);
+        maxTotalOuts = busUtils.findTotalNumChannels (false);
+    }
+
+    void setMaxChannelsOnAllBuses (bool isInput)
+    {
+        const int n = busUtils.getBusCount (isInput);
+
+        for (int i = 0; i < n; ++i)
+        {
+            int ch = busUtils.findMaxNumberOfChannelsForBus (isInput, i);
+
+            if (ch == -1)
+            {
+                // VST-2 requires a maximum number of channels. If you are hitting this assertion
+                // then make sure that your setPreferredBusArrangement only accepts layouts
+                // up to a maximum number of channels
+                jassertfalse;
+
+                // do something sensible if the above assertions was hit
+                ch = busUtils.getDefaultLayoutForBus (isInput, i).size();
+            }
+
+            AudioChannelSet set =
+                busUtils.getDefaultLayoutForChannelNumAndBus (isInput, i, ch);
+
+            bool success = filter->setPreferredBusArrangement (isInput, i, set);
+            ignoreUnused (success);
+
+            // If you are hitting this assertsion then please file bug!
+            jassert ((! set.isDisabled()) && success);
+        }
+    }
+
+
+    //==============================================================================
+    void resetAuxChannelsToDefaultLayout (bool isInput) const
+    {
+        // set side-chain and aux channels to their default layout
+        for (int busIdx = 1; busIdx < busUtils.getBusCount (isInput); ++busIdx)
+        {
+            bool success = filter->setPreferredBusArrangement (isInput, busIdx, busUtils.getDefaultLayoutForBus (isInput, busIdx));
+
+            // VST 2 only supports a static channel layout on aux/sidechain channels
+            // You must at least support the default layout regardless of the layout of the main bus.
+            // If this is a problem for your plug-in, then consider using VST-3.
+            jassert (success);
+            ignoreUnused (success);
+        }
+    }
+
+    bool setBusArrangementFromTotalChannelNum (const int numInChannels, const int numOutChannels)
+    {
+        PluginBusUtilities::ScopedBusRestorer busRestorer (busUtils);
+        const int numIns  = busUtils.getBusCount (true);
+        const int numOuts = busUtils.getBusCount (false);
+
+        const int n = numIns + numOuts;
+        HeapBlock<int> config (static_cast<size_t> (n), true);
+        HeapBlock<int> maxChans (static_cast<size_t> (n), true);
+
+        for (int i = 0; i < numIns; ++i)
+            maxChans[i] = busUtils.findMaxNumberOfChannelsForBus (true, i, numInChannels);
+
+        for (int i = 0; i < numOuts; ++i)
+            maxChans[i + numIns] = busUtils.findMaxNumberOfChannelsForBus (false, i, numOutChannels);
+
+        const int* inConfig  = config.getData();
+        const int* outConfig = config.getData() + numIns;
+
+       #if JUCE_DEBUG
+        bool firstMatch = true;
+        AudioProcessor::AudioBusArrangement saveFirstMatch;
+       #endif
+
+        for (int i = 0; i < n;)
+        {
+            if  (sumOfConfig (inConfig,  numIns)  == numInChannels
+              && sumOfConfig (outConfig, numOuts) == numOutChannels)
+            {
+                if (applyConfiguration (inConfig, outConfig))
+                {
+                   #if JUCE_DEBUG
+                    if (! firstMatch)
+                    {
+                        // Unfortunately, VST-2 requires that there is a unique plug-in bus
+                        // arrangement for every x,y pair where x,y is the total number of
+                        // input, output channels respectively.
+                        jassertfalse;
+
+                        busUtils.restoreBusArrangement (saveFirstMatch);
+                        return true;
+                    }
+
+                    saveFirstMatch = filter->busArrangement;
+                    firstMatch = false;
+                   #else
+                    busRestorer.release();
+                    return true;
+                   #endif
+                }
+            }
+
+            for (i = 0; i < n; ++i)
+                if ((config[i] = (config[i] + 1) % maxChans[i]) > 0)
+                    break;
+        }
+
+       #if JUCE_DEBUG
+        if (! firstMatch)
+        {
+            busRestorer.release();
+            busUtils.restoreBusArrangement (saveFirstMatch);
+            return true;
+        }
+       #endif
+
+        return false;
+    }
+
+    bool setBusConfiguration (bool isInput, const int config[], const int n)
+    {
+        Array<AudioProcessor::AudioProcessorBus>& busArray = isInput ? filter->busArrangement.inputBuses
+                                                                     : filter->busArrangement.outputBuses;
+
+        int idx;
+        for (idx = 0; idx < n; ++idx)
+        {
+            if (busArray.getReference (idx).channels.size() == (config [idx] + 1))
+                continue;
+
+            AudioChannelSet set;
+            if ((set = busUtils.getDefaultLayoutForChannelNumAndBus (isInput, idx, config [idx] + 1)).isDisabled())
+                break;
+
+            if (! filter->setPreferredBusArrangement (isInput, idx, set))
+                break;
+        }
+
+        return (idx >= n);
+    }
+
+    bool configurationMatches (bool isInput, const int config[], const int n)
+    {
+        Array<AudioProcessor::AudioProcessorBus>& busArray = isInput ? filter->busArrangement.inputBuses
+                                                                     : filter->busArrangement.outputBuses;
+
+        int idx;
+        for (idx = 0; idx < n; ++idx)
+            if (busArray.getReference (idx).channels.size() != (config [idx] + 1))
+                break;
+
+        return (idx >= n);
+    }
+
+    bool applyConfiguration (const int inConfig[], const int outConfig[])
+    {
+        const int numIns  = busUtils.getBusCount (true);
+        const int numOuts = busUtils.getBusCount (false);
+
+        if (! setBusConfiguration (true,  inConfig,  numIns))
+            return false;
+
+        if (! setBusConfiguration (false, outConfig, numOuts))
+            return false;
+
+        // re-check configuration
+        if (configurationMatches (true, inConfig, numIns) && configurationMatches (false, outConfig, numOuts))
+            return true;
+
+        return false;
+    }
+
+    //==============================================================================
+    bool pluginHasSidechainsOrAuxs() const { return (busUtils.getBusCount (true) > 1 || busUtils.getBusCount (false) > 1); }
+
+    static int sumOfConfig (const int config[], int num) noexcept
+    {
+        int retval = 0;
+        for (int i = 0; i < num; ++i)
+            retval += (config [i] + 1);
+
+        return retval;
+    }
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceVSTWrapper)
 };
 
@@ -1527,14 +1979,18 @@ namespace
     JUCE_EXPORTED_FUNCTION AEffect* VSTPluginMain (audioMasterCallback audioMaster);
     JUCE_EXPORTED_FUNCTION AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     {
-        initialiseMac();
+        JUCE_DECLARE_WRAPPER_TYPE (wrapperType_VST);
+
+        initialiseMacVST();
         return pluginEntryPoint (audioMaster);
     }
 
     JUCE_EXPORTED_FUNCTION AEffect* main_macho (audioMasterCallback audioMaster);
     JUCE_EXPORTED_FUNCTION AEffect* main_macho (audioMasterCallback audioMaster)
     {
-        initialiseMac();
+        JUCE_DECLARE_WRAPPER_TYPE (wrapperType_VST);
+
+        initialiseMacVST();
         return pluginEntryPoint (audioMaster);
     }
 
@@ -1545,6 +2001,8 @@ namespace
     JUCE_EXPORTED_FUNCTION AEffect* VSTPluginMain (audioMasterCallback audioMaster);
     JUCE_EXPORTED_FUNCTION AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     {
+        JUCE_DECLARE_WRAPPER_TYPE (wrapperType_VST);
+
         SharedMessageThread::getInstance();
         return pluginEntryPoint (audioMaster);
     }
@@ -1552,6 +2010,8 @@ namespace
     JUCE_EXPORTED_FUNCTION AEffect* main_plugin (audioMasterCallback audioMaster) asm ("main");
     JUCE_EXPORTED_FUNCTION AEffect* main_plugin (audioMasterCallback audioMaster)
     {
+        JUCE_DECLARE_WRAPPER_TYPE (wrapperType_VST);
+
         return VSTPluginMain (audioMaster);
     }
 
@@ -1565,12 +2025,16 @@ namespace
 
     extern "C" __declspec (dllexport) AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     {
+        JUCE_DECLARE_WRAPPER_TYPE (wrapperType_VST);
+
         return pluginEntryPoint (audioMaster);
     }
 
    #ifndef JUCE_64BIT // (can't compile this on win64, but it's not needed anyway with VST2.4)
     extern "C" __declspec (dllexport) int main (audioMasterCallback audioMaster)
     {
+        JUCE_DECLARE_WRAPPER_TYPE (wrapperType_VST);
+
         return (int) pluginEntryPoint (audioMaster);
     }
    #endif

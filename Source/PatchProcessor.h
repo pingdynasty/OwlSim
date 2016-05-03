@@ -7,7 +7,7 @@
 class PatchProcessor {
 public:  
   virtual ~PatchProcessor(){};
-  virtual void registerParameter(PatchParameterId pid, const char* name, const char* description = "");
+  virtual void registerParameter(PatchParameterId pid, const char* name, const char* description = "") = 0;
   virtual float getParameterValue(PatchParameterId pid) = 0;
   virtual int getBlockSize() = 0;
   virtual double getSampleRate() = 0;

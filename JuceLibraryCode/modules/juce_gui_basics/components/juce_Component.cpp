@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -141,7 +141,7 @@ public:
     }
 
 private:
-    Array <MouseListener*> listeners;
+    Array<MouseListener*> listeners;
     int numDeepMouseListeners;
 
     class BailOutChecker2
@@ -154,7 +154,7 @@ private:
 
         bool shouldBailOut() const noexcept
         {
-            return checker.shouldBailOut() || safePointer == 0;
+            return checker.shouldBailOut() || safePointer == nullptr;
         }
 
     private:
@@ -200,7 +200,7 @@ struct ScalingHelpers
 
     // For these, we need to avoid getSmallestIntegerContainer being used, which causes
     // judder when moving windows
-    static Rectangle<int> unscaledScreenPosToScaled (float scale, const Rectangle<int>& pos) noexcept
+    static Rectangle<int> unscaledScreenPosToScaled (float scale, Rectangle<int> pos) noexcept
     {
         return scale != 1.0f ? Rectangle<int> (roundToInt (pos.getX() / scale),
                                                roundToInt (pos.getY() / scale),
@@ -208,7 +208,7 @@ struct ScalingHelpers
                                                roundToInt (pos.getHeight() / scale)) : pos;
     }
 
-    static Rectangle<int> scaledScreenPosToUnscaled (float scale, Rectangle<int>& pos) noexcept
+    static Rectangle<int> scaledScreenPosToUnscaled (float scale, Rectangle<int> pos) noexcept
     {
         return scale != 1.0f ? Rectangle<int> (roundToInt (pos.getX() * scale),
                                                roundToInt (pos.getY() * scale),
@@ -256,7 +256,7 @@ struct Component::ComponentHelpers
    #if JUCE_MODAL_LOOPS_PERMITTED
     static void* runModalLoopCallback (void* userData)
     {
-        return (void*) (pointer_sized_int) static_cast <Component*> (userData)->runModalLoop();
+        return (void*) (pointer_sized_int) static_cast<Component*> (userData)->runModalLoop();
     }
    #endif
 
@@ -399,19 +399,9 @@ struct Component::ComponentHelpers
         return convertFromDistantParentSpace (topLevelComp, *target, p);
     }
 
-    static Rectangle<int> getUnclippedArea (const Component& comp)
+    static bool clipObscuredRegions (const Component& comp, Graphics& g, const Rectangle<int> clipRect, Point<int> delta)
     {
-        Rectangle<int> r (comp.getLocalBounds());
-
-        if (Component* const p = comp.getParentComponent())
-            r = r.getIntersection (convertFromParentSpace (comp, getUnclippedArea (*p)));
-
-        return r;
-    }
-
-    static bool clipObscuredRegions (const Component& comp, Graphics& g, const Rectangle<int>& clipRect, Point<int> delta)
-    {
-        bool nothingChanged = true;
+        bool wasClipped = false;
 
         for (int i = comp.childComponentList.size(); --i >= 0;)
         {
@@ -426,48 +416,19 @@ struct Component::ComponentHelpers
                     if (child.isOpaque() && child.componentTransparency == 0)
                     {
                         g.excludeClipRegion (newClip + delta);
-                        nothingChanged = false;
+                        wasClipped = true;
                     }
                     else
                     {
                         const Point<int> childPos (child.getPosition());
                         if (clipObscuredRegions (child, g, newClip - childPos, childPos + delta))
-                            nothingChanged = false;
+                            wasClipped = true;
                     }
                 }
             }
         }
 
-        return nothingChanged;
-    }
-
-    static void subtractObscuredRegions (const Component& comp, RectangleList<int>& result,
-                                         Point<int> delta, const Rectangle<int>& clipRect,
-                                         const Component* const compToAvoid)
-    {
-        for (int i = comp.childComponentList.size(); --i >= 0;)
-        {
-            const Component* const c = comp.childComponentList.getUnchecked(i);
-
-            if (c != compToAvoid && c->isVisible())
-            {
-                if (c->isOpaque() && c->componentTransparency == 0)
-                {
-                    Rectangle<int> childBounds (c->bounds.getIntersection (clipRect));
-                    childBounds.translate (delta.x, delta.y);
-
-                    result.subtract (childBounds);
-                }
-                else
-                {
-                    Rectangle<int> newClip (clipRect.getIntersection (c->bounds));
-                    newClip.translate (-c->getX(), -c->getY());
-
-                    subtractObscuredRegions (*c, result, c->getPosition() + delta,
-                                             newClip, compToAvoid);
-                }
-            }
-        }
+        return wasClipped;
     }
 
     static Rectangle<int> getParentOrMainMonitorBounds (const Component& comp)
@@ -477,10 +438,19 @@ struct Component::ComponentHelpers
 
         return Desktop::getInstance().getDisplays().getMainDisplay().userArea;
     }
+
+    static void releaseAllCachedImageResources (Component& c)
+    {
+        if (CachedComponentImage* cached = c.getCachedComponentImage())
+            cached->releaseResources();
+
+        for (int i = c.getNumChildComponents(); --i >= 0;)
+            releaseAllCachedImageResources (*c.getChildComponent (i));
+    }
 };
 
 //==============================================================================
-Component::Component()
+Component::Component() noexcept
   : parentComponent (nullptr),
     lookAndFeel (nullptr),
     effect (nullptr),
@@ -489,7 +459,7 @@ Component::Component()
 {
 }
 
-Component::Component (const String& name)
+Component::Component (const String& name) noexcept
   : componentName (name),
     parentComponent (nullptr),
     lookAndFeel (nullptr),
@@ -567,8 +537,7 @@ void Component::setVisible (bool shouldBeVisible)
 
         if (! shouldBeVisible)
         {
-            if (cachedImage != nullptr)
-                cachedImage->releaseResources();
+            ComponentHelpers::releaseAllCachedImageResources (*this);
 
             if (currentlyFocusedComponent == this || isParentOf (currentlyFocusedComponent))
             {
@@ -619,7 +588,6 @@ bool Component::isShowing() const
 
     return false;
 }
-
 
 //==============================================================================
 void* Component::getWindowHandle() const
@@ -824,28 +792,27 @@ public:
             validArea.clear();
         }
 
+        if (! validArea.containsRectangle (compBounds))
         {
             Graphics imG (image);
             LowLevelGraphicsContext& lg = imG.getInternalContext();
 
+            lg.addTransform (AffineTransform::scale (scale));
+
             for (const Rectangle<int>* i = validArea.begin(), * const e = validArea.end(); i != e; ++i)
                 lg.excludeClipRectangle (*i);
 
-            if (! lg.isClipEmpty())
+            if (! owner.isOpaque())
             {
-                if (! owner.isOpaque())
-                {
-                    lg.setFill (Colours::transparentBlack);
-                    lg.fillRect (imageBounds, true);
-                    lg.setFill (Colours::black);
-                }
-
-                lg.addTransform (AffineTransform::scale (scale));
-                owner.paintEntireComponent (imG, true);
+                lg.setFill (Colours::transparentBlack);
+                lg.fillRect (imageBounds, true);
+                lg.setFill (Colours::black);
             }
+
+            owner.paintEntireComponent (imG, true);
         }
 
-        validArea = imageBounds;
+        validArea = compBounds;
 
         g.setColour (Colours::black.withAlpha (owner.getAlpha()));
         g.drawImageTransformed (image, AffineTransform::scale (compBounds.getWidth()  / (float) imageBounds.getWidth(),
@@ -853,8 +820,8 @@ public:
     }
 
     bool invalidateAll() override                            { validArea.clear(); return true; }
-    bool invalidate (const Rectangle<int>& area) override    { validArea.subtract (area * scale); return true; }
-    void releaseResources() override                         { image = Image::null; }
+    bool invalidate (const Rectangle<int>& area) override    { validArea.subtract (area); return true; }
+    void releaseResources() override                         { image = Image(); }
 
 private:
     Image image;
@@ -880,7 +847,7 @@ void Component::setBufferedToImage (const bool shouldBeBuffered)
     // so by calling setBufferedToImage, you'll be deleting the custom one - this is almost certainly
     // not what you wanted to happen... If you really do know what you're doing here, and want to
     // avoid this assertion, just call setCachedComponentImage (nullptr) before setBufferedToImage().
-    jassert (cachedImage == nullptr || dynamic_cast <StandardCachedComponentImage*> (cachedImage.get()) != nullptr);
+    jassert (cachedImage == nullptr || dynamic_cast<StandardCachedComponentImage*> (cachedImage.get()) != nullptr);
 
     if (shouldBeBuffered)
     {
@@ -1195,12 +1162,15 @@ void Component::setBounds (const int x, const int y, int w, int h)
 
 void Component::sendMovedResizedMessagesIfPending()
 {
-    if (flags.isMoveCallbackPending || flags.isResizeCallbackPending)
-    {
-        sendMovedResizedMessages (flags.isMoveCallbackPending, flags.isResizeCallbackPending);
+    const bool wasMoved   = flags.isMoveCallbackPending;
+    const bool wasResized = flags.isResizeCallbackPending;
 
+    if (wasMoved || wasResized)
+    {
         flags.isMoveCallbackPending = false;
         flags.isResizeCallbackPending = false;
+
+        sendMovedResizedMessages (wasMoved, wasResized);
     }
 }
 
@@ -1397,7 +1367,7 @@ bool Component::isTransformed() const noexcept
 
 AffineTransform Component::getTransform() const
 {
-    return affineTransform != nullptr ? *affineTransform : AffineTransform::identity;
+    return affineTransform != nullptr ? *affineTransform : AffineTransform();
 }
 
 //==============================================================================
@@ -1585,8 +1555,7 @@ Component* Component::removeChildComponent (const int index, bool sendParentEven
         childComponentList.remove (index);
         child->parentComponent = nullptr;
 
-        if (child->cachedImage != nullptr)
-            child->cachedImage->releaseResources();
+        ComponentHelpers::releaseAllCachedImageResources (*child);
 
         // (NB: there are obscure situations where child->isShowing() = false, but it still has the focus)
         if (currentlyFocusedComponent == child || child->isParentOf (currentlyFocusedComponent))
@@ -1643,7 +1612,7 @@ Component* Component::getChildComponent (const int index) const noexcept
 
 int Component::getIndexOfChildComponent (const Component* const child) const noexcept
 {
-    return childComponentList.indexOf (const_cast <Component*> (child));
+    return childComponentList.indexOf (const_cast<Component*> (child));
 }
 
 Component* Component::findChildWithID (StringRef targetID) const noexcept
@@ -1665,7 +1634,7 @@ Component* Component::getTopLevelComponent() const noexcept
     while (comp->parentComponent != nullptr)
         comp = comp->parentComponent;
 
-    return const_cast <Component*> (comp);
+    return const_cast<Component*> (comp);
 }
 
 bool Component::isParentOf (const Component* possibleChild) const noexcept
@@ -1759,50 +1728,46 @@ void Component::enterModalState (const bool shouldTakeKeyboardFocus,
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
     ASSERT_MESSAGE_MANAGER_IS_LOCKED
 
-    // Check for an attempt to make a component modal when it already is!
-    // This can cause nasty problems..
-    jassert (! flags.currentlyModalFlag);
-
     if (! isCurrentlyModal())
     {
-        ModalComponentManager* const mcm = ModalComponentManager::getInstance();
-        mcm->startModal (this, deleteWhenDismissed);
-        mcm->attachCallback (this, callback);
+        ModalComponentManager& mcm = *ModalComponentManager::getInstance();
+        mcm.startModal (this, deleteWhenDismissed);
+        mcm.attachCallback (this, callback);
 
-        flags.currentlyModalFlag = true;
         setVisible (true);
 
         if (shouldTakeKeyboardFocus)
             grabKeyboardFocus();
     }
+    else
+    {
+        // Probably a bad idea to try to make a component modal twice!
+        jassertfalse;
+    }
 }
 
 void Component::exitModalState (const int returnValue)
 {
-    if (flags.currentlyModalFlag)
+    if (isCurrentlyModal())
     {
         if (MessageManager::getInstance()->isThisTheMessageThread())
         {
-            ModalComponentManager::getInstance()->endModal (this, returnValue);
-            flags.currentlyModalFlag = false;
-
-            ModalComponentManager::getInstance()->bringModalComponentsToFront();
+            ModalComponentManager& mcm = *ModalComponentManager::getInstance();
+            mcm.endModal (this, returnValue);
+            mcm.bringModalComponentsToFront();
         }
         else
         {
-            class ExitModalStateMessage   : public CallbackMessage
+            struct ExitModalStateMessage   : public CallbackMessage
             {
-            public:
-                ExitModalStateMessage (Component* const c, const int res)
-                    : target (c), result (res)   {}
+                ExitModalStateMessage (Component* c, int res)  : target (c), result (res)  {}
 
                 void messageCallback() override
                 {
-                    if (target.get() != nullptr) // (get() required for VS2003 bug)
-                        target->exitModalState (result);
+                    if (Component* c = target)
+                        c->exitModalState (result);
                 }
 
-            private:
                 WeakReference<Component> target;
                 int result;
             };
@@ -1814,8 +1779,7 @@ void Component::exitModalState (const int returnValue)
 
 bool Component::isCurrentlyModal() const noexcept
 {
-    return flags.currentlyModalFlag
-            && getCurrentlyModalComponent() == this;
+    return getCurrentlyModalComponent() == this;
 }
 
 bool Component::isCurrentlyBlockedByAnotherModalComponent() const
@@ -1876,6 +1840,11 @@ void Component::setRepaintsOnMouseActivity (const bool shouldRepaint) noexcept
 }
 
 //==============================================================================
+float Component::getAlpha() const noexcept
+{
+    return (255 - componentTransparency) / 255.0f;
+}
+
 void Component::setAlpha (const float newAlpha)
 {
     const uint8 newIntAlpha = (uint8) (255 - jlimit (0, 255, roundToInt (newAlpha * 255.0)));
@@ -1883,22 +1852,21 @@ void Component::setAlpha (const float newAlpha)
     if (componentTransparency != newIntAlpha)
     {
         componentTransparency = newIntAlpha;
-
-        if (flags.hasHeavyweightPeerFlag)
-        {
-            if (ComponentPeer* const peer = getPeer())
-                peer->setAlpha (newAlpha);
-        }
-        else
-        {
-            repaint();
-        }
+        alphaChanged();
     }
 }
 
-float Component::getAlpha() const
+void Component::alphaChanged()
 {
-    return (255 - componentTransparency) / 255.0f;
+    if (flags.hasHeavyweightPeerFlag)
+    {
+        if (ComponentPeer* const peer = getPeer())
+            peer->setAlpha (getAlpha());
+    }
+    else
+    {
+        repaint();
+    }
 }
 
 //==============================================================================
@@ -1923,15 +1891,15 @@ void Component::repaintParent()
         parentComponent->internalRepaint (ComponentHelpers::convertToParentSpace (*this, getLocalBounds()));
 }
 
-void Component::internalRepaint (const Rectangle<int>& area)
+void Component::internalRepaint (Rectangle<int> area)
 {
-    const Rectangle<int> r (area.getIntersection (getLocalBounds()));
+    area = area.getIntersection (getLocalBounds());
 
-    if (! r.isEmpty())
-        internalRepaintUnchecked (r, false);
+    if (! area.isEmpty())
+        internalRepaintUnchecked (area, false);
 }
 
-void Component::internalRepaintUnchecked (const Rectangle<int>& area, const bool isEntireComponent)
+void Component::internalRepaintUnchecked (Rectangle<int> area, const bool isEntireComponent)
 {
     if (flags.visibleFlag)
     {
@@ -2000,7 +1968,7 @@ void Component::paintComponentAndChildren (Graphics& g)
     {
         g.saveState();
 
-        if (ComponentHelpers::clipObscuredRegions (*this, g, clipBounds, Point<int>()) || ! g.isClipEmpty())
+        if (! (ComponentHelpers::clipObscuredRegions (*this, g, clipBounds, Point<int>()) && g.isClipEmpty()))
             paint (g);
 
         g.restoreState();
@@ -2205,7 +2173,7 @@ void Component::sendLookAndFeelChange()
 Colour Component::findColour (const int colourId, const bool inheritFromParent) const
 {
     if (const var* const v = properties.getVarPointer (ComponentHelpers::getColourPropertyId (colourId)))
-        return Colour ((uint32) static_cast <int> (*v));
+        return Colour ((uint32) static_cast<int> (*v));
 
     if (inheritFromParent && parentComponent != nullptr
          && (lookAndFeel == nullptr || ! lookAndFeel->isColourSpecified (colourId)))
@@ -2284,28 +2252,6 @@ Rectangle<int> Component::getBoundsInParent() const noexcept
                                       : bounds.transformedBy (*affineTransform);
 }
 
-void Component::getVisibleArea (RectangleList<int>& result, const bool includeSiblings) const
-{
-    result.clear();
-    const Rectangle<int> unclipped (ComponentHelpers::getUnclippedArea (*this));
-
-    if (! unclipped.isEmpty())
-    {
-        result.add (unclipped);
-
-        if (includeSiblings)
-        {
-            const Component* const c = getTopLevelComponent();
-
-            ComponentHelpers::subtractObscuredRegions (*c, result, getLocalPoint (c, Point<int>()),
-                                                       c->getLocalBounds(), this);
-        }
-
-        ComponentHelpers::subtractObscuredRegions (*this, result, Point<int>(), unclipped, nullptr);
-        result.consolidate();
-    }
-}
-
 //==============================================================================
 void Component::mouseEnter (const MouseEvent&)          {}
 void Component::mouseExit  (const MouseEvent&)          {}
@@ -2373,16 +2319,15 @@ void Component::internalModalInputAttempt()
 //==============================================================================
 void Component::postCommandMessage (const int commandId)
 {
-    class CustomCommandMessage   : public CallbackMessage
+    struct CustomCommandMessage   : public CallbackMessage
     {
-    public:
         CustomCommandMessage (Component* const c, const int command)
             : target (c), commandId (command) {}
 
         void messageCallback() override
         {
-            if (target.get() != nullptr)  // (get() required for VS2003 bug)
-                target->handleCommandMessage (commandId);
+            if (Component* c = target.get())
+                c->handleCommandMessage (commandId);
         }
 
     private:
@@ -2441,7 +2386,7 @@ void Component::internalMouseEnter (MouseInputSource source, Point<float> relati
 
     BailOutChecker checker (this);
 
-    const MouseEvent me (source, relativePos, source.getCurrentModifiers(),
+    const MouseEvent me (source, relativePos, source.getCurrentModifiers(), MouseInputSource::invalidPressure,
                          this, this, time, relativePos, time, 0, false);
     mouseEnter (me);
 
@@ -2460,7 +2405,7 @@ void Component::internalMouseExit (MouseInputSource source, Point<float> relativ
 
     BailOutChecker checker (this);
 
-    const MouseEvent me (source, relativePos, source.getCurrentModifiers(),
+    const MouseEvent me (source, relativePos, source.getCurrentModifiers(), MouseInputSource::invalidPressure,
                          this, this, time, relativePos, time, 0, false);
 
     mouseExit (me);
@@ -2473,7 +2418,7 @@ void Component::internalMouseExit (MouseInputSource source, Point<float> relativ
     MouseListenerList::sendMouseEvent (*this, checker, &MouseListener::mouseExit, me);
 }
 
-void Component::internalMouseDown (MouseInputSource source, Point<float> relativePos, Time time)
+void Component::internalMouseDown (MouseInputSource source, Point<float> relativePos, Time time, float pressure)
 {
     Desktop& desktop = Desktop::getInstance();
     BailOutChecker checker (this);
@@ -2492,7 +2437,7 @@ void Component::internalMouseDown (MouseInputSource source, Point<float> relativ
         {
             // allow blocked mouse-events to go to global listeners..
             const MouseEvent me (source, relativePos, source.getCurrentModifiers(),
-                                 this, this, time, relativePos, time,
+                                 pressure, this, this, time, relativePos, time,
                                  source.getNumberOfMultipleClicks(), false);
 
             desktop.getMouseListeners().callChecked (checker, &MouseListener::mouseDown, me);
@@ -2525,7 +2470,7 @@ void Component::internalMouseDown (MouseInputSource source, Point<float> relativ
         repaint();
 
     const MouseEvent me (source, relativePos, source.getCurrentModifiers(),
-                         this, this, time, relativePos, time,
+                         pressure, this, this, time, relativePos, time,
                          source.getNumberOfMultipleClicks(), false);
     mouseDown (me);
 
@@ -2549,7 +2494,7 @@ void Component::internalMouseUp (MouseInputSource source, Point<float> relativeP
         repaint();
 
     const MouseEvent me (source, relativePos,
-                         oldModifiers, this, this, time,
+                         oldModifiers, MouseInputSource::invalidPressure, this, this, time,
                          getLocalPoint (nullptr, source.getLastMouseDownPosition()),
                          source.getLastMouseDownTime(),
                          source.getNumberOfMultipleClicks(),
@@ -2580,14 +2525,14 @@ void Component::internalMouseUp (MouseInputSource source, Point<float> relativeP
     }
 }
 
-void Component::internalMouseDrag (MouseInputSource source, Point<float> relativePos, Time time)
+void Component::internalMouseDrag (MouseInputSource source, Point<float> relativePos, Time time, float pressure)
 {
     if (! isCurrentlyBlockedByAnotherModalComponent())
     {
         BailOutChecker checker (this);
 
-        const MouseEvent me (source, relativePos,
-                             source.getCurrentModifiers(), this, this, time,
+        const MouseEvent me (source, relativePos, source.getCurrentModifiers(),
+                             pressure, this, this, time,
                              getLocalPoint (nullptr, source.getLastMouseDownPosition()),
                              source.getLastMouseDownTime(),
                              source.getNumberOfMultipleClicks(),
@@ -2616,7 +2561,7 @@ void Component::internalMouseMove (MouseInputSource source, Point<float> relativ
     {
         BailOutChecker checker (this);
 
-        const MouseEvent me (source, relativePos, source.getCurrentModifiers(),
+        const MouseEvent me (source, relativePos, source.getCurrentModifiers(), MouseInputSource::invalidPressure,
                              this, this, time, relativePos, time, 0, false);
         mouseMove (me);
 
@@ -2635,7 +2580,7 @@ void Component::internalMouseWheel (MouseInputSource source, Point<float> relati
     Desktop& desktop = Desktop::getInstance();
     BailOutChecker checker (this);
 
-    const MouseEvent me (source, relativePos, source.getCurrentModifiers(),
+    const MouseEvent me (source, relativePos, source.getCurrentModifiers(), MouseInputSource::invalidPressure,
                          this, this, time, relativePos, time, 0, false);
 
     if (isCurrentlyBlockedByAnotherModalComponent())
@@ -2662,7 +2607,7 @@ void Component::internalMagnifyGesture (MouseInputSource source, Point<float> re
 {
     if (! isCurrentlyBlockedByAnotherModalComponent())
     {
-        const MouseEvent me (source, relativePos, source.getCurrentModifiers(),
+        const MouseEvent me (source, relativePos, source.getCurrentModifiers(), MouseInputSource::invalidPressure,
                              this, this, time, relativePos, time, 0, false);
 
         mouseMagnify (me, amount);
@@ -2856,7 +2801,7 @@ void Component::grabFocusInternal (const FocusChangeType cause, const bool canTr
             else
             {
                 // find the default child component..
-                ScopedPointer <KeyboardFocusTraverser> traverser (createFocusTraverser());
+                ScopedPointer<KeyboardFocusTraverser> traverser (createFocusTraverser());
 
                 if (traverser != nullptr)
                 {
@@ -2898,7 +2843,7 @@ void Component::moveKeyboardFocusToSibling (const bool moveToNext)
 
     if (parentComponent != nullptr)
     {
-        ScopedPointer <KeyboardFocusTraverser> traverser (createFocusTraverser());
+        ScopedPointer<KeyboardFocusTraverser> traverser (createFocusTraverser());
 
         if (traverser != nullptr)
         {
@@ -3026,14 +2971,18 @@ bool Component::isMouseButtonDown() const
     return false;
 }
 
-bool Component::isMouseOverOrDragging() const
+bool Component::isMouseOverOrDragging (const bool includeChildren) const
 {
     const Array<MouseInputSource>& mouseSources = Desktop::getInstance().getMouseSources();
 
     for (MouseInputSource* mi = mouseSources.begin(), * const e = mouseSources.end(); mi != e; ++mi)
-        if (mi->getComponentUnderMouse() == this
+    {
+        Component* const c = mi->getComponentUnderMouse();
+
+        if ((c == this || (includeChildren && isParentOf (c)))
               && (mi->isMouse() || mi->isDragging()))
             return true;
+    }
 
     return false;
 }
@@ -3052,7 +3001,7 @@ Point<int> Component::getMouseXYRelative() const
 void Component::addKeyListener (KeyListener* const newListener)
 {
     if (keyListeners == nullptr)
-        keyListeners = new Array <KeyListener*>();
+        keyListeners = new Array<KeyListener*>();
 
     keyListeners->addIfNotAlreadyThere (newListener);
 }

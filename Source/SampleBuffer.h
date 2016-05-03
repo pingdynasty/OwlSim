@@ -6,9 +6,9 @@
 
 class SampleBuffer : public AudioBuffer {
 private:
-  AudioSampleBuffer& buffer;
+  juce::AudioSampleBuffer& buffer;
 public:
-  SampleBuffer(AudioSampleBuffer&);
+  SampleBuffer(juce::AudioSampleBuffer&);
   float* getSamples(int channel);
   int getChannels();
   int getSize();

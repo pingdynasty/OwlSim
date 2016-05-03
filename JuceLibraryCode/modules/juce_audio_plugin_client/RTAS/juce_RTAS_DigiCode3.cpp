@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -22,15 +22,20 @@
   ==============================================================================
 */
 
-// Your project must contain an AppConfig.h file with your project-specific settings in it,
-// and your header search path must make it accessible to the module's files.
-#include "AppConfig.h"
-
+#include "../../juce_core/system/juce_TargetPlatform.h"
 #include "../utility/juce_CheckSettingMacros.h"
 
 #if JucePlugin_Build_RTAS
 
+ #include "../utility/juce_IncludeSystemHeaders.h"
  #include "juce_RTAS_DigiCode_Header.h"
+
+ #ifdef __clang__
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wnon-virtual-dtor"
+  #pragma clang diagnostic ignored "-Wextra-tokens"
+  #pragma clang diagnostic ignored "-Wreorder"
+ #endif
 
  /*
     This file is used to include and build the required digidesign CPP files without your project
@@ -50,18 +55,20 @@
  #if WINDOWS_VERSION
   #undef _UNICODE
   #undef UNICODE
-
   #define DllMain DllMainRTAS
   #include <DLLMain.cpp>
   #undef DllMain
   #include <DefaultSwap.cpp>
-
  #else
   #include <PlugInInitialize.cpp>
   #include <Dispatcher.cpp>
  #endif
 
- #else
+ #ifdef __clang__
+  #pragma clang diagnostic pop
+ #endif
+
+#else
 
  #if _MSC_VER
   short __stdcall NewPlugIn (void*)                          { return 0; }

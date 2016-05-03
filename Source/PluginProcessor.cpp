@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+using namespace juce;
+
 ThreadLocalValue<StompBoxAudioProcessor*> StompBoxAudioProcessor::instance;
 
 // StompBoxAudioProcessor* StompBoxAudioProcessor::getThreadLocalInstance(){
@@ -144,7 +146,7 @@ double StompBoxAudioProcessor::getTailLengthSeconds() const {
 }
 
 int StompBoxAudioProcessor::getNumPrograms() {
-  return 0;
+  return 1;
 }
 
 int StompBoxAudioProcessor::getCurrentProgram(){
@@ -183,7 +185,7 @@ void StompBoxAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer&
     patchprocessor->processAudio(samples);
 
   // clear any extra output channels
-  for(int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+  for(int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
     buffer.clear(i, 0, buffer.getNumSamples());    
 }
 

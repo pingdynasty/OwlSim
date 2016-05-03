@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -22,16 +22,18 @@
   ==============================================================================
 */
 
-#if _MSC_VER || JUCE_MINGW
+#if _MSC_VER || defined (__MINGW32__) || defined (__MINGW64__)
  #include <windows.h>
 #endif
 
-// Your project must contain an AppConfig.h file with your project-specific settings in it,
-// and your header search path must make it accessible to the module's files.
-#include "AppConfig.h"
-
+#include "../../juce_core/system/juce_TargetPlatform.h"
 #include "../utility/juce_CheckSettingMacros.h"
 #include "juce_IncludeModuleHeaders.h"
+
+namespace juce
+{
+    int* jucePlugInClientCurrentWrapperType = nullptr;
+}
 
 #if _MSC_VER || JUCE_MINGW
 
@@ -54,7 +56,7 @@ extern "C" BOOL WINAPI DllMain (HINSTANCE instance, DWORD reason, LPVOID reserve
     }
    #endif
 
-    (void) reserved;
+    ignoreUnused (reserved);
     return TRUE;
 }
 
@@ -66,7 +68,7 @@ extern "C" BOOL WINAPI DllMain (HINSTANCE instance, DWORD reason, LPVOID reserve
 */
 extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
 
-AudioProcessor* JUCE_CALLTYPE createPluginFilterOfType (AudioProcessor::WrapperType type)
+AudioProcessor* JUCE_API JUCE_CALLTYPE createPluginFilterOfType (AudioProcessor::WrapperType type)
 {
     AudioProcessor::setTypeOfNextNewPlugin (type);
     AudioProcessor* const pluginInstance = createPluginFilter();

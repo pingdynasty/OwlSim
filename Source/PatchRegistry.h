@@ -4,7 +4,6 @@
 #include <string>
 
 #include "StompBox.h"
-#define DONT_SET_USING_JUCE_NAMESPACE 1
 #include "JuceHeader.h"
 
 class PatchRegistry {

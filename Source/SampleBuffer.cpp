@@ -1,7 +1,7 @@
 #include "SampleBuffer.h"
 #include <string.h>
 
-SampleBuffer::SampleBuffer(AudioSampleBuffer& buf)
+SampleBuffer::SampleBuffer(juce::AudioSampleBuffer& buf)
   : buffer(buf) {}
 
 int SampleBuffer::getSize(){
@@ -13,5 +13,5 @@ int SampleBuffer::getChannels(){
 }
 
 float* SampleBuffer::getSamples(int channel){
-  return buffer.getSampleData(channel);
+  return buffer.getWritePointer(channel);
 }

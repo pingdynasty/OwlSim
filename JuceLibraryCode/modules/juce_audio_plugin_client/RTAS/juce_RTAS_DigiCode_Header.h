@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -43,10 +43,11 @@
   #define WINDOWS_VERSION           1
   #define PLUGIN_SDK_BUILD          1
   #define PLUGIN_SDK_DIRECTMIDI     1
+  #define _STDINT_H                 1
 
   // the Digidesign projects all use a struct alignment of 2..
   #pragma pack (2)
-  #pragma warning (disable: 4267 4996 4311 4312 4103 4121 4100 4127 4189 4245 4389 4512 4701)
+  #pragma warning (disable: 4267 4996 4311 4312 4103 4121 4100 4127 4189 4245 4389 4512 4701 4703)
 
   #include <ForcedInclude.h>
 

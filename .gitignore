@@ -30,3 +30,5 @@ Builds/VisualStudio2010/OwlSim.opensdf
 Builds/VisualStudio2010/OwlSim.suo
 Builds/VisualStudio2010/OwlSim.sln.docstates.suo
 Builds/VisualStudio2010/OwlSim.vcxproj.user
+Builds/MacOSX/build
+Builds/MacOSX/OwlSim.xcodeproj/xcuserdata/oli.xcuserdatad/
